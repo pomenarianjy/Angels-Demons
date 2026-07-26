@@ -48,12 +48,8 @@
             cursor: pointer;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(218, 165, 32, 0.8);
-            transition: transform 0.1s, background 0.2s;
             text-transform: uppercase;
             letter-spacing: 2px;
-        }
-        #start-btn:active {
-            transform: scale(0.95);
         }
 
         /* Main Game Layout */
@@ -61,8 +57,6 @@
             display: none;
             width: 100vw;
             height: 100vh;
-            background: url('sky.jpg') no-repeat center center;
-            background-size: cover;
             flex-direction: row;
         }
 
@@ -70,7 +64,7 @@
         #story-pane {
             width: 35%;
             height: 100%;
-            background: rgba(11, 15, 25, 0.85);
+            background: rgba(11, 15, 25, 0.95);
             border-right: 3px solid #b8860b;
             display: flex;
             flex-direction: column;
@@ -93,7 +87,7 @@
             letter-spacing: 1px;
         }
 
-        /* Right Pane: Game Box (Claw + Battle Arena) */
+        /* Right Pane: Claw Master Exact Structure */
         #game-pane {
             width: 65%;
             height: 100%;
@@ -102,119 +96,211 @@
             position: relative;
         }
 
-        /* Top Area: Claw Machine Section */
-        #claw-section {
-            height: 45%;
-            width: 100%;
-            background: rgba(15, 20, 35, 0.9);
-            border-bottom: 2px dashed #b8860b;
-            position: relative;
-            overflow: hidden;
-        }
-        #claw-rail {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 4px;
-            height: 20px;
-            background: #d4af37;
-        }
-        #claw-head {
-            position: absolute;
-            top: 20px;
-            left: calc(50% - 20px);
-            width: 40px;
-            height: 30px;
-            background: #daa520;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .claw-finger {
-            width: 6px;
-            height: 15px;
-            background: #b8860b;
-            position: absolute;
-            bottom: -15px;
-            transition: transform 0.2s;
-        }
-        .claw-left { left: 0; transform-origin: top; }
-        .claw-right { right: 0; transform-origin: top; }
-
-        /* Grab Items Container */
-        #grab-items-area {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
-            height: 60px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 20px;
-        }
-        .grab-item {
-            width: 45px;
-            height: 45px;
-            background: rgba(218, 165, 32, 0.2);
-            border: 1px solid #d4af37;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #fff;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        /* Bottom Area: Battle Arena */
+        /* Top Area: Battle Arena (Sky + Middle Road Layout) */
         #battle-arena {
             height: 55%;
             width: 100%;
             position: relative;
-            background: linear-gradient(to bottom, rgba(11,15,25,0.4), rgba(40,30,10,0.8));
+            background: url('sky.jpg') no-repeat center center;
+            background-size: cover;
             overflow: hidden;
+            border-bottom: 3px solid #b8860b;
         }
-        /* Road matching sky theme tones */
+
+        /* Horizontal Road in the middle/lower part of the battle arena, matching sky tones */
         #road {
             position: absolute;
             bottom: 0;
             width: 100%;
             height: 35%;
-            background: #1a2233;
-            border-top: 3px solid #b8860b;
+            background: rgba(15, 25, 45, 0.9);
+            border-top: 2px solid #d4af37;
         }
 
-        /* Entities */
-        .entity {
-            position: absolute;
-            bottom: 15%;
-            transform: translateY(50%);
-        }
+        /* Entities on Road */
         #hero {
+            position: absolute;
             left: 10%;
+            bottom: 5%;
             width: 60px;
             height: 90px;
             object-fit: contain;
+            cursor: pointer;
+            z-index: 5;
         }
-        .enemy {
-            right: 10%;
-            width: 60px;
-            height: 90px;
-            object-fit: contain;
-        }
+
         #angel {
             position: absolute;
-            left: 70%;
-            bottom: 15%;
-            transform: translateY(50%);
+            left: 22%;
+            bottom: 5%;
             width: 60px;
             height: 90px;
             object-fit: contain;
             display: none;
+            z-index: 5;
         }
 
-        /* Angel Wings & Halo Animation Components */
+        /* Villains Container for multiple arrays */
+        #villains-container {
+            position: absolute;
+            right: 5%;
+            bottom: 5%;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            z-index: 5;
+        }
+
+        .villain-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .villain-wrapper:hover {
+            transform: scale(1.05);
+        }
+        .villain-hp-bar {
+            width: 45px;
+            height: 6px;
+            background: #444;
+            border: 1px solid #d4af37;
+            margin-bottom: 4px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .villain-hp-fill {
+            width: 100%;
+            height: 100%;
+            background: #b8860b;
+        }
+        .villain-img {
+            width: 55px;
+            height: 85px;
+            object-fit: contain;
+        }
+        .villain-wrapper.targeted .villain-img {
+            filter: drop-shadow(0 0 8px #ff4500);
+        }
+
+        /* Bottom Area: Claw Machine Section */
+        #claw-section {
+            height: 45%;
+            width: 100%;
+            background: #0f1423;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        #claw-rail {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 25px;
+            background: #d4af37;
+            transform: translateX(-50%);
+            transition: left 0.1s linear;
+        }
+
+        #claw-head {
+            position: absolute;
+            top: 25px;
+            left: -18px;
+            width: 36px;
+            height: 25px;
+            background: #daa520;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .claw-finger {
+            width: 5px;
+            height: 14px;
+            background: #b8860b;
+            position: absolute;
+            bottom: -14px;
+            transition: transform 0.2s;
+        }
+        .claw-left { left: 0; transform-origin: top; }
+        .claw-right { right: 0; transform-origin: top; }
+
+        /* Grab Items Pool on Bottom Floor */
+        #grab-items-area {
+            position: absolute;
+            bottom: 15px;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .grab-item {
+            width: 50px;
+            height: 50px;
+            background: rgba(218, 165, 32, 0.15);
+            border: 2px solid #d4af37;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #f0e682;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: inset 0 0 8px rgba(218, 165, 32, 0.3);
+        }
+
+        /* HUD Overlays */
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #f0e682;
+            text-shadow: 1px 1px 3px #000;
+            z-index: 10;
+        }
+
+        /* Cardinal's Cross Bullet */
+        .cardinal-bullet {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            pointer-events: none;
+        }
+        .cardinal-bullet::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 22px;
+            background: #d4af37;
+            box-shadow: 0 0 8px #fff;
+        }
+        .cardinal-bullet::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 4px;
+            background: #d4af37;
+            box-shadow: 0 0 8px #fff;
+            top: 7px;
+        }
+
+        /* Angel Wings & Halo */
         .angel-halo {
             position: absolute;
             top: -15px;
@@ -259,50 +345,7 @@
             100% { transform: scale(1.1); opacity: 1; }
         }
 
-        /* Cardinal's Cross Bullet */
-        .cardinal-bullet {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .cardinal-bullet::before {
-            content: '';
-            position: absolute;
-            width: 4px;
-            height: 22px;
-            background: #d4af37;
-            box-shadow: 0 0 8px #fff;
-        }
-        .cardinal-bullet::after {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 4px;
-            background: #d4af37;
-            box-shadow: 0 0 8px #fff;
-            top: 7px;
-        }
-
-        /* HUD Overlays */
-        #hud {
-            position: absolute;
-            top: 10px;
-            left: 15px;
-            right: 15px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #f0e682;
-            text-shadow: 1px 1px 3px #000;
-            z-index: 10;
-        }
-
-        /* Modals / Messages */
+        /* Modals */
         #overlay-msg {
             position: absolute;
             top: 0;
@@ -319,22 +362,22 @@
             padding: 20px;
         }
         #overlay-msg h2 {
-            font-size: 2.5rem;
+            font-size: 2.3rem;
             color: #f0e682;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         #overlay-btn {
             background: #b8860b;
             color: #fff;
             border: 2px solid #fff;
             padding: 12px 30px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             border-radius: 5px;
             text-transform: uppercase;
         }
 
-        /* Spark Celebration */
+        /* Celebration */
         .spark {
             position: absolute;
             width: 6px;
@@ -359,102 +402,76 @@
             display: none;
             pointer-events: none;
         }
-
-        /* Mobile Controls helper */
-        #mobile-action-btn {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 70px;
-            height: 70px;
-            background: rgba(218, 165, 32, 0.8);
-            border: 2px solid #fff;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: #000;
-            font-size: 14px;
-            z-index: 20;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
     </style>
 </head>
 <body>
 
     <!-- Fullscreen Start Screen -->
     <div id="start-screen">
-        <button id="start-btn">Start Game</button>
+        <button id="start-btn" onclick="startGame()">Start Game</button>
     </div>
 
-    <!-- Main Game Screen -->
+    <!-- Main Game Container -->
     <div id="game-container">
-        <!-- Left Pane: Storyline & Stage Images -->
+        <!-- Left Pane: Storyline Pictures -->
         <div id="story-pane">
             <div id="story-title">Stage 1: The Detective</div>
             <img id="story-img" src="S1L1.png" alt="Storyline View">
         </div>
 
-        <!-- Right Pane: Game Box -->
+        <!-- Right Pane: Game Box (Claw Master Layout) -->
         <div id="game-pane">
             <div id="hud">
                 <div id="hud-stage">Stage 1 - Level 1</div>
-                <div id="hud-stats">Power: 10 | Luck: 1</div>
+                <div id="hud-stats">Power: 12 | Select Villain to Shoot</div>
             </div>
 
-            <!-- Claw Section -->
-            <div id="claw-section" onclick="triggerClaw()">
-                <div id="claw-rail">
+            <!-- Top Area: Battle Arena -->
+            <div id="battle-arena">
+                <div id="road">
+                    <img id="hero" src="hero.png" alt="Hero">
+                    <img id="angel" src="angel.png" alt="Angel">
+                    <div id="villains-container"></div>
+                </div>
+            </div>
+
+            <!-- Bottom Area: Claw Machine Section -->
+            <div id="claw-section" onclick="triggerClaw(event)">
+                <div id="claw-rail" style="left: 50%;">
                     <div id="claw-head">
                         <div class="claw-finger claw-left" id="left-finger"></div>
                         <div class="claw-finger claw-right" id="right-finger"></div>
                     </div>
                 </div>
                 <div id="grab-items-area">
-                    <div class="grab-item">Bullet+</div>
-                    <div class="grab-item">Power</div>
-                    <div class="grab-item">Relic</div>
-                    <div class="grab-item">Speed</div>
+                    <div class="grab-item">PWR<br>+5</div>
+                    <div class="grab-item">RELIC<br>+1</div>
+                    <div class="grab-item">CRIT<br>+10%</div>
+                    <div class="grab-item">GOLD<br>+50</div>
                 </div>
             </div>
-
-            <!-- Battle Arena -->
-            <div id="battle-arena">
-                <div id="road"></div>
-                <img id="hero" class="entity" src="hero.png" alt="Hero">
-                <img id="angel" src="angel.png" alt="Angel">
-                <img id="enemy" class="entity enemy" src="villain1.png" alt="Enemy">
-            </div>
-
-            <!-- Mobile Action Helper Button -->
-            <div id="mobile-action-btn">GRAB / SHOOT</div>
         </div>
     </div>
 
-    <!-- Level Clear / Game Over Overlay Modal -->
+    <!-- Modal Message -->
     <div id="overlay-msg">
         <h2 id="msg-title">Level Cleared</h2>
         <p id="msg-desc" style="color: #fff; margin-bottom: 20px;"></p>
         <button id="overlay-btn" onclick="nextAction()">Continue</button>
     </div>
 
-    <!-- Flying Celebration Object -->
-    <img id="fly-object" src="fly.png" alt="Fly Celebration">
+    <!-- Celebration Object -->
+    <img id="fly-object" src="fly.png" alt="Fly">
 
     <script>
-        // Game State Engine
         let currentStage = 1;
         let currentLevel = 1;
-        let heroPower = 10;
-        let enemyHp = 50;
-        let maxEnemyHp = 50;
-        let isGameStarted = false;
-        let isClawDropping = false;
-        let gameInterval = null;
+        let heroPower = 12;
+        let selectedVillainIndex = 0;
+        let isClawActive = false;
+        let villainsState = [];
 
-        // Villains Mapping corresponding to Dan Brown theme
-        const villains = {
+        const villainsList = {
             1: 'villain1.png',
             2: 'villain2.png',
             3: 'villain3.png',
@@ -465,7 +482,6 @@
             8: 'villain8.png'
         };
 
-        // Stage Names & Mapping Structure
         const stageData = {
             1: { name: "The Detective", prefix: "S1" },
             2: { name: "Detective’s Helper", prefix: "S2" },
@@ -473,119 +489,157 @@
             4: { name: "The Close", prefix: "S4" }
         };
 
-        document.getElementById('start-btn').addEventListener('click', startGame);
-        document.getElementById('mobile-action-btn').addEventListener('click', () => {
-            triggerClaw();
-            shootBullet();
-        });
-
         function startGame() {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('game-container').style.display = 'flex';
-            isGameStarted = true;
-            loadLevelAssets();
-            startBattleLoop();
+            initLevel();
         }
 
-        function loadLevelAssets() {
+        function initLevel() {
             const prefix = stageData[currentStage].prefix;
-            const stageName = stageData[currentStage].name;
-            
-            // Update Story Image and Title
             document.getElementById('story-img').src = `${prefix}L${currentLevel}.png`;
-            document.getElementById('story-title').innerText = `Stage ${currentStage}: ${stageName}`;
+            document.getElementById('story-title').innerText = `Stage ${currentStage}: ${stageData[currentStage].name}`;
             document.getElementById('hud-stage').innerText = `Stage ${currentStage} - Level ${currentLevel}`;
 
-            // Assign Enemy (Boss on Level 5)
-            const enemyImg = document.getElementById('enemy');
-            if (currentLevel === 5) {
-                enemyImg.src = villains[Math.min(currentStage + 4, 8)]; // Higher tier villains for bosses
-                enemyHp = 120;
-                maxEnemyHp = 120;
-            } else {
-                enemyImg.src = villains[currentStage];
-                enemyHp = 40 + (currentLevel * 10);
-                maxEnemyHp = enemyHp;
-            }
-
-            // Reset Angel state
+            // Reset Angel
             document.getElementById('angel').style.display = 'none';
+
+            // Generate Villains array based on Level (more enemies in higher levels)
+            const count = Math.min(currentLevel, 3); // 1 to 3 enemies per level
+            villainsState = [];
+            const container = document.getElementById('villains-container');
+            container.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                let vId = Math.min(currentStage + i, 8);
+                if (currentLevel === 5) vId = Math.min(currentStage + 4, 8); // Boss tier
+                
+                let hp = currentLevel === 5 ? 100 : 35 + (currentLevel * 10);
+                villainsState.push({ id: i, img: villainsList[vId], hp: hp, maxHp: hp });
+
+                const wrap = document.createElement('div');
+                wrap.className = 'villain-wrapper' + (i === 0 ? ' targeted' : '');
+                wrap.dataset.index = i;
+                wrap.onclick = () => selectVillain(i);
+
+                wrap.innerHTML = `
+                    <div class="villain-hp-bar"><div class="villain-hp-fill" id="v-hp-${i}" style="width: 100%;"></div></div>
+                    <img class="villain-img" src="${villainsList[vId]}" alt="Villain">
+                `;
+                container.appendChild(wrap);
+            }
+            selectedVillainIndex = 0;
         }
 
-        function triggerClaw() {
-            if (isClawDropping) return;
-            isClawDropping = true;
+        function selectVillain(index) {
+            selectedVillainIndex = index;
+            document.querySelectorAll('.villain-wrapper').forEach((el, idx) => {
+                if (idx === index) el.classList.add('targeted');
+                else el.classList.remove('targeted');
+            });
+            shootBulletAtTarget(index);
+        }
+
+        function shootBulletAtTarget(index) {
+            const targetEl = document.querySelectorAll('.villain-wrapper')[index];
+            if (!targetEl) return;
+
+            const arena = document.getElementById('battle-arena');
+            const bullet = document.createElement('div');
+            bullet.className = 'cardinal-bullet';
+            bullet.style.left = '16%';
+            bullet.style.bottom = '15%';
+            arena.appendChild(bullet);
+
+            // Compute target position dynamically
+            const targetRect = targetEl.getBoundingClientRect();
+            const arenaRect = arena.getBoundingClientRect();
+            const targetX = targetRect.left - arenaRect.left + (targetRect.width / 2);
+            
+            let currentX = arenaRect.width * 0.16;
+            const distance = targetX - currentX;
+            let steps = 25;
+            let stepCount = 0;
+
+            const anim = setInterval(() => {
+                stepCount++;
+                currentX += distance / steps;
+                bullet.style.left = currentX + 'px';
+
+                if (stepCount >= steps) {
+                    clearInterval(anim);
+                    bullet.remove();
+                    applyDamageToVillain(index);
+                }
+            }, 20);
+        }
+
+        function applyDamageToVillain(index) {
+            if (!villainsState[index]) return;
+            villainsState[index].hp -= heroPower;
+            
+            const hpPercent = Math.max(0, (villainsState[index].hp / villainsState[index].maxHp) * 100);
+            const bar = document.getElementById(`v-hp-${index}`);
+            if (bar) bar.style.width = hpPercent + '%';
+
+            if (villainsState[index].hp <= 0) {
+                // Remove defeated villain from DOM
+                const wrappers = document.querySelectorAll('.villain-wrapper');
+                if (wrappers[index]) wrappers[index].style.opacity = '0.3';
+                
+                // Check if all villains are cleared
+                if (villainsState.every(v => v.hp <= 0)) {
+                    handleLevelPass();
+                } else {
+                    // Auto select next active villain
+                    const nextIdx = villainsState.findIndex(v => v.hp > 0);
+                    if (nextIdx !== -1) selectVillain(nextIdx);
+                }
+            }
+        }
+
+        // Claw machine dropping mechanism (Player picks drop location)
+        function triggerClaw(event) {
+            if (isClawActive) return;
+            isClawActive = true;
+
+            const section = document.getElementById('claw-section');
+            const rect = section.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const percentage = Math.max(10, Math.min(90, (clickX / rect.width) * 100));
+
+            const rail = document.getElementById('claw-rail');
+            rail.style.left = percentage + '%';
 
             const head = document.getElementById('claw-head');
             const leftF = document.getElementById('left-finger');
             const rightF = document.getElementById('right-finger');
 
-            // Animate claw down & grab
-            head.style.transition = 'top 0.4s ease-in-out';
-            head.style.top = '120px';
-            leftF.style.transform = 'rotate(25deg)';
-            rightF.style.transform = 'rotate(-25deg)';
-
             setTimeout(() => {
-                // Apply Claw Master Booster reward randomly
-                const boosters = ['Power Up +5', 'Bullet Boost', 'Relic Synergy', 'Speed Enhance'];
-                const reward = boosters[Math.floor(Math.random() * boosters.length)];
-                heroPower += 3;
-                document.getElementById('hud-stats').innerText = `Power: ${heroPower} | Luck: ${currentLevel}`;
+                head.style.transition = 'top 0.3s ease-in-out';
+                head.style.top = '90px';
+                leftF.style.transform = 'rotate(25deg)';
+                rightF.style.transform = 'rotate(-25deg)';
 
-                // Return claw up
-                head.style.top = '20px';
-                leftF.style.transform = 'rotate(0deg)';
-                rightF.style.transform = 'rotate(0deg)';
-                isClawDropping = false;
-            }, 800);
+                setTimeout(() => {
+                    // Grab booster reward
+                    heroPower += 4;
+                    document.getElementById('hud-stats').innerText = `Power: ${heroPower} | Boost Acquired!`;
+
+                    head.style.top = '25px';
+                    leftF.style.transform = 'rotate(0deg)';
+                    rightF.style.transform = 'rotate(0deg)';
+                    isClawActive = false;
+                }, 500);
+            }, 100);
         }
 
-        function startBattleLoop() {
-            gameInterval = setInterval(() => {
-                if (!isGameStarted) return;
-                shootBullet();
-            }, 600);
-        }
-
-        function shootBullet() {
-            const arena = document.getElementById('battle-arena');
-            const bullet = document.createElement('div');
-            bullet.className = 'cardinal-bullet';
-            bullet.style.left = '18%';
-            bullet.style.bottom = '30%';
-            arena.appendChild(bullet);
-
-            let pos = 18;
-            const bulletAnim = setInterval(() => {
-                pos += 4;
-                bullet.style.left = pos + '%';
-
-                // Check collision with enemy
-                if (pos >= 80) {
-                    clearInterval(bulletAnim);
-                    bullet.remove();
-                    damageEnemy();
-                }
-            }, 30);
-        }
-
-        function damageEnemy() {
-            enemyHp -= heroPower;
-            if (enemyHp <= 0) {
-                handleLevelClear();
-            }
-        }
-
-        function handleLevelClear() {
-            clearInterval(gameInterval);
-
+        function handleLevelPass() {
             if (currentLevel === 5) {
-                // Stage Boss Defeated: Show Angel and trigger approach
+                // Final level of stage: Show Angel touching hero
                 const angel = document.getElementById('angel');
                 angel.style.display = 'block';
 
-                // Append Halo and Wings dynamically when touched/approached
                 setTimeout(() => {
                     if (!document.querySelector('.angel-halo')) {
                         const halo = document.createElement('div');
@@ -598,17 +652,17 @@
                         angel.appendChild(wingL);
                         angel.appendChild(wingR);
                     }
-                }, 500);
+                }, 400);
 
                 setTimeout(() => {
                     if (currentStage === 4) {
                         triggerFinalVictory();
                     } else {
-                        showModal(`Stage ${currentStage} Cleared`, `The divine sanctuary opens. Moving to Stage ${currentStage + 1}.`);
+                        showModal(`Stage ${currentStage} Completed`, `The sacred bond is forged. Advancing to Stage ${currentStage + 1}.`);
                     }
-                }, 1500);
+                }, 1400);
             } else {
-                showModal(`Level ${currentLevel} Cleared`, `Path secured. Proceeding to next phase.`);
+                showModal(`Level ${currentLevel} Cleared`, `All adversaries neutralized. Proceeding.`);
             }
         }
 
@@ -616,36 +670,31 @@
             document.getElementById('msg-title').innerText = title;
             document.getElementById('msg-desc').innerText = desc;
             document.getElementById('overlay-msg').style.display = 'flex';
-            isGameStarted = false;
         }
 
         function nextAction() {
             document.getElementById('overlay-msg').style.display = 'none';
-            
             if (currentLevel === 5) {
                 currentStage++;
                 currentLevel = 1;
             } else {
                 currentLevel++;
             }
-
-            loadLevelAssets();
-            startBattleLoop();
+            initLevel();
         }
 
         function triggerFinalVictory() {
             const overlay = document.getElementById('overlay-msg');
             document.getElementById('msg-title').innerText = "CONGRATULATIONS";
-            document.getElementById('msg-desc').innerText = "The Illuminati's plot has been thwarted. Truth prevails!";
+            document.getElementById('msg-desc').innerText = "The Illuminati scheme is broken. Truth and light prevail!";
             document.getElementById('overlay-btn').innerText = "Play Again";
             document.getElementById('overlay-btn').onclick = () => location.reload();
             overlay.style.display = 'flex';
 
-            // Launch fly.png animation with sparks
             const flyObj = document.getElementById('fly-object');
             flyObj.style.display = 'block';
-            
-            let posX = 10, posY = 10, dirX = 2, dirY = 1.5;
+            let posX = 20, posY = 20, dirX = 2.5, dirY = 2;
+
             setInterval(() => {
                 posX += dirX;
                 posY += dirY;
@@ -655,7 +704,6 @@
                 flyObj.style.top = posY + 'px';
             }, 25);
 
-            // Generate fireworks sparks
             setInterval(() => {
                 const spark = document.createElement('div');
                 spark.className = 'spark';
@@ -663,7 +711,7 @@
                 spark.style.top = '0px';
                 document.body.appendChild(spark);
                 setTimeout(() => spark.remove(), 2000);
-            }, 150);
+            }, 120);
         }
     </script>
 </body>
