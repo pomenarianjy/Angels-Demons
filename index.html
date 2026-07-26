@@ -119,7 +119,7 @@
             background-size: cover;
         }
 
-        /* Hero & Angel Containers - Resized to match visible pixel dimensions (approx 170px tall) */
+        /* Hero & Angel Containers - Side-by-side, touching, matching size */
         #hero-container {
             position: absolute;
             left: 5%;
@@ -131,25 +131,25 @@
             transition: left 2.5s ease-in-out;
         }
         #hero {
-            width: auto;       
-            height: 170px;      
+            width: 150px;      
+            height: 225px;      
             object-fit: contain;
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
 
         #angel-container {
             position: absolute;
-            right: 5%;
+            left: calc(5% + 150px);
             bottom: 5%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 15; /* Raised z-index again so it's above Hero if they meet */
+            z-index: 10;
             display: none;
         }
         #angel {
-            width: auto;      
-            height: 170px;      
+            width: 150px;      
+            height: 225px;      
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
@@ -157,12 +157,12 @@
 
         .angel-halo {
             position: absolute;
-            top: -8px; /* Adjusted for 170px height */
-            width: 45px; /* Adjusted for 170px height */
-            height: 15px; /* Adjusted for 170px height */
-            border: 2px solid #fde047;
+            top: 5px;
+            width: 50px;
+            height: 18px;
+            border: 3px solid #fde047;
             border-radius: 50%;
-            box-shadow: 0 0 12px #fde047;
+            box-shadow: 0 0 18px #fde047;
             animation: haloGlow 1s infinite alternate;
             display: none;
         }
@@ -219,7 +219,7 @@
             border: none !important;
             box-shadow: none !important;
             transition: transform 0.1s;
-            opacity: 1.0 !important; /* Reverted: Units are NOT faded if not first */
+            opacity: 1.0 !important;
         }
         .villain-unit:hover {
             transform: scale(1.1);
@@ -229,9 +229,8 @@
             transform: scale(1.06);
         }
         .villain-unit.disabled-target {
-            /* Reverted: Units are NOT faded if not first */
-            opacity: 1.0 !important; 
-            cursor: pointer; /* Reverted: Can click any visible villain */
+            opacity: 1.0 !important;
+            cursor: pointer;
         }
         .v-hp-container {
             width: 48px;
@@ -253,7 +252,6 @@
             object-fit: contain;
             transition: transform 0.2s, filter 0.2s;
         }
-        /* Explicit Boss Mapping & Styling */
         .villain-img.boss-img {
             width: 115px;
             height: 145px;
@@ -396,7 +394,7 @@
             transition: transform 0.2s ease-out, opacity 0.2s ease-out;
         }
 
-        /* 6 Direction Arrow Deck */
+        /* Direction Arrow Deck */
         #direction-deck {
             height: 52px;
             background: #080c16;
@@ -408,7 +406,48 @@
             padding: 0 10px;
             z-index: 40;
         }
+    </style>
+</head>
+<body>
+    <div id="start-screen">
+        <button id="start-btn">Start Game</button>
+    </div>
 
-        .dir-arrow-btn {
-            background: linear-gradient(135deg, #111827, #1f2937);
-            border:
+    <div id="game-container">
+        <div id="story-pane">
+            <img id="story-img" src="" alt="Story">
+            <div id="story-title">Prologue</div>
+        </div>
+        <div id="game-pane">
+            <div id="battle-arena">
+                <div id="road"></div>
+                <div id="hero-container">
+                    <img id="hero" src="hero.png" alt="Hero">
+                </div>
+                <div id="angel-container">
+                    <div class="angel-halo"></div>
+                    <img id="angel" src="angel.png" alt="Angel">
+                </div>
+                <div id="villains-grid-field"></div>
+            </div>
+            <div id="claw-section">
+                <div id="vault-pit">
+                    <div id="gantry-track"></div>
+                    <div id="claw-rig">
+                        <div id="vertical-cable"></div>
+                        <div id="grand-claw-head">
+                            <div class="claw-crown"></div>
+                            <div class="claw-prongs">
+                                <div class="prong-l"></div>
+                                <div class="prong-r"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="bead-container"></div>
+                </div>
+                <div id="direction-deck"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
