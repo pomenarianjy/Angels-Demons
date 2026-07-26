@@ -22,7 +22,7 @@
             height: 100vh;
         }
 
-        /* Fullscreen Start Screen with robust fallback styling for start.jpg */
+        /* Fullscreen Start Screen with explicit background image assignment */
         #start-screen {
             position: absolute;
             top: 0;
@@ -206,7 +206,7 @@
             object-fit: contain;
         }
 
-        /* Bottom Area: 180-Degree Clock-Arm Rotating Claw & Physics Bead Pile Pit */
+        /* Bottom Area: Direct Area-of-Effect / Sweep Collection Pit */
         #claw-section {
             height: 55%;
             width: 100%;
@@ -231,40 +231,26 @@
             overflow: hidden;
         }
 
-        /* Fixed Root Anchor point exactly at top-center of the vault pit */
-        #claw-pivot {
+        /* Direct Visual Sweeper Arm */
+        #rotating-arm {
             position: absolute;
             top: 0px;
             left: 50%;
-            width: 16px;
-            height: 16px;
-            background: #daa520;
-            border-radius: 50%;
-            transform: translateX(-50%);
-            z-index: 30;
-            box-shadow: 0 0 10px #d4af37;
-        }
-
-        /* Clock-Arm Rotating & Deeply Extending Mechanism reaching straight into the bottom bead pile */
-        #rotating-arm {
-            position: absolute;
-            top: 8px;
-            left: 50%;
-            width: 6px;
-            height: 150px; 
+            width: 8px;
+            height: 40px;
             background: #8b6508;
             transform-origin: top center;
             transform: translateX(-50%) rotate(0deg);
             z-index: 25;
             pointer-events: none;
-            transition: height 0.2s ease-out, transform 0.2s ease-out;
+            transition: transform 0.15s ease-out, height 0.15s ease-out;
         }
 
         #claw-head {
             position: absolute;
             bottom: -22px;
             left: 50%;
-            width: 36px;
+            width: 40px;
             height: 22px;
             transform: translateX(-50%);
             display: flex;
@@ -272,7 +258,7 @@
             z-index: 26;
         }
         .claw-hook-l, .claw-hook-r {
-            width: 10px;
+            width: 12px;
             height: 22px;
             background: #b8860b;
             border: 1px solid #f0e682;
@@ -287,9 +273,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: bold;
             box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.8);
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
         }
 
         /* HUD Overlays */
@@ -401,9 +388,8 @@
 </head>
 <body>
 
-    <!-- Start Screen with explicitly tested background image loading layer -->
+    <!-- Start Screen with start.jpg background -->
     <div id="start-screen">
-        <img id="start-img-loader" src="start.jpg" style="display:none;" onerror="console.error('start.jpg failed to load in directory!');">
         <button id="start-btn" onclick="startGame()">Start Game</button>
     </div>
 
@@ -419,7 +405,7 @@
         <div id="game-pane">
             <div id="hud">
                 <div id="hud-info">Stage 1 - Level 1</div>
-                <div id="hud-power">Power: 0 | Scoop beads at bottom pit, then hit current active column!</div>
+                <div id="hud-power">Power: 0 | Tap anywhere in the bead pit to sweep and collect power!</div>
             </div>
 
             <!-- Top Area: Battle Arena with 3x4 Grid Formation -->
@@ -434,10 +420,10 @@
                 </div>
             </div>
 
-            <!-- Bottom Area: 180-Degree Clock-Arm Rotating Claw & Bead Pile Pit -->
+            <!-- Bottom Area: Reliable Sweep Claw Pit -->
             <div id="claw-section" onpointerdown="handleClawTrigger(event)">
                 <div id="vault-pit">
-                    <div id="claw-pivot"></div>
+                    <div id="claw-pivot" style="position: absolute; top: 0; left: 50%; width: 16px; height: 16px; background: #daa520; border-radius: 50%; transform: translateX(-50%); z-index: 30;"></div>
                     <div id="rotating-arm">
                         <div id="claw-head">
                             <div class="claw-hook-l"></div>
@@ -588,43 +574,43 @@
 
             const pit = document.getElementById('vault-pit');
             const pitWidth = pit.clientWidth || 300;
+            const pitHeight = pit.clientHeight || 200;
 
             const rows = 6;
-            const cols = 14;
+            const cols = 12;
             let idCounter = 0;
 
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
-                    const isGold = Math.random() < (0.18 + upgrades.power * 0.02);
-                    const size = 18;
-                    const x = (pitWidth / 2) - 140 + c * 20 + (r % 2) * 8;
-                    const y = 15 + r * 18; 
+                    const isGold = Math.random() < (0.2 + upgrades.power * 0.03);
+                    const size = 22;
+                    // Distribute beads across the entire lower basin area so they are always reachable
+                    const x = 30 + c * ((pitWidth - 60) / (cols - 1));
+                    const y = 20 + r * (pitHeight * 0.6 / rows);
 
-                    if (x > 10 && x < pitWidth - 10) {
-                        physicsBeads.push({
-                            id: idCounter,
-                            type: isGold ? 'gold' : 'white',
-                            value: isGold ? (5 * upgrades.power) : (1 * upgrades.power),
-                            x: x,
-                            y: y,
-                            collected: false
-                        });
+                    physicsBeads.push({
+                        id: idCounter,
+                        type: isGold ? 'gold' : 'white',
+                        value: isGold ? (6 * upgrades.power) : (2 * upgrades.power),
+                        x: x,
+                        y: y,
+                        collected: false
+                    });
 
-                        const beadEl = document.createElement('div');
-                        beadEl.className = 'physics-bead';
-                        beadEl.id = `bead-${idCounter}`;
-                        beadEl.style.width = `${size}px`;
-                        beadEl.style.height = `${size}px`;
-                        beadEl.style.left = `${x}px`;
-                        beadEl.style.bottom = `${y}px`;
-                        beadEl.style.background = isGold 
-                            ? 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 60%, #a16207 100%)' 
-                            : 'radial-gradient(circle at 30% 30%, #ffffff 0%, #d1d5db 60%, #9ca3af 100%)';
-                        beadEl.style.color = isGold ? '#fff' : '#1f2937';
-                        beadEl.innerText = isGold ? '★' : '';
-                        container.appendChild(beadEl);
-                        idCounter++;
-                    }
+                    const beadEl = document.createElement('div');
+                    beadEl.className = 'physics-bead';
+                    beadEl.id = `bead-${idCounter}`;
+                    beadEl.style.width = `${size}px`;
+                    beadEl.style.height = `${size}px`;
+                    beadEl.style.left = `${x - size/2}px`;
+                    beadEl.style.bottom = `${y}px`;
+                    beadEl.style.background = isGold 
+                        ? 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 60%, #a16207 100%)' 
+                        : 'radial-gradient(circle at 30% 30%, #ffffff 0%, #d1d5db 60%, #9ca3af 100%)';
+                    beadEl.style.color = isGold ? '#fff' : '#1f2937';
+                    beadEl.innerText = isGold ? '★' : '';
+                    container.appendChild(beadEl);
+                    idCounter++;
                 }
             }
         }
@@ -637,40 +623,39 @@
             const rect = pit.getBoundingClientRect();
             
             const pivotX = rect.width / 2;
-            const pivotY = 8; 
+            const pivotY = 0; 
 
-            const clickX = event.clientX - rect.left - pivotX;
-            const clickY = event.clientY - rect.top - pivotY;
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
 
-            let rad = Math.atan2(clickX, Math.max(5, clickY));
-            let deg = rad * (180 / Math.PI);
-            deg = Math.max(-88, Math.min(88, deg));
+            let deltaX = clickX - pivotX;
+            let deltaY = Math.max(20, rect.height - clickY);
+            let targetAngle = Math.atan2(deltaX, deltaY) * (180 / Math.PI);
+            targetAngle = Math.max(-75, Math.min(75, targetAngle));
+
+            let targetReach = Math.hypot(deltaX, deltaY);
+            let maxAllowedReach = 180 + (upgrades.reach * 25);
+            targetReach = Math.min(targetReach, maxAllowedReach);
 
             const arm = document.getElementById('rotating-arm');
-            
-            // Substantially increase the claw extension reach dynamically so it reaches deep into the pit
-            const tapDist = Math.hypot(clickX, clickY);
-            const extendedReach = Math.min(Math.max(tapDist, 120), 200 + (upgrades.reach * 25));
-
-            arm.style.transform = `translateX(-50%) rotate(${deg}deg)`;
-            arm.style.height = `${extendedReach}px`;
+            arm.style.transform = `translateX(-50%) rotate(${targetAngle}deg)`;
+            arm.style.height = `${targetReach}px`;
 
             setTimeout(() => {
                 let collectedPoints = 0;
+                let reachRadius = 60 + (upgrades.reach * 10);
 
                 physicsBeads.forEach(b => {
                     if (!b.collected) {
-                        const beadAngle = Math.atan2(b.x - pivotX, pit.clientHeight - b.y - pivotY) * (180 / Math.PI);
-                        const angleDiff = Math.abs(deg - beadAngle);
-                        const beadDistFromPivot = Math.hypot(b.x - pivotX, pit.clientHeight - b.y - pivotY);
-
-                        if (angleDiff < 35 && Math.abs(beadDistFromPivot - extendedReach) < 50) {
+                        // Check distance between clicked target point in pit and bead position
+                        let beadDist = Math.hypot(b.x - clickX, (pit.clientHeight - b.y) - clickY);
+                        if (beadDist < reachRadius) {
                             b.collected = true;
                             collectedPoints += b.value;
                             const el = document.getElementById(`bead-${b.id}`);
                             if (el) {
-                                el.style.transform = 'scale(0) translateY(-30px)';
-                                el.style.transition = 'transform 0.3s ease-out';
+                                el.style.transform = 'scale(0) translateY(-40px)';
+                                el.style.opacity = '0';
                             }
                         }
                     }
@@ -679,8 +664,8 @@
                 heroPower += collectedPoints;
                 document.getElementById('hud-power').innerText = `Power: ${heroPower} | Scooped +${collectedPoints}! Click active column villain!`;
 
-                // Retract arm back to default resting length
-                arm.style.height = '150px';
+                // Retract arm back smoothly
+                arm.style.height = '40px';
                 arm.style.transform = 'translateX(-50%) rotate(0deg)';
 
                 setTimeout(() => {
@@ -688,13 +673,13 @@
                     if (physicsBeads.every(b => b.collected)) {
                         initPhysicsBeadPile();
                     }
-                }, 300);
-            }, 300);
+                }, 200);
+            }, 200);
         }
 
         function fireCrossBullet(r, c) {
             if (heroPower <= 0) {
-                document.getElementById('hud-power').innerText = `No Power! Scoop beads in the bottom pit first!`;
+                document.getElementById('hud-power').innerText = `No Power! Tap anywhere in the bottom bead pit to scoop power first!`;
                 return;
             }
 
@@ -738,9 +723,9 @@
             let villain = gridData[r][c];
             if (!villain || villain.hp <= 0) return;
 
-            let damageDealt = heroPower + (upgrades.bounce * 3);
+            let damageDealt = heroPower + (upgrades.bounce * 4);
             heroPower = 0;
-            document.getElementById('hud-power').innerText = `Power: 0 | Tap bottom bead pit to reload!`;
+            document.getElementById('hud-power').innerText = `Power: 0 | Tap bead pit to reload!`;
 
             villain.hp -= damageDealt;
 
