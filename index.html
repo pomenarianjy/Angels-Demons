@@ -116,7 +116,7 @@
             background: rgba(14, 20, 32, 0.75);
         }
 
-        /* Hero & Angel Containers - Strictly Equalized Sizes */
+        /* Hero & Angel Containers - Preserving 3:2 height-to-width proportion while making Hero bigger and Angel significantly larger */
         #hero-container {
             position: absolute;
             left: 5%;
@@ -128,8 +128,8 @@
             transition: left 2.5s ease-in-out;
         }
         #hero {
-            width: 100px;
-            height: 150px;
+            width: 150px;
+            height: 225px;
             object-fit: contain;
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
@@ -141,12 +141,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 10;
+            z-index: 5; /* Lowered z-index so Hero never slides behind or overlap improperly */
             display: none;
         }
         #angel {
-            width: 100px;
-            height: 150px;
+            width: 210px;
+            height: 315px;
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
@@ -154,9 +154,9 @@
 
         .angel-halo {
             position: absolute;
-            top: -20px;
-            width: 50px;
-            height: 16px;
+            top: 5px; /* Lowered halo position further down over the angel's head */
+            width: 70px;
+            height: 22px;
             border: 3px solid #fde047;
             border-radius: 50%;
             box-shadow: 0 0 18px #fde047;
@@ -248,9 +248,11 @@
             object-fit: contain;
             transition: transform 0.2s, filter 0.2s;
         }
+        /* Explicit Boss Mapping & Styling */
         .villain-img.boss-img {
-            width: 110px;
-            height: 140px;
+            width: 115px;
+            height: 145px;
+            filter: drop-shadow(0 0 15px rgba(255, 69, 0, 0.8));
         }
 
         /* Bottom Area: Grand Mechanical Claw Vault */
@@ -670,28 +672,27 @@
             }
 
             let baseHpMultiplier = 1 + (stage - 1) * 0.2 + (level - 1) * 0.1;
-            let totalVillainsToSpawn = Math.floor(Math.random() * 5) + 3; // Random number between 3-7 per level
 
             if (level === 5) {
-                // Final level: Standing middle on the last column (row 1, col 3) is the bigger boss
                 let bossRow = 1;
                 let bossCol = 3;
                 let bossSrc = stageBosses[stage];
-                let bossHp = Math.round(200 * baseHpMultiplier);
+                let bossHp = Math.round(250 * baseHpMultiplier);
                 gridData[bossRow][bossCol] = { row: bossRow, col: bossCol, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
-                // Level 5 normal villains use villain4.png in columns except for the last (columns 0, 1, 2)
-                let normalHp = Math.round(75 * baseHpMultiplier);
+                let normalHp = Math.round(80 * baseHpMultiplier);
                 let spawnedCount = 0;
-                while (spawnedCount < totalVillainsToSpawn) {
+                let targetMinions = 3;
+                while (spawnedCount < targetMinions) {
                     let r = Math.floor(Math.random() * 3);
-                    let c = Math.floor(Math.random() * 3); // Columns 0, 1, 2 only
+                    let c = Math.floor(Math.random() * 3);
                     if (gridData[r][c] === null) {
                         gridData[r][c] = { row: r, col: c, src: 'villain4.png', hp: normalHp, maxHp: normalHp, isBoss: false };
                         spawnedCount++;
                     }
                 }
             } else {
+                let totalVillainsToSpawn = Math.floor(Math.random() * 3) + 3;
                 let normalHp = Math.round(60 * baseHpMultiplier);
                 let spawnedCount = 0;
 
@@ -1066,6 +1067,7 @@
             if (level === 5) {
                 const angelCont = document.getElementById('angel-container');
                 angelCont.style.display = 'flex';
+                
                 angelCont.style.right = '5%';
                 
                 document.getElementById('hud-power').innerText = `Stage Cleared! Touch screen to approach the angel!`;
@@ -1082,10 +1084,14 @@
                 const heroCont = document.getElementById('hero-container');
                 const arenaWidth = document.getElementById('battle-arena').clientWidth;
                 
-                // Position hero so their right edge touches the angel's left edge exactly (no gap/overlap)
+                // Hero width is now 150px. Angel width is 210px. Angel right: 5%.
                 let angelPixelRight = arenaWidth * 0.05;
-                let angelPixelLeft = arenaWidth - angelPixelRight - 100;
-                let heroTargetPct = (angelPixelLeft / arenaWidth) * 100;
+                let angelPixelLeft = arenaWidth - angelPixelRight - 210;
+                
+                // We stop hero precisely so its right edge touches the angel's left edge (zero gap, zero overlap).
+                // Hero width is 150px, so heroPixelLeft = angelPixelLeft - 150.
+                let heroPixelLeft = angelPixelLeft - 150;
+                let heroTargetPct = (heroPixelLeft / arenaWidth) * 100;
                 
                 heroCont.style.left = `${heroTargetPct}%`;
 
