@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Angels & Demons & Banker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0f19;
+            color: #d4af37;
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Fullscreen Start Screen */
+        #start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('start.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 10vh;
+            z-index: 100;
+        }
+        #start-btn {
+            background: linear-gradient(135deg, #b8860b, #daa520);
+            border: 2px solid #fff;
+            color: #111;
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 15px 50px;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(218, 165, 32, 0.8);
+            transition: transform 0.1s, background 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        #start-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Game Layout */
+        #game-container {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            background: url('sky.jpg') no-repeat center center;
+            background-size: cover;
+            flex-direction: row;
+        }
+
+        /* Left Pane: Storyline Pictures */
+        #story-pane {
+            width: 35%;
+            height: 100%;
+            background: rgba(11, 15, 25, 0.85);
+            border-right: 3px solid #b8860b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+        #story-img {
+            max-width: 100%;
+            max-height: 70vh;
+            border: 2px solid #daa520;
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.4);
+            object-fit: contain;
+        }
+        #story-title {
+            margin-top: 15px;
+            font-size: 1.4rem;
+            color: #f0e682;
+            letter-spacing: 1px;
+        }
+
+        /* Right Pane: Game Box (Claw + Battle Arena) */
+        #game-pane {
+            width: 65%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Top Area: Claw Machine Section */
+        #claw-section {
+            height: 45%;
+            width: 100%;
+            background: rgba(15, 20, 35, 0.9);
+            border-bottom: 2px dashed #b8860b;
+            position: relative;
+            overflow: hidden;
+        }
+        #claw-rail {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 20px;
+            background: #d4af37;
+        }
+        #claw-head {
+            position: absolute;
+            top: 20px;
+            left: calc(50% - 20px);
+            width: 40px;
+            height: 30px;
+            background: #daa520;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .claw-finger {
+            width: 6px;
+            height: 15px;
+            background: #b8860b;
+            position: absolute;
+            bottom: -15px;
+            transition: transform 0.2s;
+        }
+        .claw-left { left: 0; transform-origin: top; }
+        .claw-right { right: 0; transform-origin: top; }
+
+        /* Grab Items Container */
+        #grab-items-area {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 20px;
+        }
+        .grab-item {
+            width: 45px;
+            height: 45px;
+            background: rgba(218, 165, 32, 0.2);
+            border: 1px solid #d4af37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        /* Bottom Area: Battle Arena */
+        #battle-arena {
+            height: 55%;
+            width: 100%;
+            position: relative;
+            background: linear-gradient(to bottom, rgba(11,15,25,0.4), rgba(40,30,10,0.8));
+            overflow: hidden;
+        }
+        /* Road matching sky theme tones */
+        #road {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 35%;
+            background: #1a2233;
+            border-top: 3px solid #b8860b;
+        }
+
+        /* Entities */
+        .entity {
+            position: absolute;
+            bottom: 15%;
+            transform: translateY(50%);
+        }
+        #hero {
+            left: 10%;
+            width: 60px;
+            height: 90px;
+            object-fit: contain;
+        }
+        .enemy {
+            right: 10%;
+            width: 60px;
+            height: 90px;
+            object-fit: contain;
+        }
+        #angel {
+            position: absolute;
+            left: 70%;
+            bottom: 15%;
+            transform: translateY(50%);
+            width: 60px;
+            height: 90px;
+            object-fit: contain;
+            display: none;
+        }
+
+        /* Angel Wings & Halo Animation Components */
+        .angel-halo {
+            position: absolute;
+            top: -15px;
+            left: 15px;
+            width: 30px;
+            height: 10px;
+            border: 2px solid gold;
+            border-radius: 50%;
+            box-shadow: 0 0 10px gold;
+            animation: pulse-halo 1.5s infinite alternate;
+        }
+        .angel-wing {
+            position: absolute;
+            top: 20px;
+            width: 25px;
+            height: 45px;
+            background: radial-gradient(circle, #fff 40%, rgba(218,165,32,0.6) 100%);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 15px #fff;
+        }
+        .wing-left {
+            left: -22px;
+            transform-origin: right center;
+            animation: flap-left 0.4s infinite alternate;
+        }
+        .wing-right {
+            right: -22px;
+            transform-origin: left center;
+            animation: flap-right 0.4s infinite alternate;
+        }
+
+        @keyframes flap-left {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-25deg); }
+        }
+        @keyframes flap-right {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(25deg); }
+        }
+        @keyframes pulse-halo {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Cardinal's Cross Bullet */
+        .cardinal-bullet {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cardinal-bullet::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 22px;
+            background: #d4af37;
+            box-shadow: 0 0 8px #fff;
+        }
+        .cardinal-bullet::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 4px;
+            background: #d4af37;
+            box-shadow: 0 0 8px #fff;
+            top: 7px;
+        }
+
+        /* HUD Overlays */
+        #hud {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #f0e682;
+            text-shadow: 1px 1px 3px #000;
+            z-index: 10;
+        }
+
+        /* Modals / Messages */
+        #overlay-msg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            text-align: center;
+            padding: 20px;
+        }
+        #overlay-msg h2 {
+            font-size: 2.5rem;
+            color: #f0e682;
+            margin-bottom: 20px;
+        }
+        #overlay-btn {
+            background: #b8860b;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Spark Celebration */
+        .spark {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px gold, 0 0 20px #fff;
+            pointer-events: none;
+            animation: spark-fall 2s linear infinite;
+        }
+        @keyframes spark-fall {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+        }
+
+        #fly-object {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            z-index: 60;
+            display: none;
+            pointer-events: none;
+        }
+
+        /* Mobile Controls helper */
+        #mobile-action-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: rgba(218, 165, 32, 0.8);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 14px;
+            z-index: 20;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fullscreen Start Screen -->
+    <div id="start-screen">
+        <button id="start-btn">Start Game</button>
+    </div>
+
+    <!-- Main Game Screen -->
+    <div id="game-container">
+        <!-- Left Pane: Storyline & Stage Images -->
+        <div id="story-pane">
+            <div id="story-title">Stage 1: The Detective</div>
+            <img id="story-img" src="S1L1.png" alt="Storyline View">
+        </div>
+
+        <!-- Right Pane: Game Box -->
+        <div id="game-pane">
+            <div id="hud">
+                <div id="hud-stage">Stage 1 - Level 1</div>
+                <div id="hud-stats">Power: 10 | Luck: 1</div>
+            </div>
+
+            <!-- Claw Section -->
+            <div id="claw-section" onclick="triggerClaw()">
+                <div id="claw-rail">
+                    <div id="claw-head">
+                        <div class="claw-finger claw-left" id="left-finger"></div>
+                        <div class="claw-finger claw-right" id="right-finger"></div>
+                    </div>
+                </div>
+                <div id="grab-items-area">
+                    <div class="grab-item">Bullet+</div>
+                    <div class="grab-item">Power</div>
+                    <div class="grab-item">Relic</div>
+                    <div class="grab-item">Speed</div>
+                </div>
+            </div>
+
+            <!-- Battle Arena -->
+            <div id="battle-arena">
+                <div id="road"></div>
+                <img id="hero" class="entity" src="hero.png" alt="Hero">
+                <img id="angel" src="angel.png" alt="Angel">
+                <img id="enemy" class="entity enemy" src="villain1.png" alt="Enemy">
+            </div>
+
+            <!-- Mobile Action Helper Button -->
+            <div id="mobile-action-btn">GRAB / SHOOT</div>
+        </div>
+    </div>
+
+    <!-- Level Clear / Game Over Overlay Modal -->
+    <div id="overlay-msg">
+        <h2 id="msg-title">Level Cleared</h2>
+        <p id="msg-desc" style="color: #fff; margin-bottom: 20px;"></p>
+        <button id="overlay-btn" onclick="nextAction()">Continue</button>
+    </div>
+
+    <!-- Flying Celebration Object -->
+    <img id="fly-object" src="fly.png" alt="Fly Celebration">
+
+    <script>
+        // Game State Engine
+        let currentStage = 1;
+        let currentLevel = 1;
+        let heroPower = 10;
+        let enemyHp = 50;
+        let maxEnemyHp = 50;
+        let isGameStarted = false;
+        let isClawDropping = false;
+        let gameInterval = null;
+
+        // Villains Mapping corresponding to Dan Brown theme
+        const villains = {
+            1: 'villain1.png',
+            2: 'villain2.png',
+            3: 'villain3.png',
+            4: 'villain4.png',
+            5: 'villain5.png',
+            6: 'villain6.png',
+            7: 'villain7.png',
+            8: 'villain8.png'
+        };
+
+        // Stage Names & Mapping Structure
+        const stageData = {
+            1: { name: "The Detective", prefix: "S1" },
+            2: { name: "Detective’s Helper", prefix: "S2" },
+            3: { name: "The Priest", prefix: "S3" },
+            4: { name: "The Close", prefix: "S4" }
+        };
+
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('mobile-action-btn').addEventListener('click', () => {
+            triggerClaw();
+            shootBullet();
+        });
+
+        function startGame() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('game-container').style.display = 'flex';
+            isGameStarted = true;
+            loadLevelAssets();
+            startBattleLoop();
+        }
+
+        function loadLevelAssets() {
+            const prefix = stageData[currentStage].prefix;
+            const stageName = stageData[currentStage].name;
+            
+            // Update Story Image and Title
+            document.getElementById('story-img').src = `${prefix}L${currentLevel}.png`;
+            document.getElementById('story-title').innerText = `Stage ${currentStage}: ${stageName}`;
+            document.getElementById('hud-stage').innerText = `Stage ${currentStage} - Level ${currentLevel}`;
+
+            // Assign Enemy (Boss on Level 5)
+            const enemyImg = document.getElementById('enemy');
+            if (currentLevel === 5) {
+                enemyImg.src = villains[Math.min(currentStage + 4, 8)]; // Higher tier villains for bosses
+                enemyHp = 120;
+                maxEnemyHp = 120;
+            } else {
+                enemyImg.src = villains[currentStage];
+                enemyHp = 40 + (currentLevel * 10);
+                maxEnemyHp = enemyHp;
+            }
+
+            // Reset Angel state
+            document.getElementById('angel').style.display = 'none';
+        }
+
+        function triggerClaw() {
+            if (isClawDropping) return;
+            isClawDropping = true;
+
+            const head = document.getElementById('claw-head');
+            const leftF = document.getElementById('left-finger');
+            const rightF = document.getElementById('right-finger');
+
+            // Animate claw down & grab
+            head.style.transition = 'top 0.4s ease-in-out';
+            head.style.top = '120px';
+            leftF.style.transform = 'rotate(25deg)';
+            rightF.style.transform = 'rotate(-25deg)';
+
+            setTimeout(() => {
+                // Apply Claw Master Booster reward randomly
+                const boosters = ['Power Up +5', 'Bullet Boost', 'Relic Synergy', 'Speed Enhance'];
+                const reward = boosters[Math.floor(Math.random() * boosters.length)];
+                heroPower += 3;
+                document.getElementById('hud-stats').innerText = `Power: ${heroPower} | Luck: ${currentLevel}`;
+
+                // Return claw up
+                head.style.top = '20px';
+                leftF.style.transform = 'rotate(0deg)';
+                rightF.style.transform = 'rotate(0deg)';
+                isClawDropping = false;
+            }, 800);
+        }
+
+        function startBattleLoop() {
+            gameInterval = setInterval(() => {
+                if (!isGameStarted) return;
+                shootBullet();
+            }, 600);
+        }
+
+        function shootBullet() {
+            const arena = document.getElementById('battle-arena');
+            const bullet = document.createElement('div');
+            bullet.className = 'cardinal-bullet';
+            bullet.style.left = '18%';
+            bullet.style.bottom = '30%';
+            arena.appendChild(bullet);
+
+            let pos = 18;
+            const bulletAnim = setInterval(() => {
+                pos += 4;
+                bullet.style.left = pos + '%';
+
+                // Check collision with enemy
+                if (pos >= 80) {
+                    clearInterval(bulletAnim);
+                    bullet.remove();
+                    damageEnemy();
+                }
+            }, 30);
+        }
+
+        function damageEnemy() {
+            enemyHp -= heroPower;
+            if (enemyHp <= 0) {
+                handleLevelClear();
+            }
+        }
+
+        function handleLevelClear() {
+            clearInterval(gameInterval);
+
+            if (currentLevel === 5) {
+                // Stage Boss Defeated: Show Angel and trigger approach
+                const angel = document.getElementById('angel');
+                angel.style.display = 'block';
+
+                // Append Halo and Wings dynamically when touched/approached
+                setTimeout(() => {
+                    if (!document.querySelector('.angel-halo')) {
+                        const halo = document.createElement('div');
+                        halo.className = 'angel-halo';
+                        const wingL = document.createElement('div');
+                        wingL.className = 'angel-wing wing-left';
+                        const wingR = document.createElement('div');
+                        wingR.className = 'angel-wing wing-right';
+                        angel.appendChild(halo);
+                        angel.appendChild(wingL);
+                        angel.appendChild(wingR);
+                    }
+                }, 500);
+
+                setTimeout(() => {
+                    if (currentStage === 4) {
+                        triggerFinalVictory();
+                    } else {
+                        showModal(`Stage ${currentStage} Cleared`, `The divine sanctuary opens. Moving to Stage ${currentStage + 1}.`);
+                    }
+                }, 1500);
+            } else {
+                showModal(`Level ${currentLevel} Cleared`, `Path secured. Proceeding to next phase.`);
+            }
+        }
+
+        function showModal(title, desc) {
+            document.getElementById('msg-title').innerText = title;
+            document.getElementById('msg-desc').innerText = desc;
+            document.getElementById('overlay-msg').style.display = 'flex';
+            isGameStarted = false;
+        }
+
+        function nextAction() {
+            document.getElementById('overlay-msg').style.display = 'none';
+            
+            if (currentLevel === 5) {
+                currentStage++;
+                currentLevel = 1;
+            } else {
+                currentLevel++;
+            }
+
+            loadLevelAssets();
+            startBattleLoop();
+        }
+
+        function triggerFinalVictory() {
+            const overlay = document.getElementById('overlay-msg');
+            document.getElementById('msg-title').innerText = "CONGRATULATIONS";
+            document.getElementById('msg-desc').innerText = "The Illuminati's plot has been thwarted. Truth prevails!";
+            document.getElementById('overlay-btn').innerText = "Play Again";
+            document.getElementById('overlay-btn').onclick = () => location.reload();
+            overlay.style.display = 'flex';
+
+            // Launch fly.png animation with sparks
+            const flyObj = document.getElementById('fly-object');
+            flyObj.style.display = 'block';
+            
+            let posX = 10, posY = 10, dirX = 2, dirY = 1.5;
+            setInterval(() => {
+                posX += dirX;
+                posY += dirY;
+                if (posX <= 0 || posX >= window.innerWidth - 80) dirX *= -1;
+                if (posY <= 0 || posY >= window.innerHeight - 80) dirY *= -1;
+                flyObj.style.left = posX + 'px';
+                flyObj.style.top = posY + 'px';
+            }, 25);
+
+            // Generate fireworks sparks
+            setInterval(() => {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                spark.style.left = Math.random() * window.innerWidth + 'px';
+                spark.style.top = '0px';
+                document.body.appendChild(spark);
+                setTimeout(() => spark.remove(), 2000);
+            }, 150);
+        }
+    </script>
+</body>
+</html>
