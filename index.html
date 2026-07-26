@@ -608,7 +608,7 @@
         <h2 id="msg-title">Level Cleared</h2>
         <p id="msg-desc" style="color: #fff; margin-bottom: 10px;"></p>
         <div id="upgrade-box" class="upgrade-container"></div>
-        <button id="overlay-btn" style="display:none;" onclick="proceedNext()">Continue</button>
+        <button id="overlay-btn" style="display:none;">Continue</button>
     </div>
 
     <script>
@@ -626,10 +626,8 @@
             bounce: 1  
         };
 
-        /* Random villains mix and match using villain1.png, villain2.png, villain4.png */
         const allowedVillains = ['villain1.png', 'villain2.png', 'villain4.png'];
 
-        /* Strict boss mapping as dictated */
         const stageBosses = {
             1: 'villain6.png',
             2: 'villian3.png',
@@ -679,7 +677,6 @@
             }
 
             if (level === 5) {
-                // Level 5 Boss: stands in last column (col 3), 200 HP required to diminish (worth more points/life)
                 let bossRow = Math.floor(Math.random() * 3);
                 let bossSrc = stageBosses[stage] || 'villain6.png';
                 let bossHp = 200;
@@ -1065,7 +1062,6 @@
 
         function triggerLevelClear() {
             if (level === 5) {
-                // Level 5 stage clear: Angel is on the far right. Player touches screen to make hero float over to her.
                 const angelCont = document.getElementById('angel-container');
                 angelCont.style.display = 'flex';
                 angelCont.style.right = '5%';
@@ -1078,45 +1074,43 @@
         }
 
         function handleArenaClick() {
-            if (!waitingForTouchToAdvance) return;
-            waitingForTouchToAdvance = false;
+            if (waitingForTouchToAdvance === true) {
+                waitingForTouchToAdvance = 'animating';
 
-            // Hero floats over to the right to meet angel
-            const heroCont = document.getElementById('hero-container');
-            heroCont.style.left = '65%';
+                const heroCont = document.getElementById('hero-container');
+                heroCont.style.left = '65%';
 
-            document.getElementById('hud-power').innerText = `Hero meeting Angel...`;
-
-            setTimeout(() => {
-                // When they meet, angel shows halo and spills white hearts like fireworks from the back
-                document.getElementById('angel-halo').style.display = 'block';
-                spawnWhiteHeartFireworks();
-
-                document.getElementById('hud-power').innerText = `Divine Blessing! Tap screen again to advance.`;
+                document.getElementById('hud-power').innerText = `Hero meeting Angel...`;
 
                 setTimeout(() => {
-                    waitingForTouchToAdvance = 'readyToAdvance';
-                }, 1500);
-            }, 2500);
-        } else if (waitingForTouchToAdvance === 'readyToAdvance') {
-            waitingForTouchToAdvance = false;
-            if (stage === 4) {
-                showGameOverModal("VICTORY", "All formations defeated! Light triumphs!");
-            } else {
-                showUpgradeModal(`Stage ${stage} Cleared`, "Choose an upgrade before entering next stage.");
+                    document.getElementById('angel-halo').style.display = 'block';
+                    spawnWhiteHeartFireworks();
+
+                    document.getElementById('hud-power').innerText = `Divine Blessing! Tap screen again to advance.`;
+
+                    setTimeout(() => {
+                        waitingForTouchToAdvance = 'readyToAdvance';
+                    }, 1000);
+                }, 2500);
+            } else if (waitingForTouchToAdvance === 'readyToAdvance') {
+                waitingForTouchToAdvance = false;
+                if (stage === 4) {
+                    showGameOverModal("VICTORY", "All formations defeated! Light triumphs!");
+                } else {
+                    showUpgradeModal(`Stage ${stage} Cleared`, "Choose an upgrade before entering next stage.");
+                }
             }
         }
 
         function spawnWhiteHeartFireworks() {
             const angelCont = document.getElementById('angel-container');
-            const rect = angelCont.getBoundingClientRect();
 
             for (let i = 0; i < 18; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'white-heart';
                 heart.innerHTML = '❤️';
                 
-                let angle = (Math.random() * Math.PI) - (Math.PI / 2); // backward/upward spread
+                let angle = (Math.random() * Math.PI) - (Math.PI / 2);
                 let dist = 60 + Math.random() * 90;
                 let dx = Math.cos(angle) * dist;
                 let dy = Math.sin(angle) * dist - 30;
@@ -1149,7 +1143,8 @@
                 const card = document.createElement('div');
                 card.className = 'upgrade-card';
                 card.innerHTML = `<h3>${c.name}</h3><p>${c.desc}</p><p style="color:#d4af37; margin-top:5px;">${upgrades[c.key] < 7 ? 'Upgrade (+1)' : 'MAXED'}</p>`;
-                card.onclick = () => {
+                card.onclick = (e) => {
+                    e.stopPropagation();
                     if (upgrades[c.key] < 7) upgrades[c.key]++;
                     closeUpgradeModal();
                 };
@@ -1174,9 +1169,13 @@
             document.getElementById('msg-title').innerText = title;
             document.getElementById('msg-desc').innerText = desc;
             document.getElementById('upgrade-box').innerHTML = '';
-            document.getElementById('overlay-btn').style.display = 'inline-block';
-            document.getElementById('overlay-btn').innerText = "Play Again";
-            document.getElementById('overlay-btn').onclick = () => location.reload();
+            const btn = document.getElementById('overlay-btn');
+            btn.style.display = 'inline-block';
+            btn.innerText = "Play Again";
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                location.reload();
+            };
             document.getElementById('overlay-msg').style.display = 'flex';
         }
     </script>
