@@ -136,13 +136,13 @@
 
         #angel-container {
             position: absolute;
-            left: -25%;
+            right: 5%;
             bottom: 5%;
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 10;
-            transition: left 2.5s ease-in-out;
+            display: none;
         }
         #angel {
             width: 110px;
@@ -152,7 +152,7 @@
             position: relative;
         }
 
-        /* Angel Wings & Halo Animation Elements */
+        /* Angel Halo & White Heart Fireworks */
         .angel-halo {
             position: absolute;
             top: -18px;
@@ -169,25 +169,21 @@
             to { transform: scale(1.1); box-shadow: 0 0 22px #fff; }
         }
 
-        .angel-wings {
+        .white-heart {
             position: absolute;
-            top: 25px;
-            width: 130px;
-            height: 90px;
-            background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(212,175,55,0.7) 100%);
-            clip-path: polygon(50% 0%, 100% 20%, 85% 90%, 50% 60%, 15% 90%, 0% 20%);
-            z-index: -1;
-            transform-origin: center;
-            animation: flapWings 0.35s infinite ease-in-out alternate;
-            display: none;
-            box-shadow: 0 0 25px rgba(255,255,255,0.9);
+            color: #ffffff;
+            font-size: 20px;
+            pointer-events: none;
+            animation: heartFirework 1.2s forwards ease-out;
+            z-index: 20;
+            text-shadow: 0 0 10px #ffffff, 0 0 20px #fde047;
         }
-        @keyframes flapWings {
-            0% { transform: scaleX(0.85) rotate(-5deg); }
-            100% { transform: scaleX(1.15) rotate(5deg); }
+        @keyframes heartFirework {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
         }
 
-        /* Strict 3x4 Grid Formation Field exclusively for Villains - Adjusted padding/scaling to prevent overflow */
+        /* Strict 3x4 Grid Formation Field exclusively for Villains */
         #villains-grid-field {
             position: absolute;
             right: 2%;
@@ -255,8 +251,8 @@
             transition: transform 0.2s, filter 0.2s;
         }
         .villain-img.boss-img {
-            width: 95px;
-            height: 125px;
+            width: 100px;
+            height: 130px;
         }
 
         /* Bottom Area: Grand Mechanical Claw Vault */
@@ -563,14 +559,13 @@
             </div>
 
             <!-- Top Area: Battle Arena with Formation Field -->
-            <div id="battle-arena">
+            <div id="battle-arena" onclick="handleArenaClick()">
                 <div id="road">
                     <div id="hero-container">
                         <img id="hero" src="hero.png" alt="Hero">
                     </div>
                     <div id="angel-container">
                         <div class="angel-halo" id="angel-halo"></div>
-                        <div class="angel-wings" id="angel-wings"></div>
                         <img id="angel" src="angel.png" alt="Angel">
                     </div>
                     <!-- Strict 3x4 Grid Formation Field -->
@@ -623,6 +618,7 @@
         let isClawBusy = false;
         let gridData = []; 
         let treasureBeads = [];
+        let waitingForTouchToAdvance = false;
 
         let upgrades = {
             reach: 1,  
@@ -630,9 +626,10 @@
             bounce: 1  
         };
 
+        /* Random villains mix and match using villain1.png, villain2.png, villain4.png */
         const allowedVillains = ['villain1.png', 'villain2.png', 'villain4.png'];
 
-        /* Boss mapping as dictated: villain6.png for Stage 1, villian3.png for Stage 2, villian7.png for Stage 3, villian8.png for Stage 4 */
+        /* Strict boss mapping as dictated */
         const stageBosses = {
             1: 'villain6.png',
             2: 'villian3.png',
@@ -661,16 +658,15 @@
         }
 
         function setupLevel() {
+            waitingForTouchToAdvance = false;
             const cfg = stagesConfig[stage];
             document.getElementById('story-img').src = `${cfg.prefix}L${level}.png`;
             document.getElementById('story-title').innerText = `Stage ${stage}: ${cfg.name}`;
             document.getElementById('hud-info').innerText = `Stage ${stage} - Level ${level}`;
             
-            // Reset Angel container position
             const angelCont = document.getElementById('angel-container');
-            angelCont.style.left = '-25%';
+            angelCont.style.display = 'none';
             document.getElementById('angel-halo').style.display = 'none';
-            document.getElementById('angel-wings').style.display = 'none';
             document.getElementById('hero-container').style.left = '5%';
 
             gridData = [];
@@ -683,10 +679,10 @@
             }
 
             if (level === 5) {
-                // Level 5 Boss: stands in last column (col 3), 150 HP required to diminish
+                // Level 5 Boss: stands in last column (col 3), 200 HP required to diminish (worth more points/life)
                 let bossRow = Math.floor(Math.random() * 3);
                 let bossSrc = stageBosses[stage] || 'villain6.png';
-                let bossHp = 150;
+                let bossHp = 200;
                 gridData[bossRow][3] = { row: bossRow, col: 3, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
                 let spawned = 1;
@@ -835,7 +831,7 @@
         }
 
         function deployClaw(dirIndex) {
-            if (isClawBusy) return;
+            if (isClawBusy || waitingForTouchToAdvance) return;
             isClawBusy = true;
 
             const pit = document.getElementById('vault-pit');
@@ -850,7 +846,6 @@
             clawRig.style.left = `${targetX}px`;
 
             setTimeout(() => {
-                // Extended reach to go much lower to physically touch beads
                 let dropHeight = 145 + (upgrades.reach * 12);
                 verticalCable.style.height = `${dropHeight}px`;
                 grandHead.style.top = `${dropHeight}px`;
@@ -904,6 +899,7 @@
         }
 
         function fireCrossBullet(r, c) {
+            if (waitingForTouchToAdvance) return;
             if (heroPower <= 0) {
                 document.getElementById('hud-power').innerText = `No Power! Deploy the grand mechanical claw below first!`;
                 return;
@@ -913,7 +909,6 @@
             executeBounceAnimation(pathQueue, 0);
         }
 
-        // Spillover power rule: when a villain is killed and overflow power is left, if no villain behind in same row, bounce to nearest villains until all powers are used up.
         function calculateBouncePath(startR, startC) {
             let path = [];
             let remainingPower = heroPower + (upgrades.bounce * 15);
@@ -954,7 +949,6 @@
                 if (isKilled) {
                     simGrid[curR][curC] = null;
                     if (remainingPower > 0) {
-                        // First check behind in its own row
                         let nextInSameRow = -1;
                         for (let cCheck = curC + 1; cCheck < 4; cCheck++) {
                             if (simGrid[curR][cCheck] && simGrid[curR][cCheck].hp > 0) {
@@ -966,7 +960,6 @@
                         if (nextInSameRow !== -1) {
                             curC = nextInSameRow;
                         } else {
-                            // If no other villain behind in its own row, bounce to the nearest villain in any column/row
                             let nearestR = -1;
                             let nearestC = -1;
                             let minDistance = 999;
@@ -988,12 +981,12 @@
                                 curR = nearestR;
                                 curC = nearestC;
                             } else {
-                                break; // No more targets available
+                                break; 
                             }
                         }
                     }
                 } else {
-                    break; // Target survived, power exhausted
+                    break; 
                 }
             }
 
@@ -1072,26 +1065,69 @@
 
         function triggerLevelClear() {
             if (level === 5) {
-                // Level 5 angel sequence: show angel.png on the left, approach hero, touch, grow wings & halo, run for 10 seconds before stage clear page
+                // Level 5 stage clear: Angel is on the far right. Player touches screen to make hero float over to her.
                 const angelCont = document.getElementById('angel-container');
-                angelCont.style.left = '16%'; // approaches hero standing at 5% + width
-
-                setTimeout(() => {
-                    // Touched by hero: grow wings and halo
-                    document.getElementById('angel-halo').style.display = 'block';
-                    document.getElementById('angel-wings').style.display = 'block';
-
-                    // Run animation for 10 seconds before moving to stage clear / upgrade page
-                    setTimeout(() => {
-                        if (stage === 4) {
-                            showGameOverModal("VICTORY", "All formations defeated! Light triumphs!");
-                        } else {
-                            showUpgradeModal(`Stage ${stage} Cleared`, "Choose an upgrade before entering next stage.");
-                        }
-                    }, 10000);
-                }, 2500);
+                angelCont.style.display = 'flex';
+                angelCont.style.right = '5%';
+                
+                document.getElementById('hud-power').innerText = `Stage Cleared! Touch screen to approach the angel!`;
+                waitingForTouchToAdvance = true;
             } else {
                 showUpgradeModal(`Level ${level} Cleared`, "Select a power-up for your equipment (Up to Level 7).");
+            }
+        }
+
+        function handleArenaClick() {
+            if (!waitingForTouchToAdvance) return;
+            waitingForTouchToAdvance = false;
+
+            // Hero floats over to the right to meet angel
+            const heroCont = document.getElementById('hero-container');
+            heroCont.style.left = '65%';
+
+            document.getElementById('hud-power').innerText = `Hero meeting Angel...`;
+
+            setTimeout(() => {
+                // When they meet, angel shows halo and spills white hearts like fireworks from the back
+                document.getElementById('angel-halo').style.display = 'block';
+                spawnWhiteHeartFireworks();
+
+                document.getElementById('hud-power').innerText = `Divine Blessing! Tap screen again to advance.`;
+
+                setTimeout(() => {
+                    waitingForTouchToAdvance = 'readyToAdvance';
+                }, 1500);
+            }, 2500);
+        } else if (waitingForTouchToAdvance === 'readyToAdvance') {
+            waitingForTouchToAdvance = false;
+            if (stage === 4) {
+                showGameOverModal("VICTORY", "All formations defeated! Light triumphs!");
+            } else {
+                showUpgradeModal(`Stage ${stage} Cleared`, "Choose an upgrade before entering next stage.");
+            }
+        }
+
+        function spawnWhiteHeartFireworks() {
+            const angelCont = document.getElementById('angel-container');
+            const rect = angelCont.getBoundingClientRect();
+
+            for (let i = 0; i < 18; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'white-heart';
+                heart.innerHTML = '❤️';
+                
+                let angle = (Math.random() * Math.PI) - (Math.PI / 2); // backward/upward spread
+                let dist = 60 + Math.random() * 90;
+                let dx = Math.cos(angle) * dist;
+                let dy = Math.sin(angle) * dist - 30;
+
+                heart.style.setProperty('--dx', `${dx}px`);
+                heart.style.setProperty('--dy', `${dy}px`);
+                heart.style.left = `50%`;
+                heart.style.top = `30%`;
+
+                angelCont.appendChild(heart);
+                setTimeout(() => heart.remove(), 1200);
             }
         }
 
