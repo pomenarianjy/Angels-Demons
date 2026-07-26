@@ -175,7 +175,7 @@
             font-size: 20px;
             pointer-events: none;
             animation: heartFirework 1.2s forwards ease-out;
-            z-index: 1; /* Spills out from behind the angel container */
+            z-index: 1; /* Spills out from behind the angel container to both sides */
             text-shadow: 0 0 10px #ffffff, 0 0 20px #fde047;
         }
         @keyframes heartFirework {
@@ -243,7 +243,6 @@
             height: 100%;
             background: #b8860b;
         }
-        /* Normal villains and final stage bosses properly scaled with higher life pools */
         .villain-img {
             width: 64px;
             height: 82px;
@@ -280,7 +279,6 @@
             overflow: hidden;
         }
 
-        /* Grand Gantry Track & Mechanical Grand Claw Assembly */
         #gantry-track {
             position: absolute;
             top: 0;
@@ -314,7 +312,6 @@
             transition: height 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* Grand Ornamented Claw Head */
         #grand-claw-head {
             position: absolute;
             top: 20px;
@@ -377,7 +374,6 @@
             pointer-events: none;
         }
 
-        /* Gemstones / Pearls overlapping cleanly and beautifully in a rich heap */
         .treasure-bead {
             position: absolute;
             border-radius: 50%;
@@ -444,7 +440,7 @@
             z-index: 40;
         }
 
-        /* Cardinal's Cross Bullet - Made Bigger */
+        /* Cardinal's Cross Bullet */
         .cardinal-bullet {
             position: absolute;
             width: 34px;
@@ -633,8 +629,8 @@
         const stageBosses = {
             1: 'villain6.png',
             2: 'villian3.png',
-            3: 'villian7.png',
-            4: 'villian8.png'
+            3: 'villain7.png',
+            4: 'villain8.png'
         };
 
         const stagesConfig = {
@@ -678,14 +674,14 @@
                 gridData.push(rowArr);
             }
 
-            // Substantially higher villain life scaling for tougher, longer battles
-            let baseHpMultiplier = 1 + (stage - 1) * 0.9 + (level - 1) * 0.3;
+            // Adjusted villain life points back down to balanced, lower values
+            let baseHpMultiplier = 1 + (stage - 1) * 0.2 + (level - 1) * 0.1;
 
             if (level === 5) {
-                // Final level boss configuration with mandatory designated boss images and significantly higher life
+                // Final level boss configuration with mandatory designated boss images and balanced life points
                 let bossRow = 1; 
                 let bossSrc = stageBosses[stage];
-                let bossHp = Math.round(950 * baseHpMultiplier);
+                let bossHp = Math.round(180 * baseHpMultiplier);
                 gridData[bossRow][3] = { row: bossRow, col: 3, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
                 let spawned = 1;
@@ -694,7 +690,7 @@
                     let c = Math.floor(Math.random() * 3);
                     if (gridData[r][c] === null) {
                         let vi = Math.floor(Math.random() * allowedVillains.length);
-                        let hp = Math.round(320 * baseHpMultiplier);
+                        let hp = Math.round(75 * baseHpMultiplier);
                         gridData[r][c] = { row: r, col: c, src: allowedVillains[vi], hp: hp, maxHp: hp, isBoss: false };
                         spawned++;
                     }
@@ -702,7 +698,7 @@
             } else {
                 let totalVillainsToSpawn = Math.floor(Math.random() * 5) + 3;
                 let spawnedCount = 0;
-                let maxHp = Math.round(240 * baseHpMultiplier);
+                let maxHp = Math.round(60 * baseHpMultiplier);
 
                 let rRand = Math.floor(Math.random() * 3);
                 let vIndex = Math.floor(Math.random() * allowedVillains.length);
@@ -1118,13 +1114,12 @@
         function spawnWhiteHeartFireworks() {
             const angelCont = document.getElementById('angel-container');
 
-            // Hearts spill out from back of angel to both sides (left and right directions symmetrically)
+            // Angel hearts spill out from back of angel to both sides (left and right symmetrically)
             for (let i = 0; i < 24; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'white-heart';
                 heart.innerHTML = '🤍';
                 
-                // Spills to both left and right sides from behind the angel
                 let isLeft = Math.random() < 0.5;
                 let angle = isLeft ? (Math.PI + (Math.random() * 0.7 - 0.35)) : (Math.random() * 0.7 - 0.35);
                 let dist = 70 + Math.random() * 110;
