@@ -141,7 +141,7 @@
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
 
-        /* Angel Container & Alignment */
+        /* Angel Container & Alignment - Positioned at exact same bottom coordinate as hero */
         #angel-container {
             position: absolute;
             right: 5%;
@@ -154,8 +154,8 @@
             display: none; 
         }
         #angel {
-            width: 100px;      
-            height: 150px;      
+            width: 130px;      
+            height: 195px;      
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
@@ -164,8 +164,8 @@
         .angel-halo {
             position: absolute;
             top: -5px;
-            width: 40px;
-            height: 14px;
+            width: 48px;
+            height: 16px;
             border: 2px solid #fde047;
             border-radius: 50%;
             box-shadow: 0 0 15px #fde047;
@@ -715,16 +715,18 @@
                 gridData.push(rowArr);
             }
 
-            let baseHpMultiplier = 1 + (stage - 1) * 0.2 + (level - 1) * 0.1;
+            // Fixed math factor: factoring in upgrade progression accurately so stats and scaling feel organic and real
+            let boosterMultiplier = 1 + ((upgrades.reach + upgrades.power + upgrades.bounce - 3) * 0.15);
+            let baseHpMultiplier = (1 + (stage - 1) * 0.2 + (level - 1) * 0.1) * boosterMultiplier;
 
             if (level === 5) {
                 let bossRow = 1;
                 let bossCol = 3;
                 let bossSrc = stageBosses[stage];
-                let bossHp = Math.round(250 * baseHpMultiplier);
+                let bossHp = Math.round(280 * baseHpMultiplier);
                 gridData[bossRow][bossCol] = { row: bossRow, col: bossCol, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
-                let normalHp = Math.round(80 * baseHpMultiplier);
+                let normalHp = Math.round(90 * baseHpMultiplier);
                 let spawnedCount = 0;
                 let targetMinions = 3;
                 while (spawnedCount < targetMinions) {
@@ -737,7 +739,7 @@
                 }
             } else {
                 let totalVillainsToSpawn = Math.floor(Math.random() * 3) + 3;
-                let normalHp = Math.round(60 * baseHpMultiplier);
+                let normalHp = Math.round(70 * baseHpMultiplier);
                 let spawnedCount = 0;
 
                 while (spawnedCount < totalVillainsToSpawn) {
