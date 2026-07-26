@@ -22,7 +22,7 @@
             height: 100vh;
         }
 
-        /* Fullscreen Start Screen with start.png */
+        /* Fullscreen Start Screen with start.png restored */
         #start-screen {
             position: absolute;
             top: 0;
@@ -276,7 +276,7 @@
         .claw-hook-l { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
         .claw-hook-r { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
-        /* Physics Bead Pile Elements - Correctly spawned at bottom and piled up */
+        /* Physics Bead Pile Elements */
         .physics-bead {
             position: absolute;
             border-radius: 50%;
@@ -397,7 +397,7 @@
 </head>
 <body>
 
-    <!-- Start Screen -->
+    <!-- Start Screen with start.png explicitly restored -->
     <div id="start-screen">
         <button id="start-btn" onclick="startGame()">Start Game</button>
     </div>
@@ -458,13 +458,13 @@
         let level = 1;
         let heroPower = 0;
         let isClawBusy = false;
-        let gridData = []; // 3 rows x 4 cols grid storing villain objects or null
+        let gridData = []; 
         let physicsBeads = [];
 
         let upgrades = {
-            reach: 1,  // Max 7
-            power: 1,  // Max 7
-            bounce: 1  // Max 7
+            reach: 1,  
+            power: 1,  
+            bounce: 1  
         };
 
         const villainFiles = {
@@ -492,12 +492,10 @@
             document.getElementById('hud-info').innerText = `Stage ${stage} - Level ${level}`;
             document.getElementById('angel').style.display = 'none';
 
-            // Initialize 3 rows x 4 columns grid with random arrangements and some empty spaces
             gridData = [];
             for (let r = 0; r < 3; r++) {
                 let rowArr = [];
                 for (let c = 0; c < 4; c++) {
-                    // Random chance to spawn a villain or leave space empty (do not fill all spaces)
                     if (Math.random() < 0.75) {
                         let vId = level === 5 ? Math.min(stage + 4, 8) : Math.min(stage + ((r + c) % 4), 8);
                         let maxHp = level === 5 ? 180 + (stage * 30) : 50 + (stage * 15) + (level * 12);
@@ -516,7 +514,6 @@
                 gridData.push(rowArr);
             }
 
-            // Ensure at least one villain exists in column 0 so game is immediately playable
             let colZeroHasVillain = gridData.some(row => row[0] !== null);
             if (!colZeroHasVillain) {
                 let rRand = Math.floor(Math.random() * 3);
@@ -533,7 +530,6 @@
             const field = document.getElementById('villains-grid-field');
             field.innerHTML = '';
 
-            // Find current active column (first column from left index 0 to 3 that still has living villains)
             let activeCol = -1;
             for (let c = 0; c < 4; c++) {
                 let hasAlive = false;
@@ -549,7 +545,6 @@
                 }
             }
 
-            // Render all 12 cells of the 3x4 grid
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 4; c++) {
                     const cell = document.createElement('div');
@@ -576,13 +571,11 @@
                 }
             }
 
-            // Check win condition
             if (activeCol === -1) {
                 triggerLevelClear();
             }
         }
 
-        // Initialize beads strictly at the bottom of the vault pit, piled upwards
         function initPhysicsBeadPile() {
             const container = document.getElementById('bead-container');
             container.innerHTML = '';
@@ -590,7 +583,6 @@
 
             const pit = document.getElementById('vault-pit');
             const pitWidth = pit.clientWidth || 300;
-            const pitHeight = pit.clientHeight || 250;
 
             const rows = 6;
             const cols = 14;
@@ -600,9 +592,8 @@
                 for (let c = 0; c < cols; c++) {
                     const isGold = Math.random() < (0.18 + upgrades.power * 0.02);
                     const size = 18;
-                    // Positioned at the bottom floor of the vault pit underneath the pivot
                     const x = (pitWidth / 2) - 140 + c * 20 + (r % 2) * 8;
-                    const y = 10 + r * 16; // Bottom-aligned stacking
+                    const y = 10 + r * 16; 
 
                     if (x > 10 && x < pitWidth - 10) {
                         physicsBeads.push({
@@ -620,7 +611,7 @@
                         beadEl.style.width = `${size}px`;
                         beadEl.style.height = `${size}px`;
                         beadEl.style.left = `${x}px`;
-                        beadEl.style.bottom = `${y}px`; // Bottom physical stacking
+                        beadEl.style.bottom = `${y}px`;
                         beadEl.style.background = isGold 
                             ? 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 60%, #a16207 100%)' 
                             : 'radial-gradient(circle at 30% 30%, #ffffff 0%, #d1d5db 60%, #9ca3af 100%)';
@@ -633,7 +624,6 @@
             }
         }
 
-        // 180-Degree Clock-Arm Physics Mechanics pointing directly where tapped
         function handleClawTrigger(event) {
             if (isClawBusy) return;
             isClawBusy = true;
@@ -642,12 +632,11 @@
             const rect = pit.getBoundingClientRect();
             
             const pivotX = rect.width / 2;
-            const pivotY = 8; // Top center anchor
+            const pivotY = 8; 
 
             const clickX = event.clientX - rect.left - pivotX;
             const clickY = event.clientY - rect.top - pivotY;
 
-            // Calculate angle within bottom 180 degrees (-90 to +90 degrees)
             let rad = Math.atan2(clickX, Math.max(5, clickY));
             let deg = rad * (180 / Math.PI);
             deg = Math.max(-88, Math.min(88, deg));
@@ -695,7 +684,6 @@
             }, 300);
         }
 
-        // Fire cross bullet to selected villain in the active column
         function fireCrossBullet(r, c) {
             if (heroPower <= 0) {
                 document.getElementById('hud-power').innerText = `No Power! Scoop beads in the bottom pit first!`;
@@ -709,7 +697,6 @@
             bullet.style.bottom = '22%';
             arena.appendChild(bullet);
 
-            // Approximate target screen position inside grid
             const field = document.getElementById('villains-grid-field');
             const arenaRect = arena.getBoundingClientRect();
             const fieldRect = field.getBoundingClientRect();
@@ -750,7 +737,7 @@
             villain.hp -= damageDealt;
 
             if (villain.hp <= 0) {
-                gridData[r][c] = null; // Remove dead villain from 3x4 grid space
+                gridData[r][c] = null; 
             }
 
             renderGrid();
