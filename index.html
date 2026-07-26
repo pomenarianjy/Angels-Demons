@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Angels & Demons & Banker - Grand Mechanical Claw & Diverse Treasure Heap</title>
+    <title>Angels & Demons & Banker - Grand Mechanical Claw & Physics Heap</title>
     <style>
         * {
             box-sizing: border-box;
@@ -99,7 +99,7 @@
             position: relative;
         }
 
-        /* Top Area: Battle Arena with Invisible Formation Field */
+        /* Top Area: Battle Arena with Formation Field */
         #battle-arena {
             height: 42%;
             width: 100%;
@@ -116,7 +116,7 @@
             background: rgba(14, 20, 32, 0.75);
         }
 
-        /* Hero & Angel (Distinctly separate, massive hero picture) */
+        /* Hero & Angel Containers */
         #hero-container {
             position: absolute;
             left: 5%;
@@ -144,7 +144,7 @@
             filter: drop-shadow(0 0 22px rgba(255, 255, 255, 0.85));
         }
 
-        /* Completely Invisible 3x4 Grid Formation Field exclusively for Villains */
+        /* 3x4 Grid Formation Field exclusively for Villains (Never Hero) */
         #villains-grid-field {
             position: absolute;
             right: 3%;
@@ -330,16 +330,16 @@
             pointer-events: none;
         }
 
-        /* Diverse Treasure Heap Beads */
+        /* Clean Pile Beads styled like reference image */
         .treasure-bead {
             position: absolute;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: bold;
-            box-shadow: inset 0 2px 5px rgba(255,255,255,0.7), 0 3px 6px rgba(0,0,0,0.9);
+            box-shadow: inset 0 1px 3px rgba(255,255,255,0.7), 0 2px 4px rgba(0,0,0,0.8);
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
         }
 
@@ -510,14 +510,14 @@
                 <div id="hud-power">Power: 0 | Select a direction arrow below to deploy the grand mechanical claw!</div>
             </div>
 
-            <!-- Top Area: Battle Arena with Invisible Formation Field -->
+            <!-- Top Area: Battle Arena with Formation Field -->
             <div id="battle-arena">
                 <div id="road">
                     <div id="hero-container">
                         <img id="hero" src="hero.png" alt="Hero">
                     </div>
                     <img id="angel" src="angel.png" alt="Angel">
-                    <!-- Invisible 3x4 Grid Formation Field strictly for Villains -->
+                    <!-- Invisible 3x4 Grid Formation Field exclusively for Villains -->
                     <div id="villains-grid-field"></div>
                 </div>
             </div>
@@ -574,6 +574,7 @@
             bounce: 1  
         };
 
+        // Strict list of valid villain image files (hero.png is NEVER included)
         const villainFiles = {
             1: 'villain1.png', 2: 'villain2.png', 3: 'villain3.png', 4: 'villain4.png',
             5: 'villain5.png', 6: 'villain6.png', 7: 'villain7.png', 8: 'villain8.png'
@@ -586,14 +587,12 @@
             4: { name: "The Close", prefix: "S4" }
         };
 
-        // Diverse treasure tiers with unique colors, symbols, and high power yield
+        // Standardized clean pile bead tiers
         const beadTiers = [
-            { name: 'Bronze', baseValue: 8, color: 'radial-gradient(circle at 30% 30%, #d97706 0%, #b45309 60%, #78350f 100%)', symbol: 'B', size: 16, weight: 0.28 },
-            { name: 'Jade', baseValue: 18, color: 'radial-gradient(circle at 30% 30%, #34d399 0%, #059669 60%, #065f46 100%)', symbol: 'J', size: 18, weight: 0.24 },
-            { name: 'Sapphire', baseValue: 35, color: 'radial-gradient(circle at 30% 30%, #60a5fa 0%, #2563eb 100%, #1e40af 100%)', symbol: 'S', size: 20, weight: 0.18 },
-            { name: 'Ruby', baseValue: 70, color: 'radial-gradient(circle at 30% 30%, #f87171 0%, #dc2626 60%, #991b1b 100%)', symbol: 'R', size: 22, weight: 0.14 },
-            { name: 'Amethyst', baseValue: 120, color: 'radial-gradient(circle at 30% 30%, #c084fc 0%, #9333ea 60%, #581c87 100%)', symbol: 'A', size: 24, weight: 0.10 },
-            { name: 'Diamond', baseValue: 200, color: 'radial-gradient(circle at 30% 30%, #a5f3fc 0%, #06b6d4 60%, #0e7490 100%)', symbol: '💎', size: 26, weight: 0.06 }
+            { name: 'White', baseValue: 5, color: '#f8fafc', symbol: '', size: 14, weight: 0.70 },
+            { name: 'Gold', baseValue: 20, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 100%)', symbol: '★', size: 16, weight: 0.20 },
+            { name: 'Ruby', baseValue: 50, color: 'radial-gradient(circle at 30% 30%, #f87171 0%, #dc2626 100%)', symbol: '♦', size: 18, weight: 0.07 },
+            { name: 'Diamond', baseValue: 100, color: 'radial-gradient(circle at 30% 30%, #a5f3fc 0%, #0891b2 100%)', symbol: '💎', size: 20, weight: 0.03 }
         ];
 
         function startGame() {
@@ -614,7 +613,6 @@
                 let rowArr = [];
                 for (let c = 0; c < 4; c++) {
                     if (Math.random() < 0.75) {
-                        // Strict check: Only pick from villainFiles, never hero.png
                         let vId = level === 5 ? Math.min(stage + 4, 8) : Math.min(stage + ((r + c) % 4), 8);
                         let maxHp = level === 5 ? 400 + (stage * 80) : 150 + (stage * 50) + (level * 35);
                         rowArr.push({
@@ -678,6 +676,7 @@
                         }
 
                         let pct = Math.max(0, (villain.hp / villain.maxHp) * 100);
+                        // Fallback strictly to villain1.png if image fails, NEVER hero.png
                         unit.innerHTML = `
                             <div class="v-hp-container"><div class="v-hp-bar" style="width: ${pct}%;"></div></div>
                             <img class="villain-img" src="${villainFiles[villain.id]}" alt="Villain" onerror="this.src='villain1.png';">
@@ -700,12 +699,23 @@
 
             const pit = document.getElementById('vault-pit');
             const pitWidth = pit.clientWidth || 350;
-            const pitHeight = pit.clientHeight || 180;
 
             let idCounter = 0;
-            let totalBeads = 75;
+            let totalBeads = 95;
+
+            // Generate structured, logically stacked heap matching user reference image
+            let cols = 14;
+            let spacingX = (pitWidth - 30) / cols;
 
             for (let i = 0; i < totalBeads; i++) {
+                let colIdx = i % cols;
+                let rowIdx = Math.floor(i / cols);
+
+                let x = 15 + (colIdx * spacingX) + (rowIdx % 2 === 0 ? 0 : spacingX * 0.5);
+                let y = 8 + (rowIdx * 12);
+
+                if (x > pitWidth - 15) continue;
+
                 let randW = Math.random();
                 let cumulative = 0;
                 let selectedTier = beadTiers[0];
@@ -716,10 +726,6 @@
                         break;
                     }
                 }
-
-                let x = 20 + Math.random() * (pitWidth - 40);
-                let centerFactor = 1 - Math.abs(x - (pitWidth / 2)) / (pitWidth / 2);
-                let y = 5 + Math.random() * (pitHeight * 0.55 + centerFactor * 35);
 
                 treasureBeads.push({
                     id: idCounter,
@@ -780,7 +786,7 @@
                         treasureBeads.forEach(b => {
                             if (!b.collected) {
                                 let dist = Math.hypot(b.x - targetX, b.y - dropTipY);
-                                if (dist < 55) {
+                                if (dist < 45) {
                                     b.collected = true;
                                     scoopedPower += b.value;
                                     const el = document.getElementById(`bead-${b.id}`);
