@@ -14,7 +14,7 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #05070c;
+            background-color: #04060a;
             color: #d4af37;
             font-family: 'Times New Roman', Times, serif, sans-serif;
             overflow: hidden;
@@ -96,9 +96,9 @@
             position: relative;
         }
 
-        /* Top Area: Battle Arena (Sky + Middle Road Layout) */
+        /* Top Area: Battle Arena (Sky + Middle Road) */
         #battle-arena {
-            height: 55%;
+            height: 52%;
             width: 100%;
             position: relative;
             background: url('sky.jpg') no-repeat center center;
@@ -107,52 +107,47 @@
             border-bottom: 3px solid #b8860b;
         }
 
-        /* Middle/Lower Horizontal Road matching sky tones */
         #road {
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 40%;
-            background: rgba(14, 20, 32, 0.85);
+            height: 45%;
+            background: rgba(14, 20, 32, 0.88);
             border-top: 2px solid #d4af37;
-            display: flex;
-            align-items: center;
         }
 
-        /* Hero on Left Facing Right */
         #hero-container {
             position: absolute;
-            left: 8%;
-            bottom: 10%;
+            left: 5%;
+            bottom: 8%;
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 10;
         }
         #hero {
-            width: 65px;
-            height: 95px;
+            width: 55px;
+            height: 85px;
             object-fit: contain;
-            transform: scaleX(1); /* Facing right */
         }
         #angel {
             position: absolute;
-            left: 20%;
-            bottom: 10%;
-            width: 65px;
-            height: 95px;
+            left: 15%;
+            bottom: 8%;
+            width: 55px;
+            height: 85px;
             object-fit: contain;
             display: none;
             z-index: 10;
         }
 
-        /* Villains Array on Right */
+        /* Villains Container for 3-7 villains at varying depths */
         #villains-container {
             position: absolute;
             right: 5%;
-            bottom: 10%;
+            bottom: 8%;
             display: flex;
-            gap: 12px;
+            gap: 15px;
             align-items: flex-end;
             z-index: 10;
         }
@@ -161,7 +156,7 @@
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            padding: 5px;
+            padding: 4px;
             border-radius: 6px;
             transition: transform 0.1s;
         }
@@ -169,16 +164,16 @@
             transform: scale(1.05);
         }
         .villain-slot.active-target {
-            background: rgba(218, 165, 32, 0.2);
+            background: rgba(218, 165, 32, 0.25);
             border: 1px dashed #d4af37;
         }
         .v-hp-container {
-            width: 50px;
-            height: 6px;
+            width: 45px;
+            height: 5px;
             background: #222;
             border: 1px solid #d4af37;
             border-radius: 3px;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             overflow: hidden;
         }
         .v-hp-bar {
@@ -188,84 +183,111 @@
             transition: width 0.2s;
         }
         .villain-img {
-            width: 55px;
-            height: 85px;
+            width: 48px;
+            height: 75px;
             object-fit: contain;
         }
 
-        /* Bottom Area: Claw Machine Mechanics */
+        /* Bottom Area: 180-Degree Arc Claw Machine Mechanics */
         #claw-section {
-            height: 45%;
+            height: 48%;
             width: 100%;
             background: #0b0f19;
             position: relative;
             overflow: hidden;
+            touch-action: none;
         }
 
-        /* Claw Crane Rail & Head */
-        #claw-rail {
+        /* Semi-Circular Track for 180 Degree Claw */
+        #claw-track-arc {
             position: absolute;
-            top: 0;
+            top: 10px;
+            left: 50%;
+            width: 80%;
+            height: 120px;
+            transform: translateX(-50%);
+            border-top: 2px dashed rgba(212, 175, 55, 0.4);
+            border-radius: 180px 180px 0 0;
+            pointer-events: none;
+        }
+
+        /* Swing Arm Crane */
+        #claw-crane-arm {
+            position: absolute;
+            top: 10px;
             left: 50%;
             width: 4px;
-            height: 25px;
+            height: 80px;
             background: #d4af37;
-            transform: translateX(-50%);
-            transition: left 0.08s ease-out;
+            transform-origin: top center;
+            transform: translateX(-50%) rotate(0deg);
+            transition: transform 0.4s ease-out;
+            z-index: 15;
         }
-        #claw-head {
+
+        #claw-grabber {
             position: absolute;
-            top: 25px;
-            left: -18px;
-            width: 36px;
-            height: 25px;
+            bottom: -15px;
+            left: -16px;
+            width: 32px;
+            height: 20px;
             background: #daa520;
-            border-radius: 4px;
+            border-radius: 3px;
             display: flex;
             justify-content: space-between;
         }
-        .claw-finger {
+        .claw-claw-l, .claw-claw-r {
             width: 5px;
-            height: 14px;
+            height: 12px;
             background: #b8860b;
             position: absolute;
-            bottom: -14px;
+            bottom: -12px;
             transition: transform 0.2s;
         }
-        .claw-left { left: 0; transform-origin: top; }
-        .claw-right { right: 0; transform-origin: top; }
+        .claw-claw-l { left: 0; transform-origin: top; }
+        .claw-claw-r { right: 0; transform-origin: top; }
 
-        /* Item Drop Area Pool */
-        #claw-drop-zone {
+        /* Bead Pool Field */
+        #bead-pool {
             position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 60px;
-            background: rgba(15, 22, 36, 0.9);
-            border-top: 1px solid #b8860b;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 15px;
+            bottom: 10px;
+            left: 5%;
+            width: 90%;
+            height: 100px;
+            background: rgba(16, 23, 38, 0.9);
+            border: 1px solid #b8860b;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
         }
-        .claw-item-pod {
-            width: 50px;
-            height: 50px;
-            background: rgba(218, 165, 32, 0.15);
-            border: 2px solid #d4af37;
+
+        /* Beads Styling */
+        .bead {
+            position: absolute;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-size: 9px;
-            color: #f0e682;
             font-weight: bold;
-            text-align: center;
-            box-shadow: inset 0 0 10px rgba(218, 165, 32, 0.4);
+            box-shadow: 0 0 8px rgba(0,0,0,0.6);
+            transition: transform 0.3s ease;
+        }
+        .bead-white {
+            background: radial-gradient(circle, #ffffff 30%, #cccccc 100%);
+            color: #333;
+            border: 1px solid #aaa;
+        }
+        .bead-gold {
+            background: radial-gradient(circle, #ffdf00 30%, #b8860b 100%);
+            color: #000;
+            border: 1px solid #fff;
+            box-shadow: 0 0 12px #ffd700;
         }
 
-        /* HUD */
+        /* HUD Overlays */
         #hud {
             position: absolute;
             top: 10px;
@@ -273,18 +295,18 @@
             right: 15px;
             display: flex;
             justify-content: space-between;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             color: #f0e682;
             text-shadow: 1px 1px 3px #000;
-            z-index: 20;
+            z-index: 25;
         }
 
         /* Cardinal's Cross Bullet */
         .cardinal-bullet {
             position: absolute;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             background: transparent;
             display: flex;
             align-items: center;
@@ -296,27 +318,27 @@
             content: '';
             position: absolute;
             width: 4px;
-            height: 22px;
+            height: 20px;
             background: #d4af37;
             box-shadow: 0 0 8px #fff;
         }
         .cardinal-bullet::after {
             content: '';
             position: absolute;
-            width: 18px;
+            width: 16px;
             height: 4px;
             background: #d4af37;
             box-shadow: 0 0 8px #fff;
-            top: 7px;
+            top: 6px;
         }
 
         /* Angel Wings & Halo */
         .angel-halo {
             position: absolute;
-            top: -15px;
-            left: 17px;
-            width: 30px;
-            height: 10px;
+            top: -14px;
+            left: 12px;
+            width: 28px;
+            height: 9px;
             border: 2px solid gold;
             border-radius: 50%;
             box-shadow: 0 0 12px gold;
@@ -324,15 +346,15 @@
         }
         .angel-wing {
             position: absolute;
-            top: 20px;
-            width: 25px;
-            height: 45px;
+            top: 18px;
+            width: 22px;
+            height: 40px;
             background: radial-gradient(circle, #fff 40%, rgba(218,165,32,0.6) 100%);
             border-radius: 50% 50% 20% 20%;
             box-shadow: 0 0 15px #fff;
         }
-        .wing-left { left: -22px; transform-origin: right center; animation: flap-left 0.4s infinite alternate; }
-        .wing-right { right: -22px; transform-origin: left center; animation: flap-right 0.4s infinite alternate; }
+        .wing-left { left: -20px; transform-origin: right center; animation: flap-left 0.4s infinite alternate; }
+        .wing-right { right: -20px; transform-origin: left center; animation: flap-right 0.4s infinite alternate; }
 
         @keyframes flap-left { 0% { transform: rotate(0deg); } 100% { transform: rotate(-25deg); } }
         @keyframes flap-right { 0% { transform: rotate(0deg); } 100% { transform: rotate(25deg); } }
@@ -355,7 +377,7 @@
             padding: 20px;
         }
         #overlay-msg h2 {
-            font-size: 2.5rem;
+            font-size: 2.3rem;
             color: #f0e682;
             margin-bottom: 15px;
         }
@@ -364,7 +386,7 @@
             color: #fff;
             border: 2px solid #fff;
             padding: 12px 35px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             border-radius: 5px;
             text-transform: uppercase;
@@ -415,7 +437,7 @@
         <div id="game-pane">
             <div id="hud">
                 <div id="hud-info">Stage 1 - Level 1</div>
-                <div id="hud-power">Power: 15 | Click Villain to Shoot</div>
+                <div id="hud-power">Power Points: 0 | Tap Pool for 180° Claw Drop</div>
             </div>
 
             <!-- Top Area: Battle Arena -->
@@ -429,25 +451,21 @@
                 </div>
             </div>
 
-            <!-- Bottom Area: Claw Machine Section -->
-            <div id="claw-section" onpointerdown="handleClawDrop(event)">
-                <div id="claw-rail" style="left: 50%;">
-                    <div id="claw-head">
-                        <div class="claw-finger claw-left" id="left-finger"></div>
-                        <div class="claw-finger claw-right" id="right-finger"></div>
+            <!-- Bottom Area: 180-Degree Arc Claw Section -->
+            <div id="claw-section" onpointerdown="execute180Claw(event)">
+                <div id="claw-track-arc"></div>
+                <div id="claw-crane-arm" style="transform: translateX(-50%) rotate(0deg);">
+                    <div id="claw-grabber">
+                        <div class="claw-claw-l" id="claw-l"></div>
+                        <div class="claw-claw-r" id="claw-r"></div>
                     </div>
                 </div>
-                <div id="claw-drop-zone">
-                    <div class="claw-item-pod">PWR<br>+5</div>
-                    <div class="claw-item-pod">CRIT<br>+10%</div>
-                    <div class="claw-item-pod">RELIC<br>+1</div>
-                    <div class="claw-item-pod">SPEED<br>+1</div>
-                </div>
+                <div id="bead-pool"></div>
             </div>
         </div>
     </div>
 
-    <!-- Level Clear Modal -->
+    <!-- Modal Overlay -->
     <div id="overlay-msg">
         <h2 id="msg-title">Level Cleared</h2>
         <p id="msg-desc" style="color: #fff; margin-bottom: 20px;"></p>
@@ -460,10 +478,11 @@
     <script>
         let stage = 1;
         let level = 1;
-        let heroPower = 15;
+        let heroPower = 0;
         let activeTargetIndex = 0;
         let isClawBusy = false;
         let villainsData = [];
+        let beadsOnPool = [];
 
         const villainFiles = {
             1: 'villain1.png', 2: 'villain2.png', 3: 'villain3.png', 4: 'villain4.png',
@@ -491,20 +510,28 @@
 
             document.getElementById('angel').style.display = 'none';
 
-            // Generate enemy array based on level progression
-            const enemyCount = level === 5 ? 1 : Math.min(level, 3);
+            // Generate 3 to 7 villains per round
+            const count = Math.min(3 + Math.floor(Math.random() * 5), 7);
             villainsData = [];
             const container = document.getElementById('villains-container');
             container.innerHTML = '';
 
-            for (let i = 0; i < enemyCount; i++) {
-                let vId = level === 5 ? Math.min(stage + 4, 8) : Math.min(stage + i, 8);
-                let maxHp = level === 5 ? 120 : 40 + (level * 15);
+            for (let i = 0; i < count; i++) {
+                let vId = level === 5 ? Math.min(stage + 4, 8) : Math.min(stage + (i % 3), 8);
+                // Varying physical approach distances (closer index = closer position)
+                let maxHp = level === 5 ? 150 : 45 + (level * 12);
                 
-                villainsData.push({ index: i, id: vId, hp: maxHp, maxHp: maxHp });
+                villainsData.push({ 
+                    index: i, 
+                    id: vId, 
+                    hp: maxHp, 
+                    maxHp: maxHp, 
+                    distance: 120 + (i * 25) // Distance from hero in pixels
+                });
 
                 const slot = document.createElement('div');
                 slot.className = `villain-slot ${i === 0 ? 'active-target' : ''}`;
+                slot.style.marginRight = `${i * 5}px`;
                 slot.onclick = () => selectTarget(i);
                 slot.innerHTML = `
                     <div class="v-hp-container"><div class="v-hp-bar" id="v-hp-${i}" style="width: 100%;"></div></div>
@@ -513,6 +540,89 @@
                 container.appendChild(slot);
             }
             activeTargetIndex = 0;
+            spawnBeads();
+        }
+
+        function spawnBeads() {
+            const pool = document.getElementById('bead-pool');
+            pool.innerHTML = '';
+            beadsOnPool = [];
+
+            // Generate mixed white and gold beads in the space under the claw
+            const totalBeads = 14;
+            for (let i = 0; i < totalBeads; i++) {
+                const isGold = Math.random() < 0.25; // 25% chance for special gold power up bead
+                const x = 20 + Math.random() * (pool.clientWidth - 50);
+                const y = 15 + Math.random() * (pool.clientHeight - 40);
+                
+                beadsOnPool.push({ id: i, type: isGold ? 'gold' : 'white', value: isGold ? 5 : 1, x, y, collected: false });
+
+                const beadEl = document.createElement('div');
+                beadEl.className = `bead ${isGold ? 'bead-gold' : 'bead-white'}`;
+                beadEl.id = `bead-${i}`;
+                beadEl.style.left = `${x}px`;
+                beadEl.style.top = `${y}px`;
+                beadEl.innerText = isGold ? '★' : '•';
+                pool.appendChild(beadEl);
+            }
+        }
+
+        // 180 Degree Arc Claw Control Mechanics
+        function execute180Claw(event) {
+            if (isClawBusy) return;
+            isClawBusy = true;
+
+            const section = document.getElementById('claw-section');
+            const rect = section.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            
+            // Map click position across 180 degree span (-90deg to +90deg)
+            const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+            const angleDeg = (ratio * 180) - 90;
+
+            const crane = document.getElementById('claw-crane-arm');
+            const lClaw = document.getElementById('claw-l');
+            const rClaw = document.getElementById('claw-r');
+
+            // Rotate crane arm to target 180 degree angle
+            crane.style.transform = `translateX(-50%) rotate(${angleDeg}deg)`;
+
+            setTimeout(() => {
+                // Grab action: close fingers
+                lClaw.style.transform = 'rotate(30deg)';
+                rClaw.style.transform = 'rotate(-30deg)';
+
+                setTimeout(() => {
+                    // Calculate physics reach constraint: check which beads are near the drop center vector
+                    let turnPoints = 0;
+                    beadsOnPool.forEach(b => {
+                        if (!b.collected) {
+                            // Check proximity of bead to the claw grab zone
+                            const normalizedXOffset = Math.abs((b.x / rect.width) - ratio);
+                            if (normalizedXOffset < 0.18) { // Physical constraint reach width
+                                b.collected = true;
+                                turnPoints += b.value;
+                                const el = document.getElementById(`bead-${b.id}`);
+                                if (el) el.style.transform = 'scale(0) translateY(-30px)';
+                            }
+                        }
+                    });
+
+                    heroPower += turnPoints;
+                    document.getElementById('hud-power').innerText = `Power Points: ${heroPower} | Grabbed +${turnPoints} Pts!`;
+
+                    // Reset crane arm position
+                    crane.style.transform = 'translateX(-50%) rotate(0deg)';
+                    lClaw.style.transform = 'rotate(0deg)';
+                    rClaw.style.transform = 'rotate(0deg)';
+                    isClawBusy = false;
+
+                    // Refill beads if pool runs low
+                    if (beadsOnPool.every(b => b.collected)) {
+                        spawnBeads();
+                    }
+                }, 400);
+            }, 350);
         }
 
         function selectTarget(index) {
@@ -522,52 +632,61 @@
                 if (idx === index) el.classList.add('active-target');
                 else el.classList.remove('active-target');
             });
-            fireBulletAt(index);
+            fireCrossBullet(index);
         }
 
-        function fireBulletAt(index) {
+        function fireCrossBullet(targetIndex) {
+            if (heroPower <= 0) {
+                document.getElementById('hud-power').innerText = `Not enough Power! Use 180° Claw to grab beads first!`;
+                return;
+            }
+
             const slots = document.querySelectorAll('.villain-slot');
-            if (!slots[index]) return;
+            if (!slots[targetIndex]) return;
 
             const arena = document.getElementById('battle-arena');
             const bullet = document.createElement('div');
             bullet.className = 'cardinal-bullet';
-            bullet.style.left = '14%';
-            bullet.style.bottom = '20%';
+            bullet.style.left = '12%';
+            bullet.style.bottom = '18%';
             arena.appendChild(bullet);
 
-            const targetRect = slots[index].getBoundingClientRect();
+            const targetRect = slots[targetIndex].getBoundingClientRect();
             const arenaRect = arena.getBoundingClientRect();
             const targetX = targetRect.left - arenaRect.left + (targetRect.width / 2);
 
-            let currentX = arenaRect.width * 0.14;
+            let currentX = arenaRect.width * 0.12;
             const distance = targetX - currentX;
-            let steps = 20;
+            let steps = 18;
             let step = 0;
 
-            const flyInterval = setInterval(() => {
+            const flight = setInterval(() => {
                 step++;
                 currentX += distance / steps;
                 bullet.style.left = currentX + 'px';
 
                 if (step >= steps) {
-                    clearInterval(flyInterval);
+                    clearInterval(flight);
                     bullet.remove();
-                    applyDamage(index);
+                    processDamage(targetIndex);
                 }
             }, 18);
         }
 
-        function applyDamage(index) {
-            let enemy = villainsData[index];
+        function processDamage(targetIndex) {
+            let enemy = villainsData[targetIndex];
             if (!enemy || enemy.hp <= 0) return;
 
-            enemy.hp -= heroPower;
+            let damageDealt = heroPower;
+            heroPower = 0; // Consume power points for shot
+            document.getElementById('hud-power').innerText = `Power Points: 0 | Grab beads to reload!`;
+
+            enemy.hp -= damageDealt;
             const pct = Math.max(0, (enemy.hp / enemy.maxHp) * 100);
-            document.getElementById(`v-hp-${index}`).style.width = pct + '%';
+            document.getElementById(`v-hp-${targetIndex}`).style.width = pct + '%';
 
             if (enemy.hp <= 0) {
-                document.querySelectorAll('.villain-slot')[index].style.opacity = '0.3';
+                document.querySelectorAll('.villain-slot')[targetIndex].style.opacity = '0.25';
                 
                 if (villainsData.every(e => e.hp <= 0)) {
                     triggerLevelClear();
@@ -575,42 +694,28 @@
                     const nextAlive = villainsData.findIndex(e => e.hp > 0);
                     if (nextAlive !== -1) selectTarget(nextAlive);
                 }
+            } else {
+                // Villains approach hero each turn after action
+                advanceVillains();
             }
         }
 
-        // Claw Machine Interactive Drop Control
-        function handleClawDrop(event) {
-            if (isClawBusy) return;
-            isClawBusy = true;
+        function advanceVillains() {
+            let heroDied = false;
+            villainsData.forEach((v, idx) => {
+                if (v.hp > 0) {
+                    v.distance -= 18; // Move closer to hero each turn
+                    if (v.distance <= 35) {
+                        heroDied = true;
+                    }
+                }
+            });
 
-            const section = document.getElementById('claw-section');
-            const rect = section.getBoundingClientRect();
-            const clickX = event.clientX - rect.left;
-            const dropPct = Math.max(10, Math.min(90, (clickX / rect.width) * 100));
-
-            const rail = document.getElementById('claw-rail');
-            rail.style.left = dropPct + '%';
-
-            const head = document.getElementById('claw-head');
-            const lFinger = document.getElementById('left-finger');
-            const rFinger = document.getElementById('right-finger');
-
-            setTimeout(() => {
-                head.style.transition = 'top 0.25s ease-in-out';
-                head.style.top = '100px';
-                lFinger.style.transform = 'rotate(25deg)';
-                rFinger.style.transform = 'rotate(-25deg)';
-
-                setTimeout(() => {
-                    heroPower += 5;
-                    document.getElementById('hud-power').innerText = `Power: ${heroPower} | Power-Up Grabbed!`;
-
-                    head.style.top = '25px';
-                    lFinger.style.transform = 'rotate(0deg)';
-                    rFinger.style.transform = 'rotate(0deg)';
-                    isClawBusy = false;
-                }, 450);
-            }, 80);
+            if (heroDied) {
+                showModal("DEFEAT", "The Illuminati villains breached your defenses and touched the hero!");
+                document.getElementById('overlay-btn').innerText = "Try Again";
+                document.getElementById('overlay-btn').onclick = () => location.reload();
+            }
         }
 
         function triggerLevelClear() {
@@ -636,11 +741,11 @@
                     if (stage === 4) {
                         launchFinalCelebration();
                     } else {
-                        showModal(`Stage ${stage} Clear`, `The divine bond is secured. Advancing to Stage ${stage + 1}.`);
+                        showModal(`Stage ${stage} Cleared`, `The divine bond is secured. Advancing to Stage ${stage + 1}.`);
                     }
                 }, 1300);
             } else {
-                showModal(`Level ${level} Cleared`, `Enemies vanquished. Ready for next phase.`);
+                showModal(`Level ${level} Cleared`, `All encroaching villains neutralized.`);
             }
         }
 
