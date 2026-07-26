@@ -116,7 +116,7 @@
             background: rgba(14, 20, 32, 0.75);
         }
 
-        /* Hero & Angel Containers (Exact same size and proportion maintained) */
+        /* Hero & Angel Containers - Strictly identical height & proportions */
         #hero-container {
             position: absolute;
             left: 5%;
@@ -152,7 +152,7 @@
             position: relative;
         }
 
-        /* Angel Halo & White Heart Fireworks */
+        /* Angel Halo & White Heart Fireworks spilling out from back of angel to both sides */
         .angel-halo {
             position: absolute;
             top: -18px;
@@ -175,12 +175,12 @@
             font-size: 20px;
             pointer-events: none;
             animation: heartFirework 1.2s forwards ease-out;
-            z-index: 20;
+            z-index: 1; /* Spills out from behind the angel container */
             text-shadow: 0 0 10px #ffffff, 0 0 20px #fde047;
         }
         @keyframes heartFirework {
-            0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
-            100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
+            0% { transform: translate(0, 0) scale(0.4); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.3); opacity: 0; }
         }
 
         /* Strict 3x4 Grid Formation Field exclusively for Villains */
@@ -243,7 +243,7 @@
             height: 100%;
             background: #b8860b;
         }
-        /* Standard Villains bigger, Boss significantly larger & fully visible inside game space */
+        /* Normal villains and final stage bosses properly scaled with higher life pools */
         .villain-img {
             width: 64px;
             height: 82px;
@@ -626,8 +626,10 @@
             bounce: 1  
         };
 
+        // Mandatory normal villains pool: villain1.png, villian2.png, villian4.png mixed and matched per level
         const allowedVillains = ['villain1.png', 'villian2.png', 'villian4.png'];
 
+        // Strict stage bosses configuration mapping
         const stageBosses = {
             1: 'villain6.png',
             2: 'villian3.png',
@@ -676,20 +678,23 @@
                 gridData.push(rowArr);
             }
 
+            // Substantially higher villain life scaling for tougher, longer battles
+            let baseHpMultiplier = 1 + (stage - 1) * 0.9 + (level - 1) * 0.3;
+
             if (level === 5) {
-                // Last level of each stage: Dedicated stage boss assigned to the last column (col 3) using exact specified filenames
+                // Final level boss configuration with mandatory designated boss images and significantly higher life
                 let bossRow = 1; 
-                let bossSrc = stageBosses[stage] || 'villain6.png';
-                let bossHp = 280;
+                let bossSrc = stageBosses[stage];
+                let bossHp = Math.round(950 * baseHpMultiplier);
                 gridData[bossRow][3] = { row: bossRow, col: 3, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
                 let spawned = 1;
                 while (spawned < 4) {
                     let r = Math.floor(Math.random() * 3);
-                    let c = Math.floor(Math.random() * 3); // Spawns in columns 0, 1, or 2 strictly
+                    let c = Math.floor(Math.random() * 3);
                     if (gridData[r][c] === null) {
                         let vi = Math.floor(Math.random() * allowedVillains.length);
-                        let hp = 70;
+                        let hp = Math.round(320 * baseHpMultiplier);
                         gridData[r][c] = { row: r, col: c, src: allowedVillains[vi], hp: hp, maxHp: hp, isBoss: false };
                         spawned++;
                     }
@@ -697,7 +702,7 @@
             } else {
                 let totalVillainsToSpawn = Math.floor(Math.random() * 5) + 3;
                 let spawnedCount = 0;
-                let maxHp = 70;
+                let maxHp = Math.round(240 * baseHpMultiplier);
 
                 let rRand = Math.floor(Math.random() * 3);
                 let vIndex = Math.floor(Math.random() * allowedVillains.length);
@@ -1081,11 +1086,8 @@
                 const heroCont = document.getElementById('hero-container');
                 const angelCont = document.getElementById('angel-container');
                 
-                // Position hero to physically touch angel without stopping at a distance
                 const heroWidth = heroCont.offsetWidth || 110;
                 const arenaWidth = document.getElementById('battle-arena').clientWidth;
-                // Calculate percentage position so hero right edge meets angel left edge precisely
-                let angelRightPct = 5; // right: 5%
                 let angelPixelLeft = arenaWidth * (1 - 0.05) - 110;
                 let heroTargetPct = ((angelPixelLeft - heroWidth) / arenaWidth) * 100;
                 
@@ -1115,31 +1117,28 @@
 
         function spawnWhiteHeartFireworks() {
             const angelCont = document.getElementById('angel-container');
-            const heroCont = document.getElementById('hero-container');
 
-            // Spill out pure white hearts from BOTH sides (Angel side and Hero side)
-            let containers = [angelCont, heroCont];
+            // Hearts spill out from back of angel to both sides (left and right directions symmetrically)
+            for (let i = 0; i < 24; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'white-heart';
+                heart.innerHTML = '🤍';
+                
+                // Spills to both left and right sides from behind the angel
+                let isLeft = Math.random() < 0.5;
+                let angle = isLeft ? (Math.PI + (Math.random() * 0.7 - 0.35)) : (Math.random() * 0.7 - 0.35);
+                let dist = 70 + Math.random() * 110;
+                let dx = Math.cos(angle) * dist;
+                let dy = Math.sin(angle) * dist - 20;
 
-            containers.forEach(cont => {
-                for (let i = 0; i < 14; i++) {
-                    const heart = document.createElement('div');
-                    heart.className = 'white-heart';
-                    heart.innerHTML = '🤍'; // Pure white heart symbol
-                    
-                    let angle = (Math.random() * Math.PI) - (Math.PI / 2);
-                    let dist = 60 + Math.random() * 90;
-                    let dx = Math.cos(angle) * dist;
-                    let dy = Math.sin(angle) * dist - 30;
+                heart.style.setProperty('--dx', `${dx}px`);
+                heart.style.setProperty('--dy', `${dy}px`);
+                heart.style.left = `50%`;
+                heart.style.top = `40%`;
 
-                    heart.style.setProperty('--dx', `${dx}px`);
-                    heart.style.setProperty('--dy', `${dy}px`);
-                    heart.style.left = `50%`;
-                    heart.style.top = `30%`;
-
-                    cont.appendChild(heart);
-                    setTimeout(() => heart.remove(), 1200);
-                }
-            });
+                angelCont.appendChild(heart);
+                setTimeout(() => heart.remove(), 1200);
+            }
         }
 
         function showUpgradeModal(title, desc) {
