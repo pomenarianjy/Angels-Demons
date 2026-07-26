@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Angels & Demons & Banker</title>
+    <title>Angels & Demons & Banker - Physics Claw</title>
     <style>
         * {
             box-sizing: border-box;
@@ -29,13 +29,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('start.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background: #060913;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
-            padding-bottom: 12vh;
             z-index: 100;
         }
         #start-btn {
@@ -98,15 +96,13 @@
 
         /* Top Area: Battle Arena */
         #battle-arena {
-            height: 45%;
+            height: 40%;
             width: 100%;
             position: relative;
-            background: url('sky.jpg') no-repeat center center;
-            background-size: cover;
+            background: #090e1a;
             overflow: hidden;
             border-bottom: 3px solid #b8860b;
         }
-
         #road {
             position: absolute;
             bottom: 0;
@@ -114,7 +110,6 @@
             height: 100%;
             background: rgba(14, 20, 32, 0.75);
         }
-
         #hero-container {
             position: absolute;
             left: 5%;
@@ -157,10 +152,6 @@
             cursor: pointer;
             padding: 4px;
             border-radius: 6px;
-            transition: transform 0.1s;
-        }
-        .villain-slot:hover {
-            transform: scale(1.05);
         }
         .villain-slot.active-target {
             background: rgba(218, 165, 32, 0.25);
@@ -179,7 +170,6 @@
             width: 100%;
             height: 100%;
             background: #b8860b;
-            transition: width 0.2s;
         }
         .villain-img {
             width: 45px;
@@ -187,108 +177,90 @@
             object-fit: contain;
         }
 
-        /* Bottom Area: Vertical Underground Claw Pit (Matching References) */
+        /* Bottom Area: 180-Degree Clock-Arm Rotating Claw & Physics Bead Pile Pit */
         #claw-section {
-            height: 55%;
+            height: 60%;
             width: 100%;
-            background: #060913;
+            background: #03050a;
             position: relative;
             overflow: hidden;
             touch-action: none;
-            display: flex;
-            justify-content: center;
         }
 
-        /* Underground Shaft Vault */
-        #underground-shaft {
-            position: absolute;
-            top: 0;
-            width: 72%;
-            height: 100%;
-            background: rgba(11, 16, 28, 0.95);
-            border-left: 3px solid #1f293d;
-            border-right: 3px solid #1f293d;
-            border-top: 4px solid #b8860b;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-        }
-
-        /* Vertical Rope and Claw Mechanism */
-        #claw-rope {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 6px;
-            height: 40px;
-            background: #8b6508;
-            transform: translateX(-50%);
-            z-index: 15;
-            transition: height 0.4s ease-in-out;
-        }
-
-        #vertical-claw {
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            width: 44px;
-            height: 30px;
-            transform: translateX(-50%);
-            z-index: 15;
-            transition: top 0.4s ease-in-out;
-        }
-
-        .claw-base {
-            width: 100%;
-            height: 10px;
-            background: #daa520;
-            border-radius: 3px;
-            position: relative;
-        }
-        .claw-arm-left, .claw-arm-right {
-            position: absolute;
-            top: 8px;
-            width: 8px;
-            height: 22px;
-            background: #b8860b;
-            border: 1px solid #d4af37;
-            transition: transform 0.2s;
-        }
-        .claw-arm-left { left: 2px; transform-origin: top left; transform: rotate(20deg); }
-        .claw-arm-right { right: 2px; transform-origin: top right; transform: rotate(-20deg); }
-
-        /* Bead & Gem Pool Deposit */
-        #bead-pool {
+        #vault-pit {
             position: absolute;
             bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 130px;
-            background: rgba(8, 12, 20, 0.85);
+            left: 10%;
+            width: 80%;
+            height: 95%;
+            background: #080d19;
+            border-top: 3px solid #b8860b;
+            border-left: 3px solid #1f293d;
+            border-right: 3px solid #1f293d;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
             overflow: hidden;
         }
 
-        .bead {
+        /* Fixed Root Anchor point at top-center of the vault pit (like a clock pivot) */
+        #claw-pivot {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            top: 15px;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background: #daa520;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 30;
+            box-shadow: 0 0 10px #d4af37;
+        }
+
+        /* Clock-Arm Rotating & Extending Mechanism */
+        #rotating-arm {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            width: 6px;
+            height: 30px; /* Lengthens dynamically during grab */
+            background: #8b6508;
+            transform-origin: top center;
+            transform: translateX(-50%) rotate(0deg); /* 0deg points straight down; ranges -90deg to +90deg (180 deg sweep) */
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        /* The Grabber Hook / Claw Head at the end of the arm */
+        #claw-head {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            width: 36px;
+            height: 22px;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-between;
+            z-index: 26;
+        }
+        .claw-hook-l, .claw-hook-r {
+            width: 10px;
+            height: 22px;
+            background: #b8860b;
+            border: 1px solid #f0e682;
+        }
+        .claw-hook-l { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+        .claw-hook-r { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+
+        /* Physics Bead Pile Elements */
+        .physics-bead {
+            position: absolute;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 9px;
             font-weight: bold;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 2px 5px rgba(0,0,0,0.8);
-        }
-        .bead-white {
-            background: radial-gradient(circle at 30% 30%, #ffffff 0%, #d1d5db 60%, #9ca3af 100%);
-            color: #1f2937;
-            border: 1px solid #fff;
-        }
-        .bead-gold {
-            background: radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 60%, #a16207 100%);
-            color: #fff;
-            border: 1px solid #fef08a;
-            box-shadow: 0 0 8px #eab308;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.8);
         }
 
         /* HUD Overlays */
@@ -303,7 +275,7 @@
             font-weight: bold;
             color: #f0e682;
             text-shadow: 1px 1px 2px #000;
-            z-index: 25;
+            z-index: 40;
         }
 
         /* Cardinal's Cross Bullet */
@@ -311,7 +283,6 @@
             position: absolute;
             width: 22px;
             height: 22px;
-            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -336,35 +307,7 @@
             top: 6px;
         }
 
-        /* Angel Elements */
-        .angel-halo {
-            position: absolute;
-            top: -14px;
-            left: 12px;
-            width: 28px;
-            height: 9px;
-            border: 2px solid gold;
-            border-radius: 50%;
-            box-shadow: 0 0 12px gold;
-            animation: pulse-halo 1.5s infinite alternate;
-        }
-        .angel-wing {
-            position: absolute;
-            top: 18px;
-            width: 22px;
-            height: 40px;
-            background: radial-gradient(circle, #fff 40%, rgba(218,165,32,0.6) 100%);
-            border-radius: 50% 50% 20% 20%;
-            box-shadow: 0 0 15px #fff;
-        }
-        .wing-left { left: -20px; transform-origin: right center; animation: flap-left 0.4s infinite alternate; }
-        .wing-right { right: -20px; transform-origin: left center; animation: flap-right 0.4s infinite alternate; }
-
-        @keyframes flap-left { 0% { transform: rotate(0deg); } 100% { transform: rotate(-25deg); } }
-        @keyframes flap-right { 0% { transform: rotate(0deg); } 100% { transform: rotate(25deg); } }
-        @keyframes pulse-halo { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 1; } }
-
-        /* Modal Overlay & Upgrade Screen */
+        /* Modal Overlay & Upgrades Selector */
         #overlay-msg {
             position: absolute;
             top: 0;
@@ -425,31 +368,6 @@
             text-transform: uppercase;
             margin-top: 15px;
         }
-
-        /* Sparks Celebration */
-        .spark {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 10px gold, 0 0 20px #fff;
-            pointer-events: none;
-            animation: spark-fall 2s linear infinite;
-        }
-        @keyframes spark-fall {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-        }
-        #fly-object {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            z-index: 70;
-            display: none;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body>
@@ -471,7 +389,7 @@
         <div id="game-pane">
             <div id="hud">
                 <div id="hud-info">Stage 1 - Level 1</div>
-                <div id="hud-power">Power: 0 | Tap Shaft to Drop Vertical Claw</div>
+                <div id="hud-power">Power: 0 | Click Pit to Aim 180° Clock Claw</div>
             </div>
 
             <!-- Top Area: Battle Arena -->
@@ -485,19 +403,17 @@
                 </div>
             </div>
 
-            <!-- Bottom Area: Vertical Underground Shaft Claw Machine -->
-            <div id="claw-section" onpointerdown="executeVerticalClaw(event)">
-                <div id="underground-shaft">
-                    <!-- Vertical Crane Rope & Claw -->
-                    <div id="claw-rope"></div>
-                    <div id="vertical-claw">
-                        <div class="claw-base"></div>
-                        <div class="claw-arm-left" id="claw-l"></div>
-                        <div class="claw-arm-right" id="claw-r"></div>
+            <!-- Bottom Area: 180-Degree Clock-Arm Rotating Claw & Bead Pile Pit -->
+            <div id="claw-section" onpointerdown="handleClawTrigger(event)">
+                <div id="vault-pit" id="pit-box">
+                    <div id="claw-pivot"></div>
+                    <div id="rotating-arm">
+                        <div id="claw-head">
+                            <div class="claw-hook-l"></div>
+                            <div class="claw-hook-r"></div>
+                        </div>
                     </div>
-
-                    <!-- Bead & Gem Pool -->
-                    <div id="bead-pool"></div>
+                    <div id="bead-container" style="position: absolute; width: 100%; height: 100%; top:0; left:0; pointer-events: none;"></div>
                 </div>
             </div>
         </div>
@@ -511,9 +427,6 @@
         <button id="overlay-btn" style="display:none;" onclick="proceedNext()">Continue</button>
     </div>
 
-    <!-- Celebration Fly Object -->
-    <img id="fly-object" src="fly.png" alt="Fly">
-
     <script>
         let stage = 1;
         let level = 1;
@@ -521,13 +434,12 @@
         let activeTargetIndex = 0;
         let isClawBusy = false;
         let villainsData = [];
-        let beadsOnPool = [];
+        let physicsBeads = [];
 
-        // Upgrades up to 7 levels each
         let upgrades = {
-            clawSize: 1,  // Max 7
-            power: 1,     // Max 7
-            bounce: 1     // Max 7
+            reach: 1,  // Max 7
+            power: 1,  // Max 7
+            bounce: 1  // Max 7
         };
 
         const villainFiles = {
@@ -553,10 +465,8 @@
             document.getElementById('story-img').src = `${cfg.prefix}L${level}.png`;
             document.getElementById('story-title').innerText = `Stage ${stage}: ${cfg.name}`;
             document.getElementById('hud-info').innerText = `Stage ${stage} - Level ${level}`;
-
             document.getElementById('angel').style.display = 'none';
 
-            // Difficulty scaling: more villains and harder stats each level & stage
             const villainCount = Math.min(3 + stage + Math.floor(level / 2), 7);
             villainsData = [];
             const container = document.getElementById('villains-container');
@@ -566,13 +476,7 @@
                 let vId = level === 5 ? Math.min(stage + 4, 8) : Math.min(stage + (i % 4), 8);
                 let maxHp = level === 5 ? 180 + (stage * 30) : 50 + (stage * 15) + (level * 12);
                 
-                villainsData.push({ 
-                    index: i, 
-                    id: vId, 
-                    hp: maxHp, 
-                    maxHp: maxHp, 
-                    distance: 140 + (i * 20) 
-                });
+                villainsData.push({ index: i, id: vId, hp: maxHp, maxHp: maxHp, distance: 140 + (i * 20) });
 
                 const slot = document.createElement('div');
                 slot.className = `villain-slot ${i === 0 ? 'active-target' : ''}`;
@@ -584,98 +488,129 @@
                 container.appendChild(slot);
             }
             activeTargetIndex = 0;
-            spawnBeads();
+            initPhysicsBeadPile();
         }
 
-        function spawnBeads() {
-            const pool = document.getElementById('bead-pool');
-            pool.innerHTML = '';
-            beadsOnPool = [];
+        // Initialize piled-up beads mimicking the reference photo (stacked tightly at the bottom pit)
+        function initPhysicsBeadPile() {
+            const container = document.getElementById('bead-container');
+            container.innerHTML = '';
+            physicsBeads = [];
 
-            // More beads to be picked up in higher difficulty levels
-            const totalBeads = 18 + (level * 4) + (stage * 3);
-            for (let i = 0; i < totalBeads; i++) {
-                const isGold = Math.random() < (0.2 + (upgrades.power * 0.02)); 
-                const x = 10 + Math.random() * (pool.clientWidth - 30);
-                const y = 10 + Math.random() * (pool.clientHeight - 20);
-                
-                beadsOnPool.push({ id: i, type: isGold ? 'gold' : 'white', value: isGold ? (5 * upgrades.power) : (1 * upgrades.power), x, y, collected: false });
+            const pit = document.getElementById('vault-pit');
+            const pitWidth = pit.clientWidth || 300;
+            const pitHeight = pit.clientHeight || 250;
 
-                const beadEl = document.createElement('div');
-                beadEl.className = `bead ${isGold ? 'bead-gold' : 'bead-white'}`;
-                beadEl.id = `bead-${i}`;
-                beadEl.style.left = `${x}px`;
-                beadEl.style.bottom = `${y}px`;
-                beadEl.innerText = isGold ? '★' : '•';
-                pool.appendChild(beadEl);
+            const rows = 6;
+            const cols = 14;
+            let idCounter = 0;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const isGold = Math.random() < (0.18 + upgrades.power * 0.02);
+                    const size = 18;
+                    // Stagger columns for pile stacking effect
+                    const x = 15 + c * 20 + (r % 2) * 8;
+                    const y = pitHeight - 25 - r * 16;
+
+                    if (x < pitWidth - 20) {
+                        physicsBeads.push({
+                            id: idCounter,
+                            type: isGold ? 'gold' : 'white',
+                            value: isGold ? (5 * upgrades.power) : (1 * upgrades.power),
+                            x: x,
+                            y: y,
+                            collected: false
+                        });
+
+                        const beadEl = document.createElement('div');
+                        beadEl.className = 'physics-bead';
+                        beadEl.id = `bead-${idCounter}`;
+                        beadEl.style.width = `${size}px`;
+                        beadEl.style.height = `${size}px`;
+                        beadEl.style.left = `${x}px`;
+                        beadEl.style.bottom = `${y}px`;
+                        beadEl.style.background = isGold 
+                            ? 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 60%, #a16207 100%)' 
+                            : 'radial-gradient(circle at 30% 30%, #ffffff 0%, #d1d5db 60%, #9ca3af 100%)';
+                        beadEl.style.color = isGold ? '#fff' : '#1f2937';
+                        beadEl.innerText = isGold ? '★' : '';
+                        container.appendChild(beadEl);
+                        idCounter++;
+                    }
+                }
             }
         }
 
-        // Vertical Underground Shaft Claw Drop Mechanics (Matching reference layout)
-        function executeVerticalClaw(event) {
+        // 180-Degree Clock-Arm Rotation and Lengthening Mechanism
+        function handleClawTrigger(event) {
             if (isClawBusy) return;
             isClawBusy = true;
 
-            const shaft = document.getElementById('underground-shaft');
-            const rect = shaft.getBoundingClientRect();
-            let clickX = event.clientX - rect.left;
-            clickX = Math.max(30, Math.min(rect.width - 30, clickX));
+            const pit = document.getElementById('vault-pit');
+            const rect = pit.getBoundingClientRect();
+            
+            // Pivot center coordinates relative to the pit container
+            const pivotX = rect.width / 2;
+            const pivotY = 15;
 
-            const rope = document.getElementById('claw-rope');
-            const claw = document.getElementById('vertical-claw');
-            const lClaw = document.getElementById('claw-l');
-            const rClaw = document.getElementById('claw-r');
+            // Click coordinates relative to pivot
+            const clickX = event.clientX - rect.left - pivotX;
+            const clickY = event.clientY - rect.top - pivotY;
 
-            // Set horizontal position and apply Claw Size upgrade
-            const clawWidth = 44 + (upgrades.clawSize * 6);
-            claw.style.width = `${clawWidth}px`;
-            claw.style.left = `${clickX}px`;
-            rope.style.left = `${clickX}px`;
+            // Calculate angle in radians, restricted strictly to bottom 180 degrees (-90deg to +90deg relative to straight down)
+            let rad = Math.atan2(clickX, Math.max(5, clickY)); // angle from vertical downward axis
+            let deg = rad * (180 / Math.PI);
+            deg = Math.max(-85, Math.min(85, deg)); // Clamp to 180-degree lower semicircle
 
-            // Lower the claw vertically into the bead pool
-            rope.style.height = '145px';
-            claw.style.top = '145px';
+            const arm = document.getElementById('rotating-arm');
+            
+            // Rotate arm like a clock hand pointing towards the tap direction
+            arm.style.transform = `translateX(-50%) rotate(${deg}deg)`;
+
+            // Lengthen arm dynamically toward clicked destination, boosted by Reach upgrade (up to 7 levels)
+            const maxReachDist = 140 + (upgrades.reach * 22);
+            arm.style.height = `${maxReachDist}px`;
 
             setTimeout(() => {
-                // Grab action: close arms inwards
-                lClaw.style.transform = 'rotate(45deg)';
-                rClaw.style.transform = 'rotate(-45deg)';
+                let collectedPoints = 0;
 
-                setTimeout(() => {
-                    let turnPoints = 0;
-                    beadsOnPool.forEach(b => {
-                        if (!b.collected) {
-                            const beadCenterX = b.x + 10;
-                            const distanceX = Math.abs(beadCenterX - clickX);
-                            // Catch radius scales with claw size upgrade level (up to 7 levels)
-                            const reachRadius = 22 + (upgrades.clawSize * 5);
-                            
-                            if (distanceX < reachRadius && b.y < 90) {
-                                b.collected = true;
-                                turnPoints += b.value;
-                                const el = document.getElementById(`bead-${b.id}`);
-                                if (el) el.style.transform = 'scale(0) translateY(-60px)';
+                // Check collision/scooping with piled beads along the arm's trajectory path
+                physicsBeads.forEach(b => {
+                    if (!b.collected) {
+                        // Approximate bead angle relative to pivot
+                        const beadAngle = Math.atan2(b.x - pivotX, pit.clientHeight - b.y - pivotY) * (180 / Math.PI);
+                        const angleDiff = Math.abs(deg - beadAngle);
+                        const beadDistFromPivot = Math.hypot(b.x - pivotX, pit.clientHeight - b.y - pivotY);
+
+                        // If claw angle aligns and reach distance covers the bead's stack layer
+                        if (angleDiff < 18 && beadDistFromPivot <= maxReachDist) {
+                            b.collected = true;
+                            collectedPoints += b.value;
+                            const el = document.getElementById(`bead-${b.id}`);
+                            if (el) {
+                                el.style.transform = 'scale(0) translateY(-40px)';
+                                el.style.transition = 'transform 0.3s ease-out';
                             }
                         }
-                    });
+                    }
+                });
 
-                    heroPower += turnPoints;
-                    document.getElementById('hud-power').innerText = `Power: ${heroPower} | Grabbed +${turnPoints} Pts!`;
+                heroPower += collectedPoints;
+                document.getElementById('hud-power').innerText = `Power: ${heroPower} | Scooped +${collectedPoints} Pts!`;
 
-                    // Retract rope and claw back up
-                    rope.style.height = '40px';
-                    claw.style.top = '40px';
-                    lClaw.style.transform = 'rotate(20deg)';
-                    rClaw.style.transform = 'rotate(-20deg)';
+                // Retract arm back to starting position
+                arm.style.height = '30px';
+                arm.style.transform = 'translateX(-50%) rotate(0deg)';
 
-                    setTimeout(() => {
-                        isClawBusy = false;
-                        if (beadsOnPool.every(b => b.collected)) {
-                            spawnBeads();
-                        }
-                    }, 400);
-                }, 400);
-            }, 400);
+                setTimeout(() => {
+                    isClawBusy = false;
+                    // Respawn pile if all beads cleared
+                    if (physicsBeads.every(b => b.collected)) {
+                        initPhysicsBeadPile();
+                    }
+                }, 350);
+            }, 350);
         }
 
         function selectTarget(index) {
@@ -690,7 +625,7 @@
 
         function fireCrossBullet(targetIndex) {
             if (heroPower <= 0) {
-                document.getElementById('hud-power').innerText = `No Power! Drop the vertical claw into the pit to gather beads!`;
+                document.getElementById('hud-power').innerText = `No Power! Click pit to rotate clock-arm claw & scoop beads!`;
                 return;
             }
 
@@ -720,15 +655,12 @@
 
                 if (step >= steps) {
                     clearInterval(flight);
-                    
                     if (upgrades.bounce > 1) {
-                        let bounceDist = 40 * upgrades.bounce;
-                        bullet.style.left = (currentX + bounceDist) + 'px';
-                        setTimeout(() => bullet.remove(), 150);
+                        bullet.style.left = (currentX + upgrades.bounce * 25) + 'px';
+                        setTimeout(() => bullet.remove(), 120);
                     } else {
                         bullet.remove();
                     }
-
                     processDamage(targetIndex);
                 }
             }, 18);
@@ -739,8 +671,8 @@
             if (!enemy || enemy.hp <= 0) return;
 
             let damageDealt = heroPower + (upgrades.bounce * 3);
-            heroPower = 0; 
-            document.getElementById('hud-power').innerText = `Power: 0 | Drop claw into shaft to reload!`;
+            heroPower = 0;
+            document.getElementById('hud-power').innerText = `Power: 0 | Rotate clock claw into pit to reload!`;
 
             enemy.hp -= damageDealt;
             const pct = Math.max(0, (enemy.hp / enemy.maxHp) * 100);
@@ -748,7 +680,6 @@
 
             if (enemy.hp <= 0) {
                 document.querySelectorAll('.villain-slot')[targetIndex].style.opacity = '0.25';
-                
                 if (villainsData.every(e => e.hp <= 0)) {
                     triggerLevelClear();
                 } else {
@@ -764,46 +695,27 @@
             let heroDied = false;
             villainsData.forEach((v) => {
                 if (v.hp > 0) {
-                    v.distance -= (14 + stage * 2);
-                    if (v.distance <= 35) {
-                        heroDied = true;
-                    }
+                    v.distance -= (12 + stage * 2);
+                    if (v.distance <= 30) heroDied = true;
                 }
             });
-
             if (heroDied) {
-                showGameOverModal("DEFEAT", "The villains breached your defenses and touched the hero!");
+                showGameOverModal("DEFEAT", "The enemies breached your defense line!");
             }
         }
 
         function triggerLevelClear() {
             if (level === 5) {
-                const angel = document.getElementById('angel');
-                angel.style.display = 'block';
-
-                setTimeout(() => {
-                    if (!document.querySelector('.angel-halo')) {
-                        const halo = document.createElement('div');
-                        halo.className = 'angel-halo';
-                        const wL = document.createElement('div');
-                        wL.className = 'angel-wing wing-left';
-                        const wR = document.createElement('div');
-                        wR.className = 'angel-wing wing-right';
-                        angel.appendChild(halo);
-                        angel.appendChild(wL);
-                        angel.appendChild(wR);
-                    }
-                }, 400);
-
+                document.getElementById('angel').style.display = 'block';
                 setTimeout(() => {
                     if (stage === 4) {
-                        launchFinalCelebration();
+                        showGameOverModal("VICTORY", "The grand conspiracy is defeated. Light triumphs!");
                     } else {
-                        showUpgradeModal(`Stage ${stage} Cleared`, "Choose a power-up before entering the next stage.");
+                        showUpgradeModal(`Stage ${stage} Cleared`, "Choose an upgrade before entering next stage.");
                     }
-                }, 1300);
+                }, 1000);
             } else {
-                showUpgradeModal(`Level ${level} Cleared`, "Choose one of 3 power-ups to enhance your equipment (Up to Level 7).");
+                showUpgradeModal(`Level ${level} Cleared`, "Select a power-up for your equipment (Up to Level 7).");
             }
         }
 
@@ -816,7 +728,7 @@
             upgradeBox.innerHTML = '';
 
             const choices = [
-                { key: 'clawSize', name: 'Enhance Claw Size', desc: `Current Lvl: ${upgrades.clawSize}/7` },
+                { key: 'reach', name: 'Enhance Reach', desc: `Current Lvl: ${upgrades.reach}/7` },
                 { key: 'power', name: 'Enhance Power', desc: `Current Lvl: ${upgrades.power}/7` },
                 { key: 'bounce', name: 'Enhance Bounce', desc: `Current Lvl: ${upgrades.bounce}/7` }
             ];
@@ -851,42 +763,9 @@
             document.getElementById('msg-desc').innerText = desc;
             document.getElementById('upgrade-box').innerHTML = '';
             document.getElementById('overlay-btn').style.display = 'inline-block';
-            document.getElementById('overlay-btn').innerText = "Try Again";
-            document.getElementById('overlay-btn').onclick = () => location.reload();
-            document.getElementById('overlay-msg').style.display = 'flex';
-        }
-
-        function launchFinalCelebration() {
-            const overlay = document.getElementById('overlay-msg');
-            document.getElementById('msg-title').innerText = "CONGRATULATIONS";
-            document.getElementById('msg-desc').innerText = "The grand conspiracy is unraveled. Truth and light triumph!";
-            document.getElementById('upgrade-box').innerHTML = '';
-            document.getElementById('overlay-btn').style.display = 'inline-block';
             document.getElementById('overlay-btn').innerText = "Play Again";
             document.getElementById('overlay-btn').onclick = () => location.reload();
-            overlay.style.display = 'flex';
-
-            const flyObj = document.getElementById('fly-object');
-            flyObj.style.display = 'block';
-            let posX = 50, posY = 50, vx = 2.2, vy = 1.8;
-
-            setInterval(() => {
-                posX += vx;
-                posY += vy;
-                if (posX <= 0 || posX >= window.innerWidth - 80) vx *= -1;
-                if (posY <= 0 || posY >= window.innerHeight - 80) vy *= -1;
-                flyObj.style.left = posX + 'px';
-                flyObj.style.top = posY + 'px';
-            }, 25);
-
-            setInterval(() => {
-                const sp = document.createElement('div');
-                sp.className = 'spark';
-                sp.style.left = Math.random() * window.innerWidth + 'px';
-                sp.style.top = '0px';
-                document.body.appendChild(sp);
-                setTimeout(() => sp.remove(), 2000);
-            }, 100);
+            document.getElementById('overlay-msg').style.display = 'flex';
         }
     </script>
 </body>
