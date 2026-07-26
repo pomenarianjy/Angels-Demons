@@ -574,7 +574,6 @@
             bounce: 1  
         };
 
-        // Strict list of allowed villain files only (no hero image allowed here)
         const allowedVillains = [
             'villain1.png', 'villain2.png', 'villain3.png', 'villain4.png',
             'villain5.png', 'villain6.png', 'villain7.png', 'villain8.png'
@@ -587,7 +586,6 @@
             4: { name: "The Close", prefix: "S4" }
         };
 
-        // Standardized clean pile bead tiers
         const beadTiers = [
             { name: 'White', baseValue: 5, color: '#f8fafc', symbol: '', size: 14, weight: 0.70 },
             { name: 'Gold', baseValue: 20, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 100%)', symbol: '★', size: 16, weight: 0.20 },
@@ -613,7 +611,6 @@
                 let rowArr = [];
                 for (let c = 0; c < 4; c++) {
                     if (Math.random() < 0.75) {
-                        // Strictly pick index corresponding only to the provided allowedVillains list
                         let vIndex = level === 5 ? Math.min(stage + 3, allowedVillains.length - 1) : ((stage + r + c) % allowedVillains.length);
                         let vSrc = allowedVillains[vIndex];
                         let maxHp = level === 5 ? 400 + (stage * 80) : 150 + (stage * 50) + (level * 35);
@@ -678,7 +675,6 @@
                         }
 
                         let pct = Math.max(0, (villain.hp / villain.maxHp) * 100);
-                        // Strict safety check: Fallback to villain1.png if missing, and never let hero.png render here
                         let safeSrc = allowedVillains.includes(villain.src) ? villain.src : 'villain1.png';
                         unit.innerHTML = `
                             <div class="v-hp-container"><div class="v-hp-bar" style="width: ${pct}%;"></div></div>
@@ -706,7 +702,6 @@
             let idCounter = 0;
             let totalBeads = 95;
 
-            // Generate structured, logically stacked heap matching user reference image perfectly
             let cols = 14;
             let spacingX = (pitWidth - 30) / cols;
 
@@ -733,7 +728,7 @@
                 treasureBeads.push({
                     id: idCounter,
                     tier: selectedTier.name,
-                    value: selectedTier.baseValue * upgrades.power,
+                    value: selectedTier.baseValue, // Fixed base value per bead type
                     x: x,
                     y: y,
                     collected: false
@@ -761,7 +756,6 @@
             const pit = document.getElementById('vault-pit');
             const pitWidth = pit.clientWidth || 350;
             
-            // 6 sections across the pit width
             const sectionWidth = pitWidth / 6;
             const targetX = (dirIndex * sectionWidth) + (sectionWidth / 2);
             
@@ -769,27 +763,28 @@
             const verticalCable = document.getElementById('vertical-cable');
             const grandHead = document.getElementById('grand-claw-head');
 
-            // 1. Smooth Horizontal Movement
             clawRig.style.left = `${targetX}px`;
 
             setTimeout(() => {
-                // 2. Slow drop down into the treasure heap
                 let dropHeight = 90 + (upgrades.reach * 12);
                 verticalCable.style.height = `${dropHeight}px`;
                 grandHead.style.top = `${dropHeight}px`;
 
                 setTimeout(() => {
-                    // 3. Close the grand claw prongs
                     grandHead.classList.add('closed');
 
                     setTimeout(() => {
                         let scoopedPower = 0;
                         let dropTipY = pit.clientHeight - dropHeight - 36;
 
+                        // Direction-specific dynamic multiplier so every button yields completely unique power sums!
+                        const uniqueMultipliers = [0.8, 1.3, 1.0, 1.6, 0.6, 1.9];
+                        let dirMultiplier = uniqueMultipliers[dirIndex];
+
                         treasureBeads.forEach(b => {
                             if (!b.collected) {
                                 let dist = Math.hypot(b.x - targetX, b.y - dropTipY);
-                                if (dist < 45) {
+                                if (dist < 42) {
                                     b.collected = true;
                                     scoopedPower += b.value;
                                     const el = document.getElementById(`bead-${b.id}`);
@@ -801,14 +796,16 @@
                             }
                         });
 
+                        // Ensure dynamic calculation varies per direction slot with upgrade scaling
                         if (scoopedPower === 0) {
-                            scoopedPower = 40 * upgrades.power; // Guarantee reward if empty spot
+                            scoopedPower = Math.round((25 + (dirIndex * 17)) * upgrades.power);
+                        } else {
+                            scoopedPower = Math.round(scoopedPower * dirMultiplier * upgrades.power);
                         }
 
                         heroPower += scoopedPower;
-                        document.getElementById('hud-power').innerText = `Power: ${heroPower} | Grand Claw scooped +${scoopedPower}! Select a target villain!`;
+                        document.getElementById('hud-power').innerText = `Power: ${heroPower} | Direction ${dirIndex + 1} scooped +${scoopedPower}! Select target!`;
 
-                        // 4. Retract claw and open prongs
                         verticalCable.style.height = '25px';
                         grandHead.style.top = '25px';
                         grandHead.classList.remove('closed');
