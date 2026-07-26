@@ -116,7 +116,7 @@
             background: rgba(14, 20, 32, 0.75);
         }
 
-        /* Hero & Angel Containers (Original Proportion Maintained) */
+        /* Hero & Angel Containers (Exact same size and proportion maintained) */
         #hero-container {
             position: absolute;
             left: 5%;
@@ -626,7 +626,7 @@
             bounce: 1  
         };
 
-        const allowedVillains = ['villain1.png', 'villain2.png', 'villain4.png'];
+        const allowedVillains = ['villain1.png', 'villian2.png', 'villian4.png'];
 
         const stageBosses = {
             1: 'villain6.png',
@@ -642,7 +642,6 @@
             4: { name: "The Close", prefix: "S4" }
         };
 
-        // Adjusted bead values slightly lower so villains don't die instantly
         const beadTiers = [
             { name: 'Pearl', baseValue: 4, color: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #cbd5e1 100%)', symbol: '•', size: 18, weight: 0.65 },
             { name: 'Gold Gem', baseValue: 14, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #ca8a04 100%)', symbol: '★', size: 22, weight: 0.22 },
@@ -678,8 +677,8 @@
             }
 
             if (level === 5) {
-                // Last level of each stage: Dedicated stage boss assigned to the last column (col 3)
-                let bossRow = 1; // Center row for prominent visibility
+                // Last level of each stage: Dedicated stage boss assigned to the last column (col 3) using exact specified filenames
+                let bossRow = 1; 
                 let bossSrc = stageBosses[stage] || 'villain6.png';
                 let bossHp = 280;
                 gridData[bossRow][3] = { row: bossRow, col: 3, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
@@ -855,7 +854,7 @@
                     setTimeout(() => {
                         let scoopedPower = 0;
                         let dropTipY = pit.clientHeight - dropHeight - 36;
-                        const uniqueDirectionWeights = [45, 65, 55, 75, 50, 70]; // Adjusted downwards
+                        const uniqueDirectionWeights = [45, 65, 55, 75, 50, 70];
                         let baseDirValue = uniqueDirectionWeights[dirIndex];
 
                         treasureBeads.forEach(b => {
@@ -1080,7 +1079,17 @@
                 waitingForTouchToAdvance = 'animating';
 
                 const heroCont = document.getElementById('hero-container');
-                heroCont.style.left = '65%';
+                const angelCont = document.getElementById('angel-container');
+                
+                // Position hero to physically touch angel without stopping at a distance
+                const heroWidth = heroCont.offsetWidth || 110;
+                const arenaWidth = document.getElementById('battle-arena').clientWidth;
+                // Calculate percentage position so hero right edge meets angel left edge precisely
+                let angelRightPct = 5; // right: 5%
+                let angelPixelLeft = arenaWidth * (1 - 0.05) - 110;
+                let heroTargetPct = ((angelPixelLeft - heroWidth) / arenaWidth) * 100;
+                
+                heroCont.style.left = `${heroTargetPct}%`;
 
                 document.getElementById('hud-power').innerText = `Hero meeting Angel...`;
 
@@ -1106,25 +1115,31 @@
 
         function spawnWhiteHeartFireworks() {
             const angelCont = document.getElementById('angel-container');
+            const heroCont = document.getElementById('hero-container');
 
-            for (let i = 0; i < 18; i++) {
-                const heart = document.createElement('div');
-                heart.className = 'white-heart';
-                heart.innerHTML = '❤️';
-                
-                let angle = (Math.random() * Math.PI) - (Math.PI / 2);
-                let dist = 60 + Math.random() * 90;
-                let dx = Math.cos(angle) * dist;
-                let dy = Math.sin(angle) * dist - 30;
+            // Spill out pure white hearts from BOTH sides (Angel side and Hero side)
+            let containers = [angelCont, heroCont];
 
-                heart.style.setProperty('--dx', `${dx}px`);
-                heart.style.setProperty('--dy', `${dy}px`);
-                heart.style.left = `50%`;
-                heart.style.top = `30%`;
+            containers.forEach(cont => {
+                for (let i = 0; i < 14; i++) {
+                    const heart = document.createElement('div');
+                    heart.className = 'white-heart';
+                    heart.innerHTML = '🤍'; // Pure white heart symbol
+                    
+                    let angle = (Math.random() * Math.PI) - (Math.PI / 2);
+                    let dist = 60 + Math.random() * 90;
+                    let dx = Math.cos(angle) * dist;
+                    let dy = Math.sin(angle) * dist - 30;
 
-                angelCont.appendChild(heart);
-                setTimeout(() => heart.remove(), 1200);
-            }
+                    heart.style.setProperty('--dx', `${dx}px`);
+                    heart.style.setProperty('--dy', `${dy}px`);
+                    heart.style.left = `50%`;
+                    heart.style.top = `30%`;
+
+                    cont.appendChild(heart);
+                    setTimeout(() => heart.remove(), 1200);
+                }
+            });
         }
 
         function showUpgradeModal(title, desc) {
