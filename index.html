@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Angels & Demons & Banker - Physics Claw</title>
+    <title>Angels & Demons & Banker - 2D Formations</title>
     <style>
         * {
             box-sizing: border-box;
@@ -94,9 +94,9 @@
             position: relative;
         }
 
-        /* Top Area: Battle Arena */
+        /* Top Area: Battle Arena with 2D Formations */
         #battle-arena {
-            height: 40%;
+            height: 45%;
             width: 100%;
             position: relative;
             background: #090e1a;
@@ -110,50 +110,61 @@
             height: 100%;
             background: rgba(14, 20, 32, 0.75);
         }
+
+        /* Bigger Hero Picture */
         #hero-container {
             position: absolute;
-            left: 5%;
-            bottom: 10%;
+            left: 8%;
+            bottom: 15%;
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 10;
         }
         #hero {
-            width: 55px;
-            height: 85px;
+            width: 95px;
+            height: 135px;
             object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(218, 165, 32, 0.5));
         }
         #angel {
             position: absolute;
-            left: 15%;
-            bottom: 10%;
-            width: 55px;
-            height: 85px;
+            left: 20%;
+            bottom: 15%;
+            width: 95px;
+            height: 135px;
             object-fit: contain;
             display: none;
             z-index: 10;
         }
 
-        /* Villains Container */
-        #villains-container {
+        /* 2D Formation Field for Villains */
+        #villains-formation-field {
             position: absolute;
-            right: 5%;
-            bottom: 10%;
+            right: 8%;
+            top: 10%;
+            width: 48%;
+            height: 80%;
             display: flex;
-            gap: 10px;
-            align-items: flex-end;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: flex-end;
+            gap: 12px;
             z-index: 10;
         }
-        .villain-slot {
+        .villain-unit {
             display: flex;
             flex-direction: column;
             align-items: center;
             cursor: pointer;
             padding: 4px;
             border-radius: 6px;
+            transition: transform 0.1s;
         }
-        .villain-slot.active-target {
+        .villain-unit:hover {
+            transform: scale(1.08);
+        }
+        .villain-unit.active-target {
             background: rgba(218, 165, 32, 0.25);
             border: 1px dashed #d4af37;
         }
@@ -163,7 +174,7 @@
             background: #222;
             border: 1px solid #d4af37;
             border-radius: 3px;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             overflow: hidden;
         }
         .v-hp-bar {
@@ -173,13 +184,13 @@
         }
         .villain-img {
             width: 45px;
-            height: 70px;
+            height: 65px;
             object-fit: contain;
         }
 
-        /* Bottom Area: 180-Degree Clock-Arm Rotating Claw & Physics Bead Pile Pit */
+        /* Bottom Area: 180-Degree Clock-Arm Rotating Claw & Bead Pile Pit */
         #claw-section {
-            height: 60%;
+            height: 55%;
             width: 100%;
             background: #03050a;
             position: relative;
@@ -202,7 +213,7 @@
             overflow: hidden;
         }
 
-        /* Fixed Root Anchor point at top-center of the vault pit (like a clock pivot) */
+        /* Fixed Root Anchor point at top-center of the vault pit */
         #claw-pivot {
             position: absolute;
             top: 15px;
@@ -222,15 +233,14 @@
             top: 15px;
             left: 50%;
             width: 6px;
-            height: 30px; /* Lengthens dynamically during grab */
+            height: 30px;
             background: #8b6508;
             transform-origin: top center;
-            transform: translateX(-50%) rotate(0deg); /* 0deg points straight down; ranges -90deg to +90deg (180 deg sweep) */
+            transform: translateX(-50%) rotate(0deg);
             z-index: 25;
             pointer-events: none;
         }
 
-        /* The Grabber Hook / Claw Head at the end of the arm */
         #claw-head {
             position: absolute;
             bottom: -22px;
@@ -389,23 +399,24 @@
         <div id="game-pane">
             <div id="hud">
                 <div id="hud-info">Stage 1 - Level 1</div>
-                <div id="hud-power">Power: 0 | Click Pit to Aim 180° Clock Claw</div>
+                <div id="hud-power">Power: 0 | Click Pit for 180° Clock Claw & Select Target in Formation</div>
             </div>
 
-            <!-- Top Area: Battle Arena -->
+            <!-- Top Area: Battle Arena with 2D Formations -->
             <div id="battle-arena">
                 <div id="road">
                     <div id="hero-container">
                         <img id="hero" src="hero.png" alt="Hero">
                     </div>
                     <img id="angel" src="angel.png" alt="Angel">
-                    <div id="villains-container"></div>
+                    <!-- 2D Formation Field -->
+                    <div id="villains-formation-field"></div>
                 </div>
             </div>
 
             <!-- Bottom Area: 180-Degree Clock-Arm Rotating Claw & Bead Pile Pit -->
             <div id="claw-section" onpointerdown="handleClawTrigger(event)">
-                <div id="vault-pit" id="pit-box">
+                <div id="vault-pit">
                     <div id="claw-pivot"></div>
                     <div id="rotating-arm">
                         <div id="claw-head">
@@ -467,31 +478,32 @@
             document.getElementById('hud-info').innerText = `Stage ${stage} - Level ${level}`;
             document.getElementById('angel').style.display = 'none';
 
-            const villainCount = Math.min(3 + stage + Math.floor(level / 2), 7);
+            // 2D formation enemy count
+            const villainCount = Math.min(4 + stage + Math.floor(level / 2), 8);
             villainsData = [];
-            const container = document.getElementById('villains-container');
-            container.innerHTML = '';
+            const formationField = document.getElementById('villains-formation-field');
+            formationField.innerHTML = '';
 
             for (let i = 0; i < villainCount; i++) {
                 let vId = level === 5 ? Math.min(stage + 4, 8) : Math.min(stage + (i % 4), 8);
                 let maxHp = level === 5 ? 180 + (stage * 30) : 50 + (stage * 15) + (level * 12);
                 
-                villainsData.push({ index: i, id: vId, hp: maxHp, maxHp: maxHp, distance: 140 + (i * 20) });
+                villainsData.push({ index: i, id: vId, hp: maxHp, maxHp: maxHp, forwardOffset: 0 });
 
-                const slot = document.createElement('div');
-                slot.className = `villain-slot ${i === 0 ? 'active-target' : ''}`;
-                slot.onclick = () => selectTarget(i);
-                slot.innerHTML = `
+                const unit = document.createElement('div');
+                unit.className = `villain-unit ${i === 0 ? 'active-target' : ''}`;
+                unit.onclick = () => selectTarget(i);
+                unit.innerHTML = `
                     <div class="v-hp-container"><div class="v-hp-bar" id="v-hp-${i}" style="width: 100%;"></div></div>
-                    <img class="villain-img" src="${villainFiles[vId]}" alt="Villain">
+                    <img class="villain-img" src="${villainFiles[vId]}" alt="Villain Formation">
                 `;
-                container.appendChild(slot);
+                formationField.appendChild(unit);
             }
             activeTargetIndex = 0;
             initPhysicsBeadPile();
         }
 
-        // Initialize piled-up beads mimicking the reference photo (stacked tightly at the bottom pit)
+        // Initialize piled-up beads mimicking the reference photo
         function initPhysicsBeadPile() {
             const container = document.getElementById('bead-container');
             container.innerHTML = '';
@@ -509,7 +521,6 @@
                 for (let c = 0; c < cols; c++) {
                     const isGold = Math.random() < (0.18 + upgrades.power * 0.02);
                     const size = 18;
-                    // Stagger columns for pile stacking effect
                     const x = 15 + c * 20 + (r % 2) * 8;
                     const y = pitHeight - 25 - r * 16;
 
@@ -550,40 +561,31 @@
             const pit = document.getElementById('vault-pit');
             const rect = pit.getBoundingClientRect();
             
-            // Pivot center coordinates relative to the pit container
             const pivotX = rect.width / 2;
             const pivotY = 15;
 
-            // Click coordinates relative to pivot
             const clickX = event.clientX - rect.left - pivotX;
             const clickY = event.clientY - rect.top - pivotY;
 
-            // Calculate angle in radians, restricted strictly to bottom 180 degrees (-90deg to +90deg relative to straight down)
-            let rad = Math.atan2(clickX, Math.max(5, clickY)); // angle from vertical downward axis
+            let rad = Math.atan2(clickX, Math.max(5, clickY));
             let deg = rad * (180 / Math.PI);
-            deg = Math.max(-85, Math.min(85, deg)); // Clamp to 180-degree lower semicircle
+            deg = Math.max(-85, Math.min(85, deg));
 
             const arm = document.getElementById('rotating-arm');
-            
-            // Rotate arm like a clock hand pointing towards the tap direction
             arm.style.transform = `translateX(-50%) rotate(${deg}deg)`;
 
-            // Lengthen arm dynamically toward clicked destination, boosted by Reach upgrade (up to 7 levels)
             const maxReachDist = 140 + (upgrades.reach * 22);
             arm.style.height = `${maxReachDist}px`;
 
             setTimeout(() => {
                 let collectedPoints = 0;
 
-                // Check collision/scooping with piled beads along the arm's trajectory path
                 physicsBeads.forEach(b => {
                     if (!b.collected) {
-                        // Approximate bead angle relative to pivot
                         const beadAngle = Math.atan2(b.x - pivotX, pit.clientHeight - b.y - pivotY) * (180 / Math.PI);
                         const angleDiff = Math.abs(deg - beadAngle);
                         const beadDistFromPivot = Math.hypot(b.x - pivotX, pit.clientHeight - b.y - pivotY);
 
-                        // If claw angle aligns and reach distance covers the bead's stack layer
                         if (angleDiff < 18 && beadDistFromPivot <= maxReachDist) {
                             b.collected = true;
                             collectedPoints += b.value;
@@ -597,15 +599,13 @@
                 });
 
                 heroPower += collectedPoints;
-                document.getElementById('hud-power').innerText = `Power: ${heroPower} | Scooped +${collectedPoints} Pts!`;
+                document.getElementById('hud-power').innerText = `Power: ${heroPower} | Scooped +${collectedPoints} Pts! Choose target in formation!`;
 
-                // Retract arm back to starting position
                 arm.style.height = '30px';
                 arm.style.transform = 'translateX(-50%) rotate(0deg)';
 
                 setTimeout(() => {
                     isClawBusy = false;
-                    // Respawn pile if all beads cleared
                     if (physicsBeads.every(b => b.collected)) {
                         initPhysicsBeadPile();
                     }
@@ -613,10 +613,11 @@
             }, 350);
         }
 
+        // Allow player to freely choose which villain to target first in the 2D formation
         function selectTarget(index) {
             if (villainsData[index].hp <= 0) return;
             activeTargetIndex = index;
-            document.querySelectorAll('.villain-slot').forEach((el, idx) => {
+            document.querySelectorAll('.villain-unit').forEach((el, idx) => {
                 if (idx === index) el.classList.add('active-target');
                 else el.classList.remove('active-target');
             });
@@ -625,42 +626,42 @@
 
         function fireCrossBullet(targetIndex) {
             if (heroPower <= 0) {
-                document.getElementById('hud-power').innerText = `No Power! Click pit to rotate clock-arm claw & scoop beads!`;
+                document.getElementById('hud-power').innerText = `No Power! Click pit to rotate clock-arm claw & scoop beads first!`;
                 return;
             }
 
-            const slots = document.querySelectorAll('.villain-slot');
-            if (!slots[targetIndex]) return;
+            const units = document.querySelectorAll('.villain-unit');
+            if (!units[targetIndex]) return;
 
             const arena = document.getElementById('battle-arena');
             const bullet = document.createElement('div');
             bullet.className = 'cardinal-bullet';
-            bullet.style.left = '12%';
-            bullet.style.bottom = '18%';
+            bullet.style.left = '16%';
+            bullet.style.bottom = '22%';
             arena.appendChild(bullet);
 
-            const targetRect = slots[targetIndex].getBoundingClientRect();
+            const targetRect = units[targetIndex].getBoundingClientRect();
             const arenaRect = arena.getBoundingClientRect();
             const targetX = targetRect.left - arenaRect.left + (targetRect.width / 2);
+            const targetY = targetRect.top - arenaRect.top + (targetRect.height / 2);
 
-            let currentX = arenaRect.width * 0.12;
-            let distance = targetX - currentX;
+            let currentX = arenaRect.width * 0.16;
+            let currentY = arenaRect.height * 0.78;
+            let distanceX = targetX - currentX;
+            let distanceY = targetY - currentY;
             let steps = 18;
             let step = 0;
 
             const flight = setInterval(() => {
                 step++;
-                currentX += distance / steps;
+                currentX += distanceX / steps;
+                currentY += distanceY / steps;
                 bullet.style.left = currentX + 'px';
+                bullet.style.bottom = (arenaRect.height - currentY) + 'px';
 
                 if (step >= steps) {
                     clearInterval(flight);
-                    if (upgrades.bounce > 1) {
-                        bullet.style.left = (currentX + upgrades.bounce * 25) + 'px';
-                        setTimeout(() => bullet.remove(), 120);
-                    } else {
-                        bullet.remove();
-                    }
+                    bullet.remove();
                     processDamage(targetIndex);
                 }
             }, 18);
@@ -679,28 +680,30 @@
             document.getElementById(`v-hp-${targetIndex}`).style.width = pct + '%';
 
             if (enemy.hp <= 0) {
-                document.querySelectorAll('.villain-slot')[targetIndex].style.opacity = '0.25';
+                document.querySelectorAll('.villain-unit')[targetIndex].style.opacity = '0.25';
                 if (villainsData.every(e => e.hp <= 0)) {
                     triggerLevelClear();
                 } else {
                     const nextAlive = villainsData.findIndex(e => e.hp > 0);
-                    if (nextAlive !== -1) selectTarget(nextAlive);
+                    if (nextAlive !== -1) {
+                        selectTarget(nextAlive);
+                    }
                 }
             } else {
-                advanceVillains();
+                advanceVillainFormation();
             }
         }
 
-        function advanceVillains() {
+        function advanceVillainFormation() {
             let heroDied = false;
             villainsData.forEach((v) => {
                 if (v.hp > 0) {
-                    v.distance -= (12 + stage * 2);
-                    if (v.distance <= 30) heroDied = true;
+                    v.forwardOffset += (10 + stage * 2);
+                    if (v.forwardOffset >= 120) heroDied = true;
                 }
             });
             if (heroDied) {
-                showGameOverModal("DEFEAT", "The enemies breached your defense line!");
+                showGameOverModal("DEFEAT", "The 2D formation breached your defenses!");
             }
         }
 
