@@ -144,7 +144,7 @@
             filter: drop-shadow(0 0 22px rgba(255, 255, 255, 0.85));
         }
 
-        /* 3x4 Grid Formation Field exclusively for Villains (Never Hero) */
+        /* 3x4 Grid Formation Field exclusively for Villains */
         #villains-grid-field {
             position: absolute;
             right: 3%;
@@ -574,11 +574,11 @@
             bounce: 1  
         };
 
-        // Strict list of valid villain image files (hero.png is NEVER included)
-        const villainFiles = {
-            1: 'villain1.png', 2: 'villain2.png', 3: 'villain3.png', 4: 'villain4.png',
-            5: 'villain5.png', 6: 'villain6.png', 7: 'villain7.png', 8: 'villain8.png'
-        };
+        // Strict list of allowed villain files only (no hero image allowed here)
+        const allowedVillains = [
+            'villain1.png', 'villain2.png', 'villain3.png', 'villain4.png',
+            'villain5.png', 'villain6.png', 'villain7.png', 'villain8.png'
+        ];
 
         const stagesConfig = {
             1: { name: "The Detective", prefix: "S1" },
@@ -613,12 +613,14 @@
                 let rowArr = [];
                 for (let c = 0; c < 4; c++) {
                     if (Math.random() < 0.75) {
-                        let vId = level === 5 ? Math.min(stage + 4, 8) : Math.min(stage + ((r + c) % 4), 8);
+                        // Strictly pick index corresponding only to the provided allowedVillains list
+                        let vIndex = level === 5 ? Math.min(stage + 3, allowedVillains.length - 1) : ((stage + r + c) % allowedVillains.length);
+                        let vSrc = allowedVillains[vIndex];
                         let maxHp = level === 5 ? 400 + (stage * 80) : 150 + (stage * 50) + (level * 35);
                         rowArr.push({
                             row: r,
                             col: c,
-                            id: vId,
+                            src: vSrc,
                             hp: maxHp,
                             maxHp: maxHp
                         });
@@ -632,9 +634,9 @@
             let colZeroHasVillain = gridData.some(row => row[0] !== null);
             if (!colZeroHasVillain) {
                 let rRand = Math.floor(Math.random() * 3);
-                let vId = Math.min(stage, 8);
+                let vSrc = allowedVillains[(stage - 1) % allowedVillains.length];
                 let maxHp = 150 + (stage * 50);
-                gridData[rRand][0] = { row: rRand, col: 0, id: vId, hp: maxHp, maxHp: maxHp };
+                gridData[rRand][0] = { row: rRand, col: 0, src: vSrc, hp: maxHp, maxHp: maxHp };
             }
 
             renderGrid();
@@ -676,10 +678,11 @@
                         }
 
                         let pct = Math.max(0, (villain.hp / villain.maxHp) * 100);
-                        // Fallback strictly to villain1.png if image fails, NEVER hero.png
+                        // Strict safety check: Fallback to villain1.png if missing, and never let hero.png render here
+                        let safeSrc = allowedVillains.includes(villain.src) ? villain.src : 'villain1.png';
                         unit.innerHTML = `
                             <div class="v-hp-container"><div class="v-hp-bar" style="width: ${pct}%;"></div></div>
-                            <img class="villain-img" src="${villainFiles[villain.id]}" alt="Villain" onerror="this.src='villain1.png';">
+                            <img class="villain-img" src="${safeSrc}" alt="Villain" onerror="this.src='villain1.png';">
                         `;
                         cell.appendChild(unit);
                     }
@@ -703,7 +706,7 @@
             let idCounter = 0;
             let totalBeads = 95;
 
-            // Generate structured, logically stacked heap matching user reference image
+            // Generate structured, logically stacked heap matching user reference image perfectly
             let cols = 14;
             let spacingX = (pitWidth - 30) / cols;
 
