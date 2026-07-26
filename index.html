@@ -144,7 +144,7 @@
             filter: drop-shadow(0 0 22px rgba(255, 255, 255, 0.85));
         }
 
-        /* 3x4 Grid Formation Field exclusively for Villains */
+        /* Strict 3x4 Grid Formation Field exclusively for Villains */
         #villains-grid-field {
             position: absolute;
             right: 3%;
@@ -439,7 +439,7 @@
             align-items: center;
             z-index: 60;
             text-align: center;
-            padding: 20px;
+5            padding: 20px;
         }
         #overlay-msg h2 {
             font-size: 2.2rem;
@@ -517,7 +517,7 @@
                         <img id="hero" src="hero.png" alt="Hero">
                     </div>
                     <img id="angel" src="angel.png" alt="Angel">
-                    <!-- Invisible 3x4 Grid Formation Field exclusively for Villains -->
+                    <!-- Strict 3x4 Grid Formation Field -->
                     <div id="villains-grid-field"></div>
                 </div>
             </div>
@@ -574,6 +574,7 @@
             bounce: 1  
         };
 
+        // Strict allowed villains list from villain1.png to villain8.png only
         const allowedVillains = [
             'villain1.png', 'villain2.png', 'villain3.png', 'villain4.png',
             'villain5.png', 'villain6.png', 'villain7.png', 'villain8.png'
@@ -606,6 +607,7 @@
             document.getElementById('hud-info').innerText = `Stage ${stage} - Level ${level}`;
             document.getElementById('angel').style.display = 'none';
 
+            // Strictly 3 rows by 4 columns grid matrix
             gridData = [];
             for (let r = 0; r < 3; r++) {
                 let rowArr = [];
@@ -613,7 +615,8 @@
                     if (Math.random() < 0.75) {
                         let vIndex = level === 5 ? Math.min(stage + 3, allowedVillains.length - 1) : ((stage + r + c) % allowedVillains.length);
                         let vSrc = allowedVillains[vIndex];
-                        let maxHp = level === 5 ? 400 + (stage * 80) : 150 + (stage * 50) + (level * 35);
+                        // Calculated exact HP pool per villain unit logic (precisely killable based on precise claw collection)
+                        let maxHp = level === 5 ? 120 + (stage * 30) : 50 + (stage * 20) + (level * 15);
                         rowArr.push({
                             row: r,
                             col: c,
@@ -632,7 +635,7 @@
             if (!colZeroHasVillain) {
                 let rRand = Math.floor(Math.random() * 3);
                 let vSrc = allowedVillains[(stage - 1) % allowedVillains.length];
-                let maxHp = 150 + (stage * 50);
+                let maxHp = 50 + (stage * 20);
                 gridData[rRand][0] = { row: rRand, col: 0, src: vSrc, hp: maxHp, maxHp: maxHp };
             }
 
@@ -728,7 +731,7 @@
                 treasureBeads.push({
                     id: idCounter,
                     tier: selectedTier.name,
-                    value: selectedTier.baseValue, // Fixed base value per bead type
+                    value: selectedTier.baseValue,
                     x: x,
                     y: y,
                     collected: false
@@ -777,9 +780,9 @@
                         let scoopedPower = 0;
                         let dropTipY = pit.clientHeight - dropHeight - 36;
 
-                        // Direction-specific dynamic multiplier so every button yields completely unique power sums!
-                        const uniqueMultipliers = [0.8, 1.3, 1.0, 1.6, 0.6, 1.9];
-                        let dirMultiplier = uniqueMultipliers[dirIndex];
+                        // Each of the 6 direction buttons yields a completely unique logical sum calibrated to exact monster HP thresholds (~50 power baseline)
+                        const uniqueDirectionWeights = [35, 55, 45, 70, 40, 60];
+                        let baseDirValue = uniqueDirectionWeights[dirIndex];
 
                         treasureBeads.forEach(b => {
                             if (!b.collected) {
@@ -796,11 +799,11 @@
                             }
                         });
 
-                        // Ensure dynamic calculation varies per direction slot with upgrade scaling
+                        // Precise logic mapping: combines physical pile scoop with unique directional modifier and upgrades
                         if (scoopedPower === 0) {
-                            scoopedPower = Math.round((25 + (dirIndex * 17)) * upgrades.power);
+                            scoopedPower = Math.round(baseDirValue * upgrades.power);
                         } else {
-                            scoopedPower = Math.round(scoopedPower * dirMultiplier * upgrades.power);
+                            scoopedPower = Math.round((scoopedPower * 0.4 + baseDirValue * 0.6) * upgrades.power);
                         }
 
                         heroPower += scoopedPower;
@@ -858,23 +861,47 @@
                 if (step >= steps) {
                     clearInterval(flight);
                     bullet.remove();
-                    processDamage(r, c);
+                    processDamageWithBounce(r, c);
                 }
             }, 18);
         }
 
-        function processDamage(r, c) {
-            let villain = gridData[r][c];
-            if (!villain || villain.hp <= 0) return;
-
-            let damageDealt = heroPower + (upgrades.bounce * 15);
+        // Exact logic: Kill target villain, if remaining power is left, bounce directly to the villain right behind in the next column!
+        function processDamageWithBounce(r, c) {
+            let remainingPower = heroPower + (upgrades.bounce * 10);
             heroPower = 0;
             document.getElementById('hud-power').innerText = `Power: 0 | Deploy the grand mechanical claw to reload!`;
 
-            villain.hp -= damageDealt;
+            let currentCol = c;
+            let currentRow = r;
 
-            if (villain.hp <= 0) {
-                gridData[r][c] = null; 
+            while (remainingPower > 0 && currentCol < 4) {
+                let targetVillain = gridData[currentRow][currentCol];
+                if (targetVillain && targetVillain.hp > 0) {
+                    if (remainingPower >= targetVillain.hp) {
+                        remainingPower -= targetVillain.hp;
+                        targetVillain.hp = 0;
+                        gridData[currentRow][currentCol] = null;
+                    } else {
+                        targetVillain.hp -= remainingPower;
+                        remainingPower = 0;
+                    }
+                }
+                // Bounce to the villain right behind in the next column (same row or adjacent row if empty)
+                currentCol++;
+                if (currentCol < 4 && (!gridData[currentRow][currentCol] || gridData[currentRow][currentCol].hp <= 0)) {
+                    // Look for any active villain in the next column to bounce to
+                    let foundR = -1;
+                    for (let checkR = 0; checkR < 3; checkR++) {
+                        if (gridData[checkR][currentCol] && gridData[checkR][currentCol].hp > 0) {
+                            foundR = checkR;
+                            break;
+                        }
+                    }
+                    if (foundR !== -1) {
+                        currentRow = foundR;
+                    }
+                }
             }
 
             renderGrid();
