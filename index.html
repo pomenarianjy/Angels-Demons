@@ -116,7 +116,7 @@
             background: rgba(14, 20, 32, 0.75);
         }
 
-        /* Hero & Angel (Much bigger hero picture) */
+        /* Hero & Angel (Distinctly separate, massive hero picture) */
         #hero-container {
             position: absolute;
             left: 5%;
@@ -127,24 +127,24 @@
             z-index: 10;
         }
         #hero {
-            width: 150px;
-            height: 210px;
+            width: 160px;
+            height: 220px;
             object-fit: contain;
-            filter: drop-shadow(0 0 20px rgba(218, 165, 32, 0.8));
+            filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
         #angel {
             position: absolute;
-            left: 20%;
+            left: 21%;
             bottom: 10%;
-            width: 150px;
-            height: 210px;
+            width: 160px;
+            height: 220px;
             object-fit: contain;
             display: none;
             z-index: 10;
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            filter: drop-shadow(0 0 22px rgba(255, 255, 255, 0.85));
         }
 
-        /* Completely Invisible 3x4 Grid Formation Field for Villains */
+        /* Completely Invisible 3x4 Grid Formation Field exclusively for Villains */
         #villains-grid-field {
             position: absolute;
             right: 3%;
@@ -517,7 +517,7 @@
                         <img id="hero" src="hero.png" alt="Hero">
                     </div>
                     <img id="angel" src="angel.png" alt="Angel">
-                    <!-- Invisible 3x4 Grid Formation Container -->
+                    <!-- Invisible 3x4 Grid Formation Field strictly for Villains -->
                     <div id="villains-grid-field"></div>
                 </div>
             </div>
@@ -586,7 +586,7 @@
             4: { name: "The Close", prefix: "S4" }
         };
 
-        // Expanded and highly diverse treasure tiers with unique colors, symbols, and much higher power yield
+        // Diverse treasure tiers with unique colors, symbols, and high power yield
         const beadTiers = [
             { name: 'Bronze', baseValue: 8, color: 'radial-gradient(circle at 30% 30%, #d97706 0%, #b45309 60%, #78350f 100%)', symbol: 'B', size: 16, weight: 0.28 },
             { name: 'Jade', baseValue: 18, color: 'radial-gradient(circle at 30% 30%, #34d399 0%, #059669 60%, #065f46 100%)', symbol: 'J', size: 18, weight: 0.24 },
@@ -614,6 +614,7 @@
                 let rowArr = [];
                 for (let c = 0; c < 4; c++) {
                     if (Math.random() < 0.75) {
+                        // Strict check: Only pick from villainFiles, never hero.png
                         let vId = level === 5 ? Math.min(stage + 4, 8) : Math.min(stage + ((r + c) % 4), 8);
                         let maxHp = level === 5 ? 400 + (stage * 80) : 150 + (stage * 50) + (level * 35);
                         rowArr.push({
@@ -679,7 +680,7 @@
                         let pct = Math.max(0, (villain.hp / villain.maxHp) * 100);
                         unit.innerHTML = `
                             <div class="v-hp-container"><div class="v-hp-bar" style="width: ${pct}%;"></div></div>
-                            <img class="villain-img" src="${villainFiles[villain.id]}" alt="Villain" onerror="this.src='hero.png';">
+                            <img class="villain-img" src="${villainFiles[villain.id]}" alt="Villain" onerror="this.src='villain1.png';">
                         `;
                         cell.appendChild(unit);
                     }
