@@ -182,7 +182,6 @@
         .villain-unit:hover {
             transform: scale(1.12);
         }
-        /* Invisible boxes, glow or highlight only the image/unit when targetable */
         .villain-unit.active-target .villain-img {
             filter: drop-shadow(0 0 12px rgba(218, 165, 32, 0.9));
             transform: scale(1.08);
@@ -205,12 +204,16 @@
             height: 100%;
             background: #b8860b;
         }
-        /* Villains made significantly bigger */
+        /* Villains made significantly bigger, Level 5 boss even larger */
         .villain-img {
-            width: 65px;
-            height: 85px;
+            width: 75px;
+            height: 100px;
             object-fit: contain;
             transition: transform 0.2s, filter 0.2s;
+        }
+        .villain-img.boss-img {
+            width: 105px;
+            height: 140px;
         }
 
         /* Bottom Area: Grand Mechanical Claw Vault */
@@ -257,7 +260,7 @@
             width: 50px;
             height: 20px;
             transform: translateX(-50%);
-            transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: left 0.35s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 30;
         }
 
@@ -269,7 +272,7 @@
             height: 25px;
             background: linear-gradient(90deg, #b8860b, #f0e682, #b8860b);
             transform: translateX(-50%);
-            transition: height 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: height 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* Grand Ornamented Claw Head */
@@ -283,7 +286,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: top 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: top 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .claw-crown {
@@ -309,7 +312,7 @@
             background: linear-gradient(135deg, #d4af37, #8b6508);
             border: 1px solid #fff;
             box-shadow: 0 0 8px rgba(0,0,0,0.8);
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
         }
         .prong-l {
             border-top-left-radius: 10px;
@@ -335,17 +338,18 @@
             pointer-events: none;
         }
 
-        /* Clean Pile Beads */
+        /* Gemstones / Pearls overlapping cleanly and beautifully in a rich heap */
         .treasure-bead {
             position: absolute;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 10px;
             font-weight: bold;
-            box-shadow: inset 0 1px 3px rgba(255,255,255,0.7), 0 2px 4px rgba(0,0,0,0.8);
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -2px 4px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.4);
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
         }
 
         /* 6 Direction Arrow Deck */
@@ -401,11 +405,11 @@
             z-index: 40;
         }
 
-        /* Cardinal's Cross Bullet */
+        /* Cardinal's Cross Bullet - Made Bigger */
         .cardinal-bullet {
             position: absolute;
-            width: 22px;
-            height: 22px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -415,19 +419,19 @@
         .cardinal-bullet::before {
             content: '';
             position: absolute;
-            width: 4px;
-            height: 20px;
+            width: 6px;
+            height: 32px;
             background: #d4af37;
-            box-shadow: 0 0 8px #fff;
+            box-shadow: 0 0 12px #fff;
         }
         .cardinal-bullet::after {
             content: '';
             position: absolute;
-            width: 16px;
-            height: 4px;
+            width: 26px;
+            height: 6px;
             background: #d4af37;
-            box-shadow: 0 0 8px #fff;
-            top: 6px;
+            box-shadow: 0 0 12px #fff;
+            top: 14px;
         }
 
         /* Modal Overlay & Upgrades Selector */
@@ -579,10 +583,16 @@
             bounce: 1  
         };
 
-        const allowedVillains = [
-            'villain1.png', 'villain2.png', 'villain3.png', 'villain4.png',
-            'villain5.png', 'villain6.png', 'villain7.png', 'villain8.png'
-        ];
+        /* Random villains mix and match using villain1.png, villain2.png, villain4.png */
+        const allowedVillains = ['villain1.png', 'villain2.png', 'villain4.png'];
+
+        /* Stage boss mapping for Level 5 */
+        const stageBosses = {
+            1: 'villain6.png',
+            2: 'villian3.png',
+            3: 'villian7.png',
+            4: 'villian8.png'
+        };
 
         const stagesConfig = {
             1: { name: "The Detective", prefix: "S1" },
@@ -592,10 +602,10 @@
         };
 
         const beadTiers = [
-            { name: 'White', baseValue: 5, color: '#f8fafc', symbol: '', size: 14, weight: 0.70 },
-            { name: 'Gold', baseValue: 20, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 100%)', symbol: '★', size: 16, weight: 0.20 },
-            { name: 'Ruby', baseValue: 50, color: 'radial-gradient(circle at 30% 30%, #f87171 0%, #dc2626 100%)', symbol: '♦', size: 18, weight: 0.07 },
-            { name: 'Diamond', baseValue: 100, color: 'radial-gradient(circle at 30% 30%, #a5f3fc 0%, #0891b2 100%)', symbol: '💎', size: 20, weight: 0.03 }
+            { name: 'Pearl', baseValue: 6, color: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #cbd5e1 100%)', symbol: '•', size: 20, weight: 0.65 },
+            { name: 'Gold Gem', baseValue: 22, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #ca8a04 100%)', symbol: '★', size: 24, weight: 0.22 },
+            { name: 'Ruby', baseValue: 55, color: 'radial-gradient(circle at 30% 30%, #fca5a5 0%, #b91c1c 100%)', symbol: '♦', size: 28, weight: 0.10 },
+            { name: 'Diamond', baseValue: 120, color: 'radial-gradient(circle at 30% 30%, #cffafe 0%, #0e7490 100%)', symbol: '💎', size: 32, weight: 0.03 }
         ];
 
         function startGame() {
@@ -620,24 +630,45 @@
                 gridData.push(rowArr);
             }
 
-            // 3 to 7 villains rule
-            let totalVillainsToSpawn = Math.floor(Math.random() * 5) + 3;
-            let spawnedCount = 0;
+            if (level === 5) {
+                // Level 5: Big boss villain stands in the last column (col 3), requires 150 points to diminish
+                let bossRow = Math.floor(Math.random() * 3);
+                let bossSrc = stageBosses[stage] || 'villain6.png';
+                let bossHp = 150;
+                gridData[bossRow][3] = { row: bossRow, col: 3, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
-            // Ensure column 0 gets at least one villain
-            let rRand = Math.floor(Math.random() * 3);
-            let vIndex = Math.floor(Math.random() * allowedVillains.length);
-            let maxHp = 50;
-            gridData[rRand][0] = { row: rRand, col: 0, src: allowedVillains[vIndex], hp: maxHp, maxHp: maxHp };
-            spawnedCount++;
+                // Also spawn a couple of minions in earlier columns to make it tactical
+                let spawned = 1;
+                while (spawned < 3) {
+                    let r = Math.floor(Math.random() * 3);
+                    let c = Math.floor(Math.random() * 3); // cols 0, 1, 2
+                    if (gridData[r][c] === null) {
+                        let vi = Math.floor(Math.random() * allowedVillains.length);
+                        let hp = 50;
+                        gridData[r][c] = { row: r, col: c, src: allowedVillains[vi], hp: hp, maxHp: hp, isBoss: false };
+                        spawned++;
+                    }
+                }
+            } else {
+                // Standard levels 1-4: 3 to 7 villains rule
+                let totalVillainsToSpawn = Math.floor(Math.random() * 5) + 3;
+                let spawnedCount = 0;
 
-            while (spawnedCount < totalVillainsToSpawn) {
-                let r = Math.floor(Math.random() * 3);
-                let c = Math.floor(Math.random() * 4);
-                if (gridData[r][c] === null) {
-                    let vi = Math.floor(Math.random() * allowedVillains.length);
-                    gridData[r][c] = { row: r, col: c, src: allowedVillains[vi], hp: maxHp, maxHp: maxHp };
-                    spawnedCount++;
+                // Ensure column 0 gets at least one villain
+                let rRand = Math.floor(Math.random() * 3);
+                let vIndex = Math.floor(Math.random() * allowedVillains.length);
+                let maxHp = 50;
+                gridData[rRand][0] = { row: rRand, col: 0, src: allowedVillains[vIndex], hp: maxHp, maxHp: maxHp, isBoss: false };
+                spawnedCount++;
+
+                while (spawnedCount < totalVillainsToSpawn) {
+                    let r = Math.floor(Math.random() * 3);
+                    let c = Math.floor(Math.random() * 4);
+                    if (gridData[r][c] === null) {
+                        let vi = Math.floor(Math.random() * allowedVillains.length);
+                        gridData[r][c] = { row: r, col: c, src: allowedVillains[vi], hp: maxHp, maxHp: maxHp, isBoss: false };
+                        spawnedCount++;
+                    }
                 }
             }
 
@@ -649,14 +680,14 @@
             const field = document.getElementById('villains-grid-field');
             field.innerHTML = '';
 
-            // Determine the first ranking living villain in EACH row (the leftmost living villain per row)
+            // Determine the first ranking living villain in EACH row (leftmost living villain per row)
             let firstInRows = {};
             let hasAnyAlive = false;
 
             for (let r = 0; r < 3; r++) {
                 for (let c = 0; c < 4; c++) {
                     if (gridData[r][c] !== null && gridData[r][c].hp > 0) {
-                        firstInRows[r] = c; // First alive in row r
+                        firstInRows[r] = c;
                         hasAnyAlive = true;
                         break;
                     }
@@ -671,7 +702,6 @@
                     const villain = gridData[r][c];
                     if (villain !== null && villain.hp > 0) {
                         const unit = document.createElement('div');
-                        // Hero can choose to hit any first villain in their row
                         let isTargetable = (firstInRows[r] === c);
                         unit.className = `villain-unit ${isTargetable ? 'active-target' : 'disabled-target'}`;
                         
@@ -680,10 +710,12 @@
                         }
 
                         let pct = Math.max(0, (villain.hp / villain.maxHp) * 100);
-                        let safeSrc = allowedVillains.includes(villain.src) ? villain.src : 'villain1.png';
+                        let imgClass = villain.isBoss ? 'villain-img boss-img' : 'villain-img';
+                        let safeSrc = villain.src;
+
                         unit.innerHTML = `
                             <div class="v-hp-container"><div class="v-hp-bar" style="width: ${pct}%;"></div></div>
-                            <img class="villain-img" src="${safeSrc}" alt="Villain" onerror="this.src='villain1.png';">
+                            <img class="${imgClass}" src="${safeSrc}" alt="Villain" onerror="this.src='villain1.png';">
                         `;
                         cell.appendChild(unit);
                     }
@@ -705,18 +737,19 @@
             const pitWidth = pit.clientWidth || 350;
 
             let idCounter = 0;
-            let totalBeads = 95;
-            let cols = 14;
-            let spacingX = (pitWidth - 30) / cols;
+            let totalBeads = 80;
+            let cols = 12;
+            let spacingX = (pitWidth - 40) / cols;
 
             for (let i = 0; i < totalBeads; i++) {
                 let colIdx = i % cols;
                 let rowIdx = Math.floor(i / cols);
 
-                let x = 15 + (colIdx * spacingX) + (rowIdx % 2 === 0 ? 0 : spacingX * 0.5);
-                let y = 8 + (rowIdx * 12);
+                // Staggered overlapping grid heap arrangement so gemstones lie over each other naturally
+                let x = 20 + (colIdx * spacingX) + ((rowIdx % 2) * (spacingX * 0.5)) + ((Math.random() - 0.5) * 8);
+                let y = 6 + (rowIdx * 14) + ((Math.random() - 0.5) * 5);
 
-                if (x > pitWidth - 15) continue;
+                if (x > pitWidth - 20) continue;
 
                 let randW = Math.random();
                 let cumulative = 0;
@@ -746,7 +779,8 @@
                 beadEl.style.left = `${x - selectedTier.size / 2}px`;
                 beadEl.style.bottom = `${y}px`;
                 beadEl.style.background = selectedTier.color;
-                beadEl.style.color = '#fff';
+                beadEl.style.color = '#333';
+                beadEl.style.zIndex = rowIdx; // Proper layering order
                 beadEl.innerText = selectedTier.symbol;
                 container.appendChild(beadEl);
                 idCounter++;
@@ -768,8 +802,10 @@
 
             clawRig.style.left = `${targetX}px`;
 
+            // Faster mechanical speed (transitions shortened)
             setTimeout(() => {
-                let dropHeight = 90 + (upgrades.reach * 12);
+                // Extended reach so the claw goes much lower to physically touch and scoop the bottom beads
+                let dropHeight = 135 + (upgrades.reach * 12);
                 verticalCable.style.height = `${dropHeight}px`;
                 grandHead.style.top = `${dropHeight}px`;
 
@@ -779,13 +815,13 @@
                     setTimeout(() => {
                         let scoopedPower = 0;
                         let dropTipY = pit.clientHeight - dropHeight - 36;
-                        const uniqueDirectionWeights = [50, 75, 60, 90, 55, 80];
+                        const uniqueDirectionWeights = [60, 85, 70, 100, 65, 90];
                         let baseDirValue = uniqueDirectionWeights[dirIndex];
 
                         treasureBeads.forEach(b => {
                             if (!b.collected) {
                                 let dist = Math.hypot(b.x - targetX, b.y - dropTipY);
-                                if (dist < 42) {
+                                if (dist < 48) {
                                     b.collected = true;
                                     scoopedPower += b.value;
                                     const el = document.getElementById(`bead-${b.id}`);
@@ -815,10 +851,10 @@
                             if (treasureBeads.every(b => b.collected)) {
                                 initTreasureHeap();
                             }
-                        }, 600);
-                    }, 350);
-                }, 600);
-            }, 600);
+                        }, 300);
+                    }, 200);
+                }, 350);
+            }, 300);
         }
 
         function fireCrossBullet(r, c) {
@@ -831,26 +867,20 @@
             executeBounceAnimation(pathQueue, 0);
         }
 
-        // Calculate bounce sequence according to rules:
-        // When a villain is killed with overflow power left to bounce:
-        // - First check behind in its own row.
-        // - If no other villain behind in its own row, bounce to the nearest villain in the next column.
         function calculateBouncePath(startR, startC) {
             let path = [];
-            let remainingPower = heroPower + (upgrades.bounce * 10);
+            let remainingPower = heroPower + (upgrades.bounce * 15);
             heroPower = 0;
             document.getElementById('hud-power').innerText = `Power: 0 | Deploy the grand mechanical claw to reload!`;
 
             let curR = startR;
             let curC = startC;
 
-            // Deep copy grid to simulate path and damage deduction
             let simGrid = gridData.map(row => row.map(v => v ? { ...v } : null));
 
             while (remainingPower > 0) {
                 let target = simGrid[curR][curC];
                 if (!target || target.hp <= 0) {
-                    // Find next available target if current is invalid
                     let found = false;
                     for (let cIdx = curC; cIdx < 4; cIdx++) {
                         for (let rIdx = 0; rIdx < 3; rIdx++) {
@@ -877,7 +907,6 @@
                 if (isKilled) {
                     simGrid[curR][curC] = null;
                     if (remainingPower > 0) {
-                        // Check behind in its own row first
                         let nextInSameRow = -1;
                         for (let cCheck = curC + 1; cCheck < 4; cCheck++) {
                             if (simGrid[curR][cCheck] && simGrid[curR][cCheck].hp > 0) {
@@ -889,7 +918,6 @@
                         if (nextInSameRow !== -1) {
                             curC = nextInSameRow;
                         } else {
-                            // If no other villain behind in its own row, bounce to the nearest villain in the next column
                             let foundNextColTarget = false;
                             for (let cCheck = curC + 1; cCheck < 4; cCheck++) {
                                 let bestR = -1;
@@ -911,19 +939,18 @@
                                 }
                             }
                             if (!foundNextColTarget) {
-                                break; // No more targets anywhere
+                                break;
                             }
                         }
                     }
                 } else {
-                    break; // Villain survived, power exhausted
+                    break;
                 }
             }
 
             return path;
         }
 
-        // Execute bouncy cross motion step-by-step
         function executeBounceAnimation(pathQueue, index) {
             if (index >= pathQueue.length) {
                 renderGrid();
@@ -960,14 +987,13 @@
             let currentY = startY;
             let distanceX = targetX - startX;
             let distanceY = targetY - startY;
-            let steps = 12;
+            let steps = 10;
             let currentStep = 0;
 
             const flight = setInterval(() => {
                 currentStep++;
                 let progress = currentStep / steps;
-                // Bouncy arch motion using sine wave for vertical offset
-                let bounceArc = Math.sin(progress * Math.PI) * -35; 
+                let bounceArc = Math.sin(progress * Math.PI) * -45; 
 
                 currentX = startX + (distanceX * progress);
                 currentY = startY + (distanceY * progress);
@@ -979,7 +1005,6 @@
                     clearInterval(flight);
                     bullet.remove();
 
-                    // Apply actual damage to live grid state
                     let liveTarget = gridData[stepData.r][stepData.c];
                     if (liveTarget) {
                         liveTarget.hp = Math.max(0, liveTarget.hp - stepData.damage);
@@ -989,12 +1014,11 @@
                     }
                     renderGrid();
 
-                    // Proceed to next bounce in queue
                     setTimeout(() => {
                         executeBounceAnimation(pathQueue, index + 1);
-                    }, 120);
+                    }, 100);
                 }
-            }, 15);
+            }, 12);
         }
 
         function triggerLevelClear() {
