@@ -74,7 +74,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
- and text-align: center;
+            text-align: center;
         }
         #story-img {
             max-width: 100%;
@@ -116,7 +116,7 @@
             background: rgba(14, 20, 32, 0.75);
         }
 
-        /* Hero & Angel Containers - Distinct Proportions & Sizes */
+        /* Hero & Angel Containers - Strictly Equalized Sizes */
         #hero-container {
             position: absolute;
             left: 5%;
@@ -128,8 +128,8 @@
             transition: left 2.5s ease-in-out;
         }
         #hero {
-            width: 95px;
-            height: 145px;
+            width: 100px;
+            height: 150px;
             object-fit: contain;
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
@@ -145,8 +145,8 @@
             display: none;
         }
         #angel {
-            width: 130px;
-            height: 190px;
+            width: 100px;
+            height: 150px;
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
@@ -154,9 +154,9 @@
 
         .angel-halo {
             position: absolute;
-            top: -22px;
-            width: 55px;
-            height: 18px;
+            top: -20px;
+            width: 50px;
+            height: 16px;
             border: 3px solid #fde047;
             border-radius: 50%;
             box-shadow: 0 0 18px #fde047;
@@ -670,17 +670,17 @@
             }
 
             let baseHpMultiplier = 1 + (stage - 1) * 0.2 + (level - 1) * 0.1;
-            let totalVillainsToSpawn = Math.floor(Math.random() * 5) + 3; // Random number between 3-7
+            let totalVillainsToSpawn = Math.floor(Math.random() * 5) + 3; // Random number between 3-7 per level
 
             if (level === 5) {
-                // Final level boss configuration: standing middle on the last column (row 1, col 3)
+                // Final level: Standing middle on the last column (row 1, col 3) is the bigger boss
                 let bossRow = 1;
                 let bossCol = 3;
-                let bossSrc = stageBosses[stage]; // Stage 1 explicitly uses villain6.png here
+                let bossSrc = stageBosses[stage];
                 let bossHp = Math.round(200 * baseHpMultiplier);
                 gridData[bossRow][bossCol] = { row: bossRow, col: bossCol, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
-                // Normal villains in columns except for the last (columns 0, 1, 2) using villain4.png
+                // Level 5 normal villains use villain4.png in columns except for the last (columns 0, 1, 2)
                 let normalHp = Math.round(75 * baseHpMultiplier);
                 let spawnedCount = 0;
                 while (spawnedCount < totalVillainsToSpawn) {
@@ -1080,12 +1080,12 @@
                 waitingForTouchToAdvance = 'animating';
 
                 const heroCont = document.getElementById('hero-container');
-                const angelCont = document.getElementById('angel-container');
-                
-                const heroWidth = heroCont.offsetWidth || 95;
                 const arenaWidth = document.getElementById('battle-arena').clientWidth;
-                let angelPixelLeft = arenaWidth * (1 - 0.05) - 130;
-                let heroTargetPct = ((angelPixelLeft - heroWidth) / arenaWidth) * 100;
+                
+                // Position hero so their right edge touches the angel's left edge exactly (no gap/overlap)
+                let angelPixelRight = arenaWidth * 0.05;
+                let angelPixelLeft = arenaWidth - angelPixelRight - 100;
+                let heroTargetPct = (angelPixelLeft / arenaWidth) * 100;
                 
                 heroCont.style.left = `${heroTargetPct}%`;
 
