@@ -642,11 +642,12 @@
             4: { name: "The Close", prefix: "S4" }
         };
 
+        // Adjusted bead values slightly lower so villains don't die instantly
         const beadTiers = [
-            { name: 'Pearl', baseValue: 6, color: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #cbd5e1 100%)', symbol: '•', size: 18, weight: 0.65 },
-            { name: 'Gold Gem', baseValue: 22, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #ca8a04 100%)', symbol: '★', size: 22, weight: 0.22 },
-            { name: 'Ruby', baseValue: 55, color: 'radial-gradient(circle at 30% 30%, #fca5a5 0%, #b91c1c 100%)', symbol: '♦', size: 26, weight: 0.10 },
-            { name: 'Diamond', baseValue: 120, color: 'radial-gradient(circle at 30% 30%, #cffafe 0%, #0e7490 100%)', symbol: '💎', size: 30, weight: 0.03 }
+            { name: 'Pearl', baseValue: 4, color: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #cbd5e1 100%)', symbol: '•', size: 18, weight: 0.65 },
+            { name: 'Gold Gem', baseValue: 14, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #ca8a04 100%)', symbol: '★', size: 22, weight: 0.22 },
+            { name: 'Ruby', baseValue: 35, color: 'radial-gradient(circle at 30% 30%, #fca5a5 0%, #b91c1c 100%)', symbol: '♦', size: 26, weight: 0.10 },
+            { name: 'Diamond', baseValue: 75, color: 'radial-gradient(circle at 30% 30%, #cffafe 0%, #0e7490 100%)', symbol: '💎', size: 30, weight: 0.03 }
         ];
 
         function startGame() {
@@ -677,18 +678,19 @@
             }
 
             if (level === 5) {
-                let bossRow = Math.floor(Math.random() * 3);
+                // Last level of each stage: Dedicated stage boss assigned to the last column (col 3)
+                let bossRow = 1; // Center row for prominent visibility
                 let bossSrc = stageBosses[stage] || 'villain6.png';
-                let bossHp = 200;
+                let bossHp = 280;
                 gridData[bossRow][3] = { row: bossRow, col: 3, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
                 let spawned = 1;
-                while (spawned < 3) {
+                while (spawned < 4) {
                     let r = Math.floor(Math.random() * 3);
-                    let c = Math.floor(Math.random() * 3);
+                    let c = Math.floor(Math.random() * 3); // Spawns in columns 0, 1, or 2 strictly
                     if (gridData[r][c] === null) {
                         let vi = Math.floor(Math.random() * allowedVillains.length);
-                        let hp = 50;
+                        let hp = 70;
                         gridData[r][c] = { row: r, col: c, src: allowedVillains[vi], hp: hp, maxHp: hp, isBoss: false };
                         spawned++;
                     }
@@ -696,10 +698,10 @@
             } else {
                 let totalVillainsToSpawn = Math.floor(Math.random() * 5) + 3;
                 let spawnedCount = 0;
+                let maxHp = 70;
 
                 let rRand = Math.floor(Math.random() * 3);
                 let vIndex = Math.floor(Math.random() * allowedVillains.length);
-                let maxHp = 50;
                 gridData[rRand][0] = { row: rRand, col: 0, src: allowedVillains[vIndex], hp: maxHp, maxHp: maxHp, isBoss: false };
                 spawnedCount++;
 
@@ -853,7 +855,7 @@
                     setTimeout(() => {
                         let scoopedPower = 0;
                         let dropTipY = pit.clientHeight - dropHeight - 36;
-                        const uniqueDirectionWeights = [60, 85, 70, 100, 65, 90];
+                        const uniqueDirectionWeights = [45, 65, 55, 75, 50, 70]; // Adjusted downwards
                         let baseDirValue = uniqueDirectionWeights[dirIndex];
 
                         treasureBeads.forEach(b => {
@@ -908,7 +910,7 @@
 
         function calculateBouncePath(startR, startC) {
             let path = [];
-            let remainingPower = heroPower + (upgrades.bounce * 15);
+            let remainingPower = heroPower + (upgrades.bounce * 12);
             heroPower = 0;
             document.getElementById('hud-power').innerText = `Power: 0 | Deploy the grand mechanical claw to reload!`;
 
