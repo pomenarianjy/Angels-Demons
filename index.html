@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Angels & Demons & Banker - True 180° Rotating Claw & Physics Bead Pile</title>
+    <title>Angels & Demons & Banker - 6-Direction Lucky Draw Claw & Treasure Heap</title>
     <style>
         * {
             box-sizing: border-box;
@@ -99,9 +99,9 @@
             position: relative;
         }
 
-        /* Top Area: Battle Arena with 3x4 Grid Formation */
+        /* Top Area: Battle Arena with Invisible Formation Field */
         #battle-arena {
-            height: 45%;
+            height: 42%;
             width: 100%;
             position: relative;
             background: #090e1a;
@@ -143,7 +143,7 @@
             z-index: 10;
         }
 
-        /* 3x4 Grid Formation Field for Villains */
+        /* Completely Invisible 3x4 Grid Formation Field for Villains */
         #villains-grid-field {
             position: absolute;
             right: 5%;
@@ -155,11 +155,12 @@
             grid-template-rows: repeat(3, 1fr);
             gap: 8px;
             z-index: 10;
+            background: transparent;
+            border: none;
         }
         .grid-cell {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px dashed rgba(184, 134, 11, 0.3);
-            border-radius: 6px;
+            background: transparent;
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -178,9 +179,9 @@
             transform: scale(1.06);
         }
         .villain-unit.active-target {
-            background: rgba(218, 165, 32, 0.3);
-            border: 1px solid #d4af37;
-            box-shadow: 0 0 10px rgba(218, 165, 32, 0.6);
+            background: rgba(218, 165, 32, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.6);
+            box-shadow: 0 0 12px rgba(218, 165, 32, 0.4);
         }
         .villain-unit.disabled-target {
             opacity: 0.35;
@@ -201,37 +202,36 @@
             background: #b8860b;
         }
         .villain-img {
-            width: 38px;
-            height: 52px;
+            width: 42px;
+            height: 56px;
             object-fit: contain;
         }
 
-        /* Bottom Area: True 180-Degree Free Rotating & Extending Claw Pit */
+        /* Bottom Area: 6-Direction Lucky Draw Claw Vault */
         #claw-section {
-            height: 55%;
+            height: 58%;
             width: 100%;
             background: #03050a;
             position: relative;
             overflow: hidden;
-            touch-action: none;
+            display: flex;
+            flex-direction: column;
         }
 
         #vault-pit {
-            position: absolute;
-            bottom: 0;
-            left: 5%;
-            width: 90%;
-            height: 95%;
-            background: #080d19;
+            position: relative;
+            flex-grow: 1;
+            width: 92%;
+            margin: 6px auto 0 auto;
+            background: radial-gradient(circle at center, #0f172a 0%, #050811 100%);
             border-top: 3px solid #b8860b;
             border-left: 3px solid #1f293d;
             border-right: 3px solid #1f293d;
-            border-top-left-radius: 35px;
-            border-top-right-radius: 35px;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
             overflow: hidden;
         }
 
-        /* Fixed Pivot Anchor point at top center of vault pit */
         #claw-pivot {
             position: absolute;
             top: 4px;
@@ -245,18 +245,18 @@
             box-shadow: 0 0 12px #f0e682;
         }
 
-        /* Rotating & Extending Mechanical Arm */
         #rotating-arm {
             position: absolute;
             top: 13px;
             left: 50%;
             width: 6px;
-            height: 30px; /* dynamic length during extension */
+            height: 30px;
             background: linear-gradient(90deg, #8b6508, #daa520);
             transform-origin: top center;
             transform: translateX(-50%) rotate(0deg);
             z-index: 25;
             pointer-events: none;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         #claw-head {
@@ -279,7 +279,6 @@
         .claw-hook-l { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
         .claw-hook-r { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
-        /* Piled Physics Beads Container */
         #bead-container {
             position: absolute;
             width: 100%;
@@ -289,16 +288,66 @@
             pointer-events: none;
         }
 
-        .physics-bead {
+        /* Overflowing compact treasure heap beads */
+        .treasure-bead {
             position: absolute;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 8px;
             font-weight: bold;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), 0 3px 6px rgba(0,0,0,0.8);
-            transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6), 0 3px 6px rgba(0,0,0,0.9);
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+
+        /* 6 Direction Control Deck */
+        #direction-deck {
+            height: 72px;
+            background: #080c16;
+            border-top: 2px solid #b8860b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            z-index: 40;
+        }
+
+        .dir-btn {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            border: 2px solid #b8860b;
+            color: #f0e682;
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 14.5%;
+            max-width: 110px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            transition: all 0.15s ease;
+        }
+        .dir-btn:hover {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            border-color: #f0e682;
+            transform: translateY(-2px);
+        }
+        .dir-btn:active {
+            transform: translateY(1px);
+        }
+        .dir-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .dir-value {
+            font-size: 0.85rem;
+            color: #38bdf8;
+            margin-top: 2px;
+            font-weight: bold;
         }
 
         /* HUD Overlays */
@@ -427,23 +476,23 @@
         <div id="game-pane">
             <div id="hud">
                 <div id="hud-info">Stage 1 - Level 1</div>
-                <div id="hud-power">Power: 0 | Aim claw anywhere in 180° pit to scoop different bead piles!</div>
+                <div id="hud-power">Power: 0 | Pick one of the 6 lucky directions below to scoop treasures!</div>
             </div>
 
-            <!-- Top Area: Battle Arena with 3x4 Grid Formation -->
+            <!-- Top Area: Battle Arena with Invisible Formation Field -->
             <div id="battle-arena">
                 <div id="road">
                     <div id="hero-container">
                         <img id="hero" src="hero.png" alt="Hero">
                     </div>
                     <img id="angel" src="angel.png" alt="Angel">
-                    <!-- 3x4 Grid Formation Container -->
+                    <!-- Invisible 3x4 Grid Formation Container -->
                     <div id="villains-grid-field"></div>
                 </div>
             </div>
 
-            <!-- Bottom Area: True 180° Rotating Claw & Clustered Bead Pile Pit -->
-            <div id="claw-section" onpointerdown="handleClawTrigger(event)">
+            <!-- Bottom Area: Compact Treasure Heap Pit & 6-Direction Lucky Draw Claw -->
+            <div id="claw-section">
                 <div id="vault-pit">
                     <div id="claw-pivot"></div>
                     <div id="rotating-arm">
@@ -453,6 +502,34 @@
                         </div>
                     </div>
                     <div id="bead-container"></div>
+                </div>
+
+                <!-- 6 Lucky Draw Direction Deck -->
+                <div id="direction-deck">
+                    <button class="dir-btn" onclick="triggerLuckyDraw(0)">
+                        <span class="dir-label">Far Left</span>
+                        <span class="dir-value" id="val-0">+0</span>
+                    </button>
+                    <button class="dir-btn" onclick="triggerLuckyDraw(1)">
+                        <span class="dir-label">Mid Left</span>
+                        <span class="dir-value" id="val-1">+0</span>
+                    </button>
+                    <button class="dir-btn" onclick="triggerLuckyDraw(2)">
+                        <span class="dir-label">Center-L</span>
+                        <span class="dir-value" id="val-2">+0</span>
+                    </button>
+                    <button class="dir-btn" onclick="triggerLuckyDraw(3)">
+                        <span class="dir-label">Center-R</span>
+                        <span class="dir-value" id="val-3">+0</span>
+                    </button>
+                    <button class="dir-btn" onclick="triggerLuckyDraw(4)">
+                        <span class="dir-label">Mid Right</span>
+                        <span class="dir-value" id="val-4">+0</span>
+                    </button>
+                    <button class="dir-btn" onclick="triggerLuckyDraw(5)">
+                        <span class="dir-label">Far Right</span>
+                        <span class="dir-value" id="val-5">+0</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -472,7 +549,8 @@
         let heroPower = 0;
         let isClawBusy = false;
         let gridData = []; 
-        let physicsBeads = [];
+        let treasureBeads = [];
+        let directionValues = [0, 0, 0, 0, 0, 0];
 
         let upgrades = {
             reach: 1,  
@@ -491,6 +569,14 @@
             3: { name: "The Priest", prefix: "S3" },
             4: { name: "The Close", prefix: "S4" }
         };
+
+        const beadTiers = [
+            { name: 'Bronze', value: 2, color: 'radial-gradient(circle at 30% 30%, #d97706 0%, #b45309 60%, #78350f 100%)', symbol: '', size: 16, weight: 0.35 },
+            { name: 'Silver', value: 5, color: 'radial-gradient(circle at 30% 30%, #f3f4f6 0%, #9ca3af 60%, #4b5563 100%)', symbol: '', size: 18, weight: 0.30 },
+            { name: 'Gold', value: 10, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 60%, #a16207 100%)', symbol: '★', size: 20, weight: 0.20 },
+            { name: 'Ruby', value: 20, color: 'radial-gradient(circle at 30% 30%, #f87171 0%, #dc2626 60%, #991b1b 100%)', symbol: '♦', size: 22, weight: 0.10 },
+            { name: 'Diamond', value: 40, color: 'radial-gradient(circle at 30% 30%, #a5f3fc 0%, #06b6d4 60%, #0e7490 100%)', symbol: '💎', size: 24, weight: 0.05 }
+        ];
 
         function startGame() {
             document.getElementById('start-screen').style.display = 'none';
@@ -517,8 +603,7 @@
                             col: c,
                             id: vId,
                             hp: maxHp,
-                            maxHp: maxHp,
-                            forwardOffset: 0
+                            maxHp: maxHp
                         });
                     } else {
                         rowArr.push(null);
@@ -532,11 +617,11 @@
                 let rRand = Math.floor(Math.random() * 3);
                 let vId = Math.min(stage, 8);
                 let maxHp = 50 + (stage * 15);
-                gridData[rRand][0] = { row: rRand, col: 0, id: vId, hp: maxHp, maxHp: maxHp, forwardOffset: 0 };
+                gridData[rRand][0] = { row: rRand, col: 0, id: vId, hp: maxHp, maxHp: maxHp };
             }
 
             renderGrid();
-            initPhysicsBeadPile();
+            initTreasureHeap();
         }
 
         function renderGrid() {
@@ -576,7 +661,7 @@
                         let pct = Math.max(0, (villain.hp / villain.maxHp) * 100);
                         unit.innerHTML = `
                             <div class="v-hp-container"><div class="v-hp-bar" style="width: ${pct}%;"></div></div>
-                            <img class="villain-img" src="${villainFiles[villain.id]}" alt="Villain">
+                            <img class="villain-img" src="${villainFiles[villain.id]}" alt="Villain" onerror="this.src='hero.png';">
                         `;
                         cell.appendChild(unit);
                     }
@@ -589,124 +674,147 @@
             }
         }
 
-        function initPhysicsBeadPile() {
+        function initTreasureHeap() {
             const container = document.getElementById('bead-container');
             container.innerHTML = '';
-            physicsBeads = [];
+            treasureBeads = [];
 
             const pit = document.getElementById('vault-pit');
-            const pitWidth = pit.clientWidth || 320;
-            const pitHeight = pit.clientHeight || 220;
+            const pitWidth = pit.clientWidth || 350;
+            const pitHeight = pit.clientHeight || 180;
 
-            const pivotX = pitWidth / 2;
-            const pivotY = 13; // top anchor offset
+            // Generate compact overflowing pile of treasures across zones
+            let idCounter = 0;
+            let totalBeads = 75; // dense heap
 
-            // Generate an organic, clustered 180-degree pile of beads overlapping each other
-            let totalBeads = 45;
             for (let i = 0; i < totalBeads; i++) {
-                // Random angle across full 180 degrees (-90 to +90 degrees relative to straight down)
-                let angleDeg = (Math.random() * 160) - 80; 
-                let angleRad = angleDeg * (Math.PI / 180);
-                
-                // Random depth distributed in clusters across the pit radius
-                let distance = 50 + Math.random() * (pitHeight - 80);
-                
-                let x = pivotX + Math.sin(angleRad) * distance;
-                let y = pivotY + Math.cos(angleRad) * distance;
+                let randW = Math.random();
+                let cumulative = 0;
+                let selectedTier = beadTiers[0];
+                for (let t of beadTiers) {
+                    cumulative += t.weight;
+                    if (randW <= cumulative) {
+                        selectedTier = t;
+                        break;
+                    }
+                }
 
-                let isGold = Math.random() < (0.22 + upgrades.power * 0.03);
-                let size = 22 + Math.floor(Math.random() * 6);
+                // Pile distribution across width
+                let x = 20 + Math.random() * (pitWidth - 40);
+                // Mound shape: higher concentration and height in the center, overlapping downwards
+                let centerFactor = 1 - Math.abs(x - (pitWidth / 2)) / (pitWidth / 2);
+                let y = 5 + Math.random() * (pitHeight * 0.55 + centerFactor * 35);
 
-                physicsBeads.push({
-                    id: i,
-                    type: isGold ? 'gold' : 'white',
-                    value: isGold ? (6 * upgrades.power) : (2 * upgrades.power),
+                treasureBeads.push({
+                    id: idCounter,
+                    tier: selectedTier.name,
+                    value: selectedTier.value * upgrades.power,
                     x: x,
                     y: y,
                     collected: false
                 });
 
                 const beadEl = document.createElement('div');
-                beadEl.className = 'physics-bead';
-                beadEl.id = `bead-${i}`;
-                beadEl.style.width = `${size}px`;
-                beadEl.style.height = `${size}px`;
-                // Position using pixel coordinates inside vault pit (measuring from top/left)
-                beadEl.style.left = `${x - size / 2}px`;
-                beadEl.style.top = `${y - size / 2}px`;
-                beadEl.style.background = isGold 
-                    ? 'radial-gradient(circle at 30% 30%, #fde047 0%, #eab308 60%, #a16207 100%)' 
-                    : 'radial-gradient(circle at 30% 30%, #ffffff 0%, #d1d5db 60%, #9ca3af 100%)';
-                beadEl.style.color = isGold ? '#fff' : '#1f2937';
-                beadEl.innerText = isGold ? '★' : '';
+                beadEl.className = 'treasure-bead';
+                beadEl.id = `bead-${idCounter}`;
+                beadEl.style.width = `${selectedTier.size}px`;
+                beadEl.style.height = `${selectedTier.size}px`;
+                beadEl.style.left = `${x - selectedTier.size / 2}px`;
+                beadEl.style.bottom = `${y}px`;
+                beadEl.style.background = selectedTier.color;
+                beadEl.style.color = '#fff';
+                beadEl.innerText = selectedTier.symbol;
                 container.appendChild(beadEl);
+                idCounter++;
+            }
+
+            updateDirectionValues();
+        }
+
+        function updateDirectionValues() {
+            // Assign random varying jackpot numbers (lucky draw values) to the 6 directions based on available treasures
+            const angles = [-65, -38, -12, 12, 38, 65];
+            const pit = document.getElementById('vault-pit');
+            const pitWidth = pit.clientWidth || 350;
+            const pivotX = pitWidth / 2;
+            const pivotY = 13;
+            const reach = 120 + (upgrades.reach * 15);
+
+            for (let i = 0; i < 6; i++) {
+                let angleRad = angles[i] * (Math.PI / 180);
+                let targetX = pivotX + Math.sin(angleRad) * reach;
+                let targetYFromBottom = pit.clientHeight - pivotY - Math.cos(angleRad) * reach;
+
+                let sumVal = 0;
+                treasureBeads.forEach(b => {
+                    if (!b.collected) {
+                        let dist = Math.hypot(b.x - targetX, b.y - targetYFromBottom);
+                        if (dist < 65) {
+                            sumVal += b.value;
+                        }
+                    }
+                });
+
+                // Ensure non-zero lucky draw reward
+                if (sumVal === 0) {
+                    sumVal = (5 + Math.floor(Math.random() * 15)) * upgrades.power;
+                }
+
+                directionValues[i] = sumVal;
+                document.getElementById(`val-${i}`).innerText = `+${sumVal}`;
             }
         }
 
-        function handleClawTrigger(event) {
+        function triggerLuckyDraw(dirIndex) {
             if (isClawBusy) return;
             isClawBusy = true;
 
-            const pit = document.getElementById('vault-pit');
-            const rect = pit.getBoundingClientRect();
-            
-            const pivotX = rect.width / 2;
-            const pivotY = 13; 
-
-            // Calculate precise angle and distance from pivot to player tap location anywhere in pit
-            const clickX = event.clientX - rect.left;
-            const clickY = event.clientY - rect.top;
-
-            let deltaX = clickX - pivotX;
-            let deltaY = Math.max(10, clickY - pivotY);
-
-            // True 180-degree free rotation angle (-90deg to +90deg)
-            let targetAngle = Math.atan2(deltaX, deltaY) * (180 / Math.PI);
-            targetAngle = Math.max(-88, Math.min(88, targetAngle));
-
-            let targetReach = Math.hypot(deltaX, deltaY);
-            let maxAllowedReach = 160 + (upgrades.reach * 25);
-            targetReach = Math.min(Math.max(targetReach, 60), maxAllowedReach);
+            const angles = [-65, -38, -12, 12, 38, 65];
+            let targetAngle = angles[dirIndex];
+            let targetReach = 120 + (upgrades.reach * 15);
 
             const arm = document.getElementById('rotating-arm');
-            // Animate arm extension and rotation towards user target tap
             arm.style.transform = `translateX(-50%) rotate(${targetAngle}deg)`;
             arm.style.height = `${targetReach}px`;
 
             setTimeout(() => {
-                let collectedPoints = 0;
-                // Grab radius around the tip of the extended claw
-                let tipRad = targetAngle * (Math.PI / 180);
-                let tipX = pivotX + Math.sin(tipRad) * targetReach;
-                let tipY = pivotY + Math.cos(tipRad) * targetReach;
-                let grabRadius = 45 + (upgrades.reach * 8);
+                let earned = directionValues[dirIndex];
+                
+                // Collect visual beads near that directional sweep
+                const pit = document.getElementById('vault-pit');
+                let pivotX = pit.clientWidth / 2;
+                let pivotY = 13;
+                let angleRad = targetAngle * (Math.PI / 180);
+                let tipX = pivotX + Math.sin(angleRad) * targetReach;
+                let tipYFromBottom = pit.clientHeight - pivotY - Math.cos(angleRad) * targetReach;
 
-                physicsBeads.forEach(b => {
+                treasureBeads.forEach(b => {
                     if (!b.collected) {
-                        let distToTip = Math.hypot(b.x - tipX, b.y - tipY);
-                        if (distToTip < grabRadius) {
+                        let dist = Math.hypot(b.x - tipX, b.y - tipYFromBottom);
+                        if (dist < 70) {
                             b.collected = true;
-                            collectedPoints += b.value;
                             const el = document.getElementById(`bead-${b.id}`);
                             if (el) {
-                                el.style.transform = 'scale(0) translateY(-30px)';
+                                el.style.transform = 'scale(0) translateY(-40px)';
                                 el.style.opacity = '0';
                             }
                         }
                     }
                 });
 
-                heroPower += collectedPoints;
-                document.getElementById('hud-power').innerText = `Power: ${heroPower} | Scooped +${collectedPoints}! Click active column villain!`;
+                heroPower += earned;
+                document.getElementById('hud-power').innerText = `Power: ${heroPower} | Lucky Draw Scooped +${earned}! Click target villain!`;
 
-                // Retract arm back smoothly
+                // Retract claw
                 arm.style.height = '30px';
                 arm.style.transform = 'translateX(-50%) rotate(0deg)';
 
                 setTimeout(() => {
                     isClawBusy = false;
-                    if (physicsBeads.every(b => b.collected)) {
-                        initPhysicsBeadPile();
+                    if (treasureBeads.every(b => b.collected)) {
+                        initTreasureHeap();
+                    } else {
+                        updateDirectionValues();
                     }
                 }, 250);
             }, 250);
@@ -714,7 +822,7 @@
 
         function fireCrossBullet(r, c) {
             if (heroPower <= 0) {
-                document.getElementById('hud-power').innerText = `No Power! Tap anywhere in the 180° bead pit to scoop power first!`;
+                document.getElementById('hud-power').innerText = `No Power! Choose one of the 6 lucky draw directions below first!`;
                 return;
             }
 
@@ -758,9 +866,9 @@
             let villain = gridData[r][c];
             if (!villain || villain.hp <= 0) return;
 
-            let damageDealt = heroPower + (upgrades.bounce * 4);
+            let damageDealt = heroPower + (upgrades.bounce * 6);
             heroPower = 0;
-            document.getElementById('hud-power').innerText = `Power: 0 | Tap bead pit to reload!`;
+            document.getElementById('hud-power').innerText = `Power: 0 | Select a lucky draw direction to reload!`;
 
             villain.hp -= damageDealt;
 
