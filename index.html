@@ -74,7 +74,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            text-align: center;
+ and text-align: center;
         }
         #story-img {
             max-width: 100%;
@@ -116,7 +116,7 @@
             background: rgba(14, 20, 32, 0.75);
         }
 
-        /* Hero & Angel Containers */
+        /* Hero & Angel Containers - Distinct Proportions & Sizes */
         #hero-container {
             position: absolute;
             left: 5%;
@@ -128,8 +128,8 @@
             transition: left 2.5s ease-in-out;
         }
         #hero {
-            width: 110px;
-            height: 160px;
+            width: 95px;
+            height: 145px;
             object-fit: contain;
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
@@ -145,27 +145,27 @@
             display: none;
         }
         #angel {
-            width: 110px;
-            height: 160px;
+            width: 130px;
+            height: 190px;
             object-fit: contain;
-            filter: drop-shadow(0 0 22px rgba(255, 255, 255, 0.85));
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
         }
 
         .angel-halo {
             position: absolute;
-            top: -18px;
-            width: 45px;
-            height: 16px;
+            top: -22px;
+            width: 55px;
+            height: 18px;
             border: 3px solid #fde047;
             border-radius: 50%;
-            box-shadow: 0 0 15px #fde047;
+            box-shadow: 0 0 18px #fde047;
             animation: haloGlow 1s infinite alternate;
             display: none;
         }
         @keyframes haloGlow {
             from { transform: scale(1); box-shadow: 0 0 10px #fde047; }
-            to { transform: scale(1.1); box-shadow: 0 0 22px #fff; }
+            to { transform: scale(1.1); box-shadow: 0 0 25px #fff; }
         }
 
         .white-heart {
@@ -249,8 +249,8 @@
             transition: transform 0.2s, filter 0.2s;
         }
         .villain-img.boss-img {
-            width: 100px;
-            height: 130px;
+            width: 110px;
+            height: 140px;
         }
 
         /* Bottom Area: Grand Mechanical Claw Vault */
@@ -676,11 +676,11 @@
                 // Final level boss configuration: standing middle on the last column (row 1, col 3)
                 let bossRow = 1;
                 let bossCol = 3;
-                let bossSrc = stageBosses[stage];
+                let bossSrc = stageBosses[stage]; // Stage 1 explicitly uses villain6.png here
                 let bossHp = Math.round(200 * baseHpMultiplier);
                 gridData[bossRow][bossCol] = { row: bossRow, col: bossCol, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
 
-                // Normal villains in columns except for the last (columns 0, 1, 2)
+                // Normal villains in columns except for the last (columns 0, 1, 2) using villain4.png
                 let normalHp = Math.round(75 * baseHpMultiplier);
                 let spawnedCount = 0;
                 while (spawnedCount < totalVillainsToSpawn) {
@@ -1082,9 +1082,9 @@
                 const heroCont = document.getElementById('hero-container');
                 const angelCont = document.getElementById('angel-container');
                 
-                const heroWidth = heroCont.offsetWidth || 110;
+                const heroWidth = heroCont.offsetWidth || 95;
                 const arenaWidth = document.getElementById('battle-arena').clientWidth;
-                let angelPixelLeft = arenaWidth * (1 - 0.05) - 110;
+                let angelPixelLeft = arenaWidth * (1 - 0.05) - 130;
                 let heroTargetPct = ((angelPixelLeft - heroWidth) / arenaWidth) * 100;
                 
                 heroCont.style.left = `${heroTargetPct}%`;
