@@ -63,15 +63,15 @@
             flex-direction: row;
         }
 
-        /* Left Pane: Storyline Pictures with darkened left.jpg background */
+        /* Left Pane: Storyline Pictures */
         #story-pane {
-            width: 35%;
+            width: 50%;
             height: 100%;
             background-image: linear-gradient(rgba(4, 6, 10, 0.75), rgba(4, 6, 10, 0.75)), url('left.jpg');
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
-            border-right: 3px solid #b8860b;
+            border-right: 3px solid #000000; /* Changed from yellow to black */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -81,7 +81,7 @@
         }
         #story-img {
             max-width: 100%;
-            max-height: 70vh;
+            max-height: 65vh;
             border: 2px solid #daa520;
             box-shadow: 0 0 20px rgba(218, 165, 32, 0.4);
             object-fit: contain;
@@ -96,7 +96,7 @@
 
         /* Right Pane: Game Box */
         #game-pane {
-            width: 65%;
+            width: 50%;
             height: 100%;
             display: flex;
             flex-direction: column;
@@ -110,7 +110,7 @@
             position: relative;
             background-color: #090e1a;
             overflow: hidden;
-            border-bottom: 3px solid #b8860b;
+            border-bottom: 3px solid #000000; /* Changed from yellow to black */
         }
         #road {
             position: absolute;
@@ -141,7 +141,7 @@
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
 
-        /* Angel Container & Alignment - Positioned at exact same bottom coordinate as hero */
+        /* Angel Container & Alignment */
         #angel-container {
             position: absolute;
             right: 5%;
@@ -151,7 +151,7 @@
             align-items: center;
             z-index: 15;
             cursor: pointer;
-            display: none; 
+            display: none;
         }
         #angel {
             width: 130px;      
@@ -389,7 +389,7 @@
         #direction-deck {
             height: 52px;
             background: #080c16;
-            border-top: 2px solid #b8860b;
+            border-top: 2px solid #000000; /* Changed from yellow to black */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -406,173 +406,143 @@
             cursor: pointer;
             font-size: 1.1rem;
             font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-            transition: all 0.15s ease;
-            width: 14%;
-            max-width: 90px;
-            text-align: center;
+            box-shadow: 0 0 10px rgba(184, 134, 11, 0.3);
         }
-        .dir-arrow-btn:hover {
-            background: linear-gradient(135deg, #1f2937, #374151);
-            border-color: #f0e682;
-            transform: translateY(-2px);
-            box-shadow: 0 0 12px rgba(218, 165, 32, 0.6);
+        .dir-arrow-btn:active {
+            transform: scale(0.95);
+            background: #b8860b;
+            color: #fff;
+        }
+        #drop-grab-btn {
+            background: linear-gradient(135deg, #8b6508, #daa520);
+            border: 2px solid #fff;
+            color: #fff;
+            border-radius: 8px;
+            padding: 6px 22px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.6);
+            text-transform: uppercase;
+        }
+        #drop-grab-btn:active {
+            transform: scale(0.95);
         }
 
-        /* HUD Overlays */
-        #hud {
-            position: absolute;
-            top: 6px;
-            left: 10px;
-            right: 10px;
+        /* Boosters Dock */
+        #boosters-dock {
+            height: 65px;
+            background: #050811;
+            border-top: 1px solid #000000; /* Changed from yellow to black */
             display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #f0e682;
-            text-shadow: 1px 1px 2px #000;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 8px;
             z-index: 40;
         }
-
-        /* Cardinal's Cross Bullet */
-        .cardinal-bullet {
-            position: absolute;
-            width: 34px;
-            height: 34px;
+        .booster-slot {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            border: 2px solid #b8860b;
+            border-radius: 8px;
+            width: 23%;
+            height: 50px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 25;
-            pointer-events: none;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 0 10px rgba(184, 134, 11, 0.2);
+            transition: transform 0.1s, border-color 0.2s;
         }
-        .cardinal-bullet::before {
-            content: '';
-            position: absolute;
-            width: 6px;
-            height: 32px;
-            background: #d4af37;
-            box-shadow: 0 0 12px #fff;
+        .booster-slot:active {
+            transform: scale(0.96);
         }
-        .cardinal-bullet::after {
-            content: '';
-            position: absolute;
-            width: 26px;
-            height: 6px;
-            background: #d4af37;
-            box-shadow: 0 0 12px #fff;
-            top: 14px;
+        .booster-slot.maxed {
+            border-color: #ef4444;
+            opacity: 0.65;
+            cursor: not-allowed;
+            pointer-events: none; /* Blocked from moving forward when maxed out */
+        }
+        .booster-name {
+            font-size: 0.75rem;
+            color: #f0e682;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .booster-counter {
+            font-size: 0.8rem;
+            color: #fff;
+            margin-top: 2px;
         }
 
-        /* Modal Overlay & Upgrades Selector */
-        #overlay-msg {
+        /* Floating Overlays & Banners */
+        #floating-banner {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(4, 6, 10, 0.9);
+            border: 2px solid #daa520;
+            color: #f0e682;
+            padding: 12px 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(218, 165, 32, 0.7);
+            z-index: 100;
+            display: none;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        /* Expanded Final Fly Screen */
+        #final-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.92);
+            background: rgba(4, 6, 10, 0.95);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 60;
-            text-align: center;
+            z-index: 200;
             padding: 20px;
         }
-        #congrat-img {
-            max-width: 80vw;
-            max-height: 55vh;
+        #final-img {
+            width: 550px; /* Made bigger as requested */
+            height: 550px; /* Made bigger as requested */
+            max-width: 90vw;
+            max-height: 70vh;
             object-fit: contain;
+            border: 3px solid #daa520;
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(218, 165, 32, 0.8);
             margin-bottom: 20px;
-            filter: drop-shadow(0 0 25px rgba(218, 165, 32, 0.8));
         }
-        #msg-title {
-            font-size: 2.4rem;
+        #final-msg {
+            font-size: 1.8rem;
             color: #f0e682;
-            margin-bottom: 10px;
-            font-family: 'Times New Roman', Times, serif;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(218, 165, 32, 0.6);
-        }
-        #msg-desc {
-            font-size: 1.2rem;
-            color: #f3f4f6;
-            margin-bottom: 20px;
-            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+            text-shadow: 0 0 10px #000;
+            margin-bottom: 25px;
+            font-weight: bold;
             letter-spacing: 1px;
         }
-        .upgrade-container {
-            display: flex;
-            gap: 15px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .upgrade-card {
-            background: #111827;
-            border: 2px solid #b8860b;
-            border-radius: 8px;
-            padding: 12px;
-            width: 160px;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-        }
-        .upgrade-card:hover {
-            transform: scale(1.05);
-            background: #1f2937;
-        }
-        .upgrade-card h3 {
-            font-size: 1rem;
-            color: #f0e682;
-            margin-top: 0;
-        }
-        .upgrade-card p {
-            font-size: 0.8rem;
-            color: #ccc;
-        }
-        #overlay-btn {
+        #restart-game-btn {
             background: linear-gradient(135deg, #8b6508, #daa520);
-            color: #fff;
             border: 2px solid #fff;
-            padding: 12px 40px;
-            font-size: 1.3rem;
-            font-family: 'Times New Roman', Times, serif;
+            color: #fff;
+            font-size: 1.4rem;
             font-weight: bold;
+            padding: 12px 35px;
             cursor: pointer;
             border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
             box-shadow: 0 0 20px rgba(218, 165, 32, 0.8);
-            margin-top: 15px;
-        }
-        #overlay-btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Celebration Fly Icon */
-        .celebration-fly {
-            position: absolute;
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            pointer-events: none;
-            z-index: 70;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
-        }
-
-        /* White & Gold Sparks */
-        .spark {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 65;
-            animation: sparkFade 1s forwards ease-out;
-        }
-        @keyframes sparkFade {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--sx), var(--sy)) scale(0.2); opacity: 0; }
+            text-transform: uppercase;
         }
     </style>
 </head>
@@ -580,45 +550,44 @@
 
     <!-- Start Screen -->
     <div id="start-screen">
-        <button id="start-btn" onclick="startGame()">Start Game</button>
+        <button id="start-btn">Start Game</button>
     </div>
 
-    <!-- Main Container -->
+    <!-- Main Game Container -->
     <div id="game-container">
-        <!-- Left Pane: Storyline Pictures with darkened left.jpg background -->
+        <!-- Left Pane: Storyline Pictures (50%) -->
         <div id="story-pane">
-            <div id="story-title">Stage 1: The Detective</div>
-            <img id="story-img" src="S1L1.png" alt="Storyline">
+            <img id="story-img" src="story1.png" alt="Storyline">
+            <div id="story-title">Chapter I: The Awakening</div>
         </div>
 
-        <!-- Right Pane: Game Box -->
+        <!-- Right Pane: Game Box (50%) -->
         <div id="game-pane">
-            <div id="hud">
-                <div id="hud-info">Stage 1 - Level 1</div>
-                <div id="hud-power">Power: 0 | Select a direction arrow below to deploy the grand mechanical claw!</div>
-            </div>
-
             <!-- Top Area: Battle Arena -->
             <div id="battle-arena">
-                <div id="road">
-                    <div id="hero-container">
-                        <img id="hero" src="hero.png" alt="Hero">
-                    </div>
-                    <div id="angel-container" onclick="handleAngelClick()">
-                        <div class="angel-halo" id="angel-halo"></div>
-                        <img id="angel" src="angel.png" alt="Angel">
-                    </div>
-                    <!-- Strict 3x4 Grid Formation Field -->
-                    <div id="villains-grid-field"></div>
+                <div id="road"></div>
+                
+                <!-- Hero Container (Base placed at same height as angel) -->
+                <div id="hero-container">
+                    <img id="hero" src="hero.png" alt="Hero">
                 </div>
+
+                <!-- Angel Container (Base placed at same height as hero) -->
+                <div id="angel-container">
+                    <div class="angel-halo" id="angel-halo"></div>
+                    <img id="angel" src="angel.png" alt="Angel">
+                </div>
+
+                <!-- Villains Grid Field (3x4 Formation) -->
+                <div id="villains-grid-field"></div>
             </div>
 
             <!-- Bottom Area: Claw Vault -->
             <div id="claw-section">
                 <div id="vault-pit">
                     <div id="gantry-track"></div>
-                    <div id="claw-rig" style="left: 50%;">
-                        <div id="vertical-cable" style="height: 20px;"></div>
+                    <div id="claw-rig">
+                        <div id="vertical-cable"></div>
                         <div id="grand-claw-head">
                             <div class="claw-crown"></div>
                             <div class="claw-prongs">
@@ -630,676 +599,419 @@
                     <div id="bead-container"></div>
                 </div>
 
-                <!-- 6 Direction Arrow Deck -->
+                <!-- Direction Deck -->
                 <div id="direction-deck">
-                    <button class="dir-arrow-btn" onclick="deployClaw(0)">1 &larr;</button>
-                    <button class="dir-arrow-btn" onclick="deployClaw(1)">2 &larr;</button>
-                    <button class="dir-arrow-btn" onclick="deployClaw(2)">3 &larr;</button>
-                    <button class="dir-arrow-btn" onclick="deployClaw(3)">4 &rarr;</button>
-                    <button class="dir-arrow-btn" onclick="deployClaw(4)">5 &rarr;</button>
-                    <button class="dir-arrow-btn" onclick="deployClaw(5)">6 &rarr;</button>
+                    <button class="dir-arrow-btn" id="btn-left">&#9664;</button>
+                    <button id="drop-grab-btn">Drop</button>
+                    <button class="dir-arrow-btn" id="btn-right">&#9654;</button>
+                </div>
+
+                <!-- Boosters Dock -->
+                <div id="boosters-dock">
+                    <div class="booster-slot" id="booster-0" onclick="triggerBooster(0)">
+                        <div class="booster-name">Power</div>
+                        <div class="booster-counter" id="count-0">0/5</div>
+                    </div>
+                    <div class="booster-slot" id="booster-1" onclick="triggerBooster(1)">
+                        <div class="booster-name">Speed</div>
+                        <div class="booster-counter" id="count-1">0/5</div>
+                    </div>
+                    <div class="booster-slot" id="booster-2" onclick="triggerBooster(2)">
+                        <div class="booster-name">Shield</div>
+                        <div class="booster-counter" id="count-2">0/5</div>
+                    </div>
+                    <div class="booster-slot" id="booster-3" onclick="triggerBooster(3)">
+                        <div class="booster-name">Bomb</div>
+                        <div class="booster-counter" id="count-3">0/5</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Overlay & Upgrades Selector -->
-    <div id="overlay-msg">
-        <img id="congrat-img" src="" alt="Congratulation" style="display:none;">
-        <h2 id="msg-title">Level Cleared</h2>
-        <p id="msg-desc"></p>
-        <div id="upgrade-box" class="upgrade-container"></div>
-        <button id="overlay-btn" style="display:none;">Continue</button>
+    <!-- Floating Banner -->
+    <div id="floating-banner">Victory!</div>
+
+    <!-- Final Fly Screen -->
+    <div id="final-screen">
+        <img id="final-img" src="fly.png" alt="Final Fly">
+        <div id="final-msg">Together In Eternity</div>
+        <button id="restart-game-btn" onclick="location.reload()">Play Again</button>
     </div>
 
     <script>
-        let stage = 1;
-        let level = 1;
-        let heroPower = 0;
-        let isClawBusy = false;
-        let gridData = []; 
-        let treasureBeads = [];
-        let waitingForTouchToAdvance = false;
+        // Storyline Sequence Images & Titles
+        const storyChapters = [
+            { img: 'story1.png', title: 'Chapter I: The Awakening' },
+            { img: 'story2.png', title: 'Chapter II: Trials of Abyss' },
+            { img: 'story3.png', title: 'Chapter III: Ascending Light' }
+        ];
+        let currentChapterIndex = 0;
 
-        let upgrades = {
-            reach: 1,  
-            power: 1,  
-            bounce: 1  
-        };
-
-        const stageBosses = {
-            1: 'villain6.png',
-            2: 'villain3.png',
-            3: 'villain7.png',
-            4: 'villain8.png'
-        };
-
-        const stagesConfig = {
-            1: { name: "The Detective", prefix: "S1" },
-            2: { name: "Detective’s Helper", prefix: "S2" },
-            3: { name: "The Priest", prefix: "S3" },
-            4: { name: "The Close", prefix: "S4" }
-        };
-
-        const beadTiers = [
-            { name: 'Pearl', baseValue: 4, color: 'radial-gradient(circle at 30% 30%, #ffffff 0%, #cbd5e1 100%)', symbol: '•', size: 18, weight: 0.65 },
-            { name: 'Gold Gem', baseValue: 14, color: 'radial-gradient(circle at 30% 30%, #fde047 0%, #ca8a04 100%)', symbol: '★', size: 22, weight: 0.22 },
-            { name: 'Ruby', baseValue: 35, color: 'radial-gradient(circle at 30% 30%, #fca5a5 0%, #b91c1c 100%)', symbol: '♦', size: 26, weight: 0.10 },
-            { name: 'Diamond', baseValue: 75, color: 'radial-gradient(circle at 30% 30%, #cffafe 0%, #0e7490 100%)', symbol: '💎', size: 30, weight: 0.03 }
+        // Game State Variables
+        let stageLevel = 1; // Stage 1 to 3
+        const maxStages = 3;
+        
+        // Boosters state (max 5 each)
+        let boosters = [
+            { count: 0, max: 5 },
+            { count: 0, max: 5 },
+            { count: 0, max: 5 },
+            { count: 0, max: 5 }
         ];
 
-        function startGame() {
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('game-container').style.display = 'flex';
-            setupLevel();
-        }
-
-        function setupLevel() {
-            waitingForTouchToAdvance = false;
-            const cfg = stagesConfig[stage];
-            document.getElementById('story-img').src = `${cfg.prefix}L${level}.png`;
-            document.getElementById('story-title').innerText = `Stage ${stage}: ${cfg.name}`;
-            document.getElementById('hud-info').innerText = `Stage ${stage} - Level ${level}`;
-            
-            const angelCont = document.getElementById('angel-container');
-            angelCont.style.display = 'none';
-            document.getElementById('angel-halo').style.display = 'none';
-            document.getElementById('hero-container').style.left = '5%';
-
-            gridData = [];
-            for (let r = 0; r < 3; r++) {
-                let rowArr = [];
-                for (let c = 0; c < 4; c++) {
-                    rowArr.push(null);
-                }
-                gridData.push(rowArr);
-            }
-
-            // Fixed math factor: factoring in upgrade progression accurately so stats and scaling feel organic and real
-            let boosterMultiplier = 1 + ((upgrades.reach + upgrades.power + upgrades.bounce - 3) * 0.15);
-            let baseHpMultiplier = (1 + (stage - 1) * 0.2 + (level - 1) * 0.1) * boosterMultiplier;
-
-            if (level === 5) {
-                let bossRow = 1;
-                let bossCol = 3;
-                let bossSrc = stageBosses[stage];
-                let bossHp = Math.round(280 * baseHpMultiplier);
-                gridData[bossRow][bossCol] = { row: bossRow, col: bossCol, src: bossSrc, hp: bossHp, maxHp: bossHp, isBoss: true };
-
-                let normalHp = Math.round(90 * baseHpMultiplier);
-                let spawnedCount = 0;
-                let targetMinions = 3;
-                while (spawnedCount < targetMinions) {
-                    let r = Math.floor(Math.random() * 3);
-                    let c = Math.floor(Math.random() * 3);
-                    if (gridData[r][c] === null) {
-                        gridData[r][c] = { row: r, col: c, src: 'villain4.png', hp: normalHp, maxHp: normalHp, isBoss: false };
-                        spawnedCount++;
-                    }
-                }
-            } else {
-                let totalVillainsToSpawn = Math.floor(Math.random() * 3) + 3;
-                let normalHp = Math.round(70 * baseHpMultiplier);
-                let spawnedCount = 0;
-
-                while (spawnedCount < totalVillainsToSpawn) {
-                    let r = Math.floor(Math.random() * 3);
-                    let c = Math.floor(Math.random() * 4);
-                    if (gridData[r][c] === null) {
-                        let villainSrc = 'villain1.png';
-                        if (level === 1) {
-                            villainSrc = 'villain1.png';
-                        } else if (level === 2) {
-                            villainSrc = 'villain2.png';
-                        } else if (level === 3) {
-                            villainSrc = 'villain4.png';
-                        } else if (level === 4) {
-                            villainSrc = Math.random() < 0.5 ? 'villain1.png' : 'villain2.png';
-                        }
-
-                        gridData[r][c] = { row: r, col: c, src: villainSrc, hp: normalHp, maxHp: normalHp, isBoss: false };
-                        spawnedCount++;
-                    }
-                }
-            }
-
-            renderGrid();
-            initTreasureHeap();
-        }
-
-        function renderGrid() {
-            const field = document.getElementById('villains-grid-field');
-            field.innerHTML = '';
-
-            let hasAnyAlive = false;
-
-            for (let r = 0; r < 3; r++) {
-                for (let c = 0; c < 4; c++) {
-                    if (gridData[r][c] !== null && gridData[r][c].hp > 0) {
-                        hasAnyAlive = true;
-                        break;
-                    }
-                }
-            }
-
-            for (let r = 0; r < 3; r++) {
-                for (let c = 0; c < 4; c++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'grid-cell';
-                    
-                    const villain = gridData[r][c];
-                    if (villain !== null && villain.hp > 0) {
-                        const unit = document.createElement('div');
-                        unit.className = `villain-unit active-target`;
-                        
-                        unit.onclick = () => fireCrossBullet(r, c);
-
-                        let pct = Math.max(0, (villain.hp / villain.maxHp) * 100);
-                        let imgClass = villain.isBoss ? 'villain-img boss-img' : 'villain-img';
-                        let safeSrc = villain.src;
-
-                        unit.innerHTML = `
-                            <div class="v-hp-container"><div class="v-hp-bar" style="width: ${pct}%;"></div></div>
-                            <img class="${imgClass}" src="${safeSrc}" alt="Villain" onerror="this.src='villain1.png';">
-                        `;
-                        cell.appendChild(unit);
-                    }
-                    field.appendChild(cell);
-                }
-            }
-
-            if (!hasAnyAlive) {
-                triggerLevelClear();
-            }
-        }
-
-        function initTreasureHeap() {
-            const container = document.getElementById('bead-container');
-            container.innerHTML = '';
-            treasureBeads = [];
-
-            const pit = document.getElementById('vault-pit');
-            const pitWidth = pit.clientWidth || 350;
-
-            let idCounter = 0;
-            let totalBeads = 75;
-            let cols = 12;
-            let spacingX = (pitWidth - 40) / cols;
-
-            for (let i = 0; i < totalBeads; i++) {
-                let colIdx = i % cols;
-                let rowIdx = Math.floor(i / cols);
-
-                let x = 20 + (colIdx * spacingX) + ((rowIdx % 2) * (spacingX * 0.5)) + ((Math.random() - 0.5) * 6);
-                let y = 4 + (rowIdx * 12) + ((Math.random() - 0.5) * 4);
-
-                if (x > pitWidth - 20) continue;
-
-                let randW = Math.random();
-                let cumulative = 0;
-                let selectedTier = beadTiers[0];
-                for (let t of beadTiers) {
-                    cumulative += t.weight;
-                    if (randW <= cumulative) {
-                        selectedTier = t;
-                        break;
-                    }
-                }
-
-                treasureBeads.push({
-                    id: idCounter,
-                    tier: selectedTier.name,
-                    value: selectedTier.baseValue,
-                    x: x,
-                    y: y,
-                    collected: false
-                });
-
-                const beadEl = document.createElement('div');
-                beadEl.className = 'treasure-bead';
-                beadEl.id = `bead-${idCounter}`;
-                beadEl.style.width = `${selectedTier.size}px`;
-                beadEl.style.height = `${selectedTier.size}px`;
-                beadEl.style.left = `${x - selectedTier.size / 2}px`;
-                beadEl.style.bottom = `${y}px`;
-                beadEl.style.background = selectedTier.color;
-                beadEl.style.color = '#333';
-                beadEl.style.zIndex = rowIdx;
-                beadEl.innerText = selectedTier.symbol;
-                container.appendChild(beadEl);
-                idCounter++;
-            }
-        }
-
-        function deployClaw(dirIndex) {
-            if (isClawBusy || waitingForTouchToAdvance) return;
-            isClawBusy = true;
-
-            const pit = document.getElementById('vault-pit');
-            const pitWidth = pit.clientWidth || 350;
-            const sectionWidth = pitWidth / 6;
-            const targetX = (dirIndex * sectionWidth) + (sectionWidth / 2);
-            
-            const clawRig = document.getElementById('claw-rig');
-            const verticalCable = document.getElementById('vertical-cable');
-            const grandHead = document.getElementById('grand-claw-head');
-
-            clawRig.style.left = `${targetX}px`;
-
-            setTimeout(() => {
-                let dropHeight = 145 + (upgrades.reach * 12);
-                verticalCable.style.height = `${dropHeight}px`;
-                grandHead.style.top = `${dropHeight}px`;
-
-                setTimeout(() => {
-                    grandHead.classList.add('closed');
-
-                    setTimeout(() => {
-                        let scoopedPower = 0;
-                        let dropTipY = pit.clientHeight - dropHeight - 36;
-                        const uniqueDirectionWeights = [45, 65, 55, 75, 50, 70];
-                        let baseDirValue = uniqueDirectionWeights[dirIndex];
-
-                        treasureBeads.forEach(b => {
-                            if (!b.collected) {
-                                let dist = Math.hypot(b.x - targetX, b.y - dropTipY);
-                                if (dist < 50) {
-                                    b.collected = true;
-                                    scoopedPower += b.value;
-                                    const el = document.getElementById(`bead-${b.id}`);
-                                    if (el) {
-                                        el.style.transform = 'scale(0) translateY(-50px)';
-                                        el.style.opacity = '0';
-                                    }
-                                }
-                            }
-                        });
-
-                        if (scoopedPower === 0) {
-                            scoopedPower = Math.round(baseDirValue * upgrades.power);
-                        } else {
-                            scoopedPower = Math.round((scoopedPower * 0.4 + baseDirValue * 0.6) * upgrades.power);
-                        }
-
-                        heroPower += scoopedPower;
-                        document.getElementById('hud-power').innerText = `Power: ${heroPower} | Direction ${dirIndex + 1} scooped +${scoopedPower}! Select target!`;
-
-                        verticalCable.style.height = '20px';
-                        grandHead.style.top = '20px';
-                        grandHead.classList.remove('closed');
-
-                        setTimeout(() => {
-                            isClawBusy = false;
-                            if (treasureBeads.every(b => b.collected)) {
-                                initTreasureHeap();
-                            }
-                        }, 250);
-                    }, 180);
-                }, 300);
-            }, 250);
-        }
-
-        function fireCrossBullet(r, c) {
-            if (waitingForTouchToAdvance) return;
-            if (heroPower <= 0) {
-                document.getElementById('hud-power').innerText = `No Power! Deploy the grand mechanical claw below first!`;
-                return;
-            }
-
-            let pathQueue = calculateBouncePath(r, c);
-            executeBounceAnimation(pathQueue, 0);
-        }
-
-        function calculateBouncePath(startR, startC) {
-            let path = [];
-            let remainingPower = heroPower + (upgrades.bounce * 12);
-            heroPower = 0;
-            document.getElementById('hud-power').innerText = `Power: 0 | Deploy the grand mechanical claw to reload!`;
-
-            let curR = startR;
-            let curC = startC;
-
-            let simGrid = gridData.map(row => row.map(v => v ? { ...v } : null));
-
-            while (remainingPower > 0) {
-                let target = simGrid[curR][curC];
-                if (!target || target.hp <= 0) {
-                    let found = false;
-                    for (let cIdx = 0; cIdx < 4; cIdx++) {
-                        for (let rIdx = 0; rIdx < 3; rIdx++) {
-                            if (simGrid[rIdx][cIdx] && simGrid[rIdx][cIdx].hp > 0) {
-                                curR = rIdx;
-                                curC = cIdx;
-                                target = simGrid[rR][rC];
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (found) break;
-                    }
-                    if (!target || target.hp <= 0) break;
-                }
-
-                let damageDealt = Math.min(remainingPower, target.hp);
-                target.hp -= damageDealt;
-                remainingPower -= damageDealt;
-
-                let isKilled = (target.hp <= 0);
-                path.push({ r: curR, c: curC, damage: damageDealt, killed: isKilled });
-
-                if (isKilled) {
-                    simGrid[curR][curC] = null;
-                    if (remainingPower > 0) {
-                        let nextInSameRow = -1;
-                        for (let cCheck = curC + 1; cCheck < 4; cCheck++) {
-                            if (simGrid[curR][cCheck] && simGrid[curR][cCheck].hp > 0) {
-                                nextInSameRow = cCheck;
-                                break;
-                            }
-                        }
-
-                        if (nextInSameRow !== -1) {
-                            curC = nextInSameRow;
-                        } else {
-                            let nearestR = -1;
-                            let nearestC = -1;
-                            let minDistance = 999;
-
-                            for (let rCheck = 0; rCheck < 3; rCheck++) {
-                                for (let cCheck = 0; cCheck < 4; cCheck++) {
-                                    if (simGrid[rCheck][cCheck] && simGrid[rCheck][cCheck].hp > 0) {
-                                        let dist = Math.hypot(rCheck - curR, cCheck - curC);
-                                        if (dist < minDistance) {
-                                            minDistance = dist;
-                                            nearestR = rCheck;
-                                            nearestC = cCheck;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (nearestR !== -1) {
-                                curR = nearestR;
-                                curC = nearestC;
-                            } else {
-                                break; 
-                            }
-                        }
-                    }
-                } else {
-                    break; 
-                }
-            }
-
-            return path;
-        }
-
-        function executeBounceAnimation(pathQueue, index) {
-            if (index >= pathQueue.length) {
-                renderGrid();
-                return;
-            }
-
-            const stepData = pathQueue[index];
-            const arena = document.getElementById('battle-arena');
-            const field = document.getElementById('villains-grid-field');
-            const arenaRect = arena.getBoundingClientRect();
-            const fieldRect = field.getBoundingClientRect();
-            
-            const targetX = fieldRect.left - arenaRect.left + (stepData.c + 0.5) * (fieldRect.width / 4);
-            const targetY = fieldRect.top - arenaRect.top + (stepData.r + 0.5) * (fieldRect.height / 3);
-
-            const bullet = document.createElement('div');
-            bullet.className = 'cardinal-bullet';
-            
-            let startX, startY;
-            if (index === 0) {
-                startX = arenaRect.width * 0.14;
-                startY = arenaRect.height * 0.78;
-            } else {
-                let prevStep = pathQueue[index - 1];
-                startX = fieldRect.left - arenaRect.left + (prevStep.c + 0.5) * (fieldRect.width / 4);
-                startY = fieldRect.top - arenaRect.top + (prevStep.r + 0.5) * (fieldRect.height / 3);
-            }
-
-            bullet.style.left = startX + 'px';
-            bullet.style.bottom = (arenaRect.height - startY) + 'px';
-            arena.appendChild(bullet);
-
-            let currentX = startX;
-            let currentY = startY;
-            let distanceX = targetX - startX;
-            let distanceY = targetY - startY;
-            let steps = 10;
-            let currentStep = 0;
-
-            const flight = setInterval(() => {
-                currentStep++;
-                let progress = currentStep / steps;
-                let bounceArc = Math.sin(progress * Math.PI) * -50; 
-
-                currentX = startX + (distanceX * progress);
-                currentY = startY + (distanceY * progress);
-
-                bullet.style.left = currentX + 'px';
-                bullet.style.bottom = (arenaRect.height - (currentY + bounceArc)) + 'px';
-
-                if (currentStep >= steps) {
-                    clearInterval(flight);
-                    bullet.remove();
-
-                    let liveTarget = gridData[stepData.r][stepData.c];
-                    if (liveTarget) {
-                        liveTarget.hp = Math.max(0, liveTarget.hp - stepData.damage);
-                        if (liveTarget.hp <= 0) {
-                            gridData[stepData.r][stepData.c] = null;
-                        }
-                    }
-                    renderGrid();
-
-                    setTimeout(() => {
-                        executeBounceAnimation(pathQueue, index + 1);
-                    }, 90);
-                }
-            }, 10);
-        }
-
-        function triggerLevelClear() {
-            if (level === 5) {
-                const angelCont = document.getElementById('angel-container');
-                angelCont.style.display = 'flex';
-                
-                document.getElementById('hud-power').innerText = `Stage Cleared! Click on the angel to approach her!`;
-                waitingForTouchToAdvance = true;
-            } else {
-                showUpgradeModal(`Level ${level} Cleared`, "Select a power-up for your equipment (Up to Level 7).");
-            }
-        }
-
-        function handleAngelClick() {
-            if (waitingForTouchToAdvance === true) {
-                waitingForTouchToAdvance = 'animating';
-
-                const heroCont = document.getElementById('hero-container');
-                let targetHeroLeftPct = 68;
-                heroCont.style.left = `${targetHeroLeftPct}%`;
-
-                document.getElementById('hud-power').innerText = `Hero advancing to meet the angel...`;
-
-                setTimeout(() => {
-                    document.getElementById('angel-halo').style.display = 'block';
-                    spawnMultipleHeartWaves();
-                    document.getElementById('hud-power').innerText = `Divine Blessing! Click anywhere to continue.`;
-
-                    setTimeout(() => {
-                        waitingForTouchToAdvance = 'readyToAdvance';
-                    }, 1200);
-                }, 2500);
-            } else if (waitingForTouchToAdvance === 'readyToAdvance') {
-                waitingForTouchToAdvance = false;
-                if (stage === 4) {
-                    showFinalVictoryModal();
-                } else {
-                    showUpgradeModal(`Stage ${stage} Cleared`, "Choose an upgrade before entering next stage.");
-                }
-            }
-        }
-
-        window.addEventListener('click', (e) => {
-            if (waitingForTouchToAdvance === 'readyToAdvance') {
-                if (e.target.closest('#overlay-msg')) return;
-                waitingForTouchToAdvance = false;
-                if (stage === 4) {
-                    showFinalVictoryModal();
-                } else {
-                    showUpgradeModal(`Stage ${stage} Cleared`, "Choose an upgrade before entering next stage.");
-                }
-            }
+        // Villains Data Setup (3x4 grid = 12 total units per stage, last unit in grid is Boss)
+        let villains = [];
+        let activeTargetIndex = 0;
+
+        // Claw Rig State
+        let clawX = 50; // percentage across track
+        let clawState = 'IDLE'; // IDLE, MOVING_LEFT, MOVING_RIGHT, DROPPING, RETRACTING
+        let beads = [];
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const gameContainer = document.getElementById('game-container');
+        const storyImg = document.getElementById('story-img');
+        const storyTitle = document.getElementById('story-title');
+        const villainsGridField = document.getElementById('villains-grid-field');
+        const clawRig = document.getElementById('claw-rig');
+        const verticalCable = document.getElementById('vertical-cable');
+        const grandClawHead = document.getElementById('grand-claw-head');
+        const beadContainer = document.getElementById('bead-container');
+        const dropGrabBtn = document.getElementById('drop-grab-btn');
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+        const floatingBanner = document.getElementById('floating-banner');
+        const heroContainer = document.getElementById('hero-container');
+        const angelContainer = document.getElementById('angel-container');
+        const angelHalo = document.getElementById('angel-halo');
+        const finalScreen = document.getElementById('final-screen');
+
+        // Initialize Game
+        startBtn.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            gameContainer.style.display = 'flex';
+            initStage(stageLevel);
+            spawnBeads();
         });
 
-        function spawnMultipleHeartWaves() {
-            let waveCount = 4;
-            let delayBetweenWaves = 400;
-
-            for (let w = 0; w < waveCount; w++) {
-                setTimeout(() => {
-                    spawnSingleHeartWave();
-                }, w * delayBetweenWaves);
+        // Initialize Stage Villains (3x4 = 12 units)
+        function initStage(level) {
+            villains = [];
+            // 11 regular minions + 1 Boss (Boss is always index 11, last in grid)
+            let totalUnits = 12;
+            for(let i=0; i<totalUnits; i++) {
+                let isBoss = (i === totalUnits - 1);
+                let maxHp = isBoss ? (level * 3) : level;
+                villains.push({
+                    id: i,
+                    isBoss: isBoss,
+                    hp: maxHp,
+                    maxHp: maxHp,
+                    alive: true,
+                    img: isBoss ? 'boss.png' : `minion${(i % 3) + 1}.png`
+                });
             }
+            activeTargetIndex = 0;
+            // Ensure boss is not selected first if there are living minions
+            updateActiveTarget();
+            renderVillains();
         }
 
-        function spawnSingleHeartWave() {
-            const angelCont = document.getElementById('angel-container');
+        // Render Villains in Strict 3x4 Grid
+        function renderVillains() {
+            villainsGridField.innerHTML = '';
+            villains.forEach((v, idx) => {
+                let cell = document.createElement('div');
+                cell.className = 'grid-cell';
 
-            for (let i = 0; i < 20; i++) {
-                const heart = document.createElement('div');
-                heart.className = 'white-heart';
-                heart.innerHTML = '🤍';
-                
-                let isLeft = Math.random() < 0.5;
-                let angle = isLeft ? (Math.PI + (Math.random() * 0.8 - 0.4)) : (Math.random() * 0.8 - 0.4);
-                let dist = 80 + Math.random() * 120;
-                let dx = Math.cos(angle) * dist;
-                let dy = Math.sin(angle) * dist - 25;
+                if (v.alive) {
+                    let unitDiv = document.createElement('div');
+                    unitDiv.className = `villain-unit ${idx === activeTargetIndex ? 'active-target' : ''}`;
+                    unitDiv.onclick = () => {
+                        // Boss rule: boss is always the last to be bounced on/killed
+                        if (v.isBoss && villains.some((item, i) => i !== idx && item.alive)) {
+                            showBanner("Boss must be attacked last!");
+                            return;
+                        }
+                        activeTargetIndex = idx;
+                        renderVillains();
+                    };
 
-                heart.style.setProperty('--dx', `${dx}px`);
-                heart.style.setProperty('--dy', `${dy}px`);
-                heart.style.left = `50%`;
-                heart.style.top = `35%`;
+                    let hpCont = document.createElement('div');
+                    hpCont.className = 'v-hp-container';
+                    let hpBar = document.createElement('div');
+                    hpBar.className = 'v-hp-bar';
+                    hpBar.style.width = `${(v.hp / v.maxHp) * 100}%`;
+                    hpCont.appendChild(hpBar);
 
-                angelCont.appendChild(heart);
-                setTimeout(() => heart.remove(), 1400);
-            }
-        }
+                    let img = document.createElement('img');
+                    img.className = `villain-img ${v.isBoss ? 'boss-img' : ''}`;
+                    img.src = v.img;
 
-        function showUpgradeModal(title, desc) {
-            document.getElementById('congrat-img').style.display = 'none';
-            document.getElementById('msg-title').innerText = title;
-            document.getElementById('msg-desc').innerText = desc;
-            document.getElementById('overlay-btn').style.display = 'none';
-
-            const upgradeBox = document.getElementById('upgrade-box');
-            upgradeBox.innerHTML = '';
-
-            const choices = [
-                { key: 'reach', name: 'Enhance Reach', desc: `Current Lvl: ${upgrades.reach}/7` },
-                { key: 'power', name: 'Enhance Power', desc: `Current Lvl: ${upgrades.power}/7` },
-                { key: 'bounce', name: 'Enhance Bounce', desc: `Current Lvl: ${upgrades.bounce}/7` }
-            ];
-
-            choices.forEach(c => {
-                const card = document.createElement('div');
-                card.className = 'upgrade-card';
-                card.innerHTML = `<h3>${c.name}</h3><p>${c.desc}</p><p style="color:#d4af37; margin-top:5px;">${upgrades[c.key] < 7 ? 'Upgrade (+1)' : 'MAXED'}</p>`;
-                card.onclick = (e) => {
-                    e.stopPropagation();
-                    if (upgrades[c.key] < 7) upgrades[c.key]++;
-                    closeUpgradeModal();
-                };
-                upgradeBox.appendChild(card);
-            });
-
-            document.getElementById('overlay-msg').style.display = 'flex';
-        }
-
-        function closeUpgradeModal() {
-            document.getElementById('overlay-msg').style.display = 'none';
-            if (level === 5) {
-                stage++;
-                level = 1;
-            } else {
-                level++;
-            }
-            setupLevel();
-        }
-
-        function showFinalVictoryModal() {
-            const modal = document.getElementById('overlay-msg');
-            const congratImg = document.getElementById('congrat-img');
-            congratImg.src = 'congrat.png';
-            congratImg.style.display = 'block';
-
-            document.getElementById('msg-title').innerText = "Victory & Divine Grace";
-            document.getElementById('msg-desc').innerText = "All formations defeated! Light and love triumph eternally!";
-            document.getElementById('upgrade-box').innerHTML = '';
-            
-            const btn = document.getElementById('overlay-btn');
-            btn.style.display = 'inline-block';
-            btn.innerText = "Play Again";
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                location.reload();
-            };
-            modal.style.display = 'flex';
-
-            startCelebrationFly();
-        }
-
-        function startCelebrationFly() {
-            const fly = document.createElement('img');
-            fly.src = 'fly.png';
-            fly.className = 'celebration-fly';
-            document.body.appendChild(fly);
-
-            let posX = window.innerWidth / 2;
-            let posY = window.innerHeight / 2;
-            let angle = 0;
-            let radiusX = window.innerWidth * 0.35;
-            let radiusY = window.innerHeight * 0.25;
-
-            const flyInterval = setInterval(() => {
-                angle += 0.03;
-                posX = (window.innerWidth / 2) + Math.cos(angle) * radiusX;
-                posY = (window.innerHeight / 2) + Math.sin(angle * 2) * radiusY;
-
-                fly.style.left = `${posX}px`;
-                fly.style.top = `${posY}px`;
-
-                if (Math.random() < 0.6) {
-                    spawnSpark(posX + 24, posY + 24);
+                    unitDiv.appendChild(hpCont);
+                    unitDiv.appendChild(img);
+                    cell.appendChild(unitDiv);
                 }
-            }, 30);
-
-            window.activeFlyInterval = flyInterval;
+                villainsGridField.appendChild(cell);
+            });
         }
 
-        function spawnSpark(x, y) {
-            const spark = document.createElement('div');
-            spark.className = 'spark';
-            spark.style.left = `${x}px`;
-            spark.style.top = `${y}px`;
-            
-            let isGold = Math.random() < 0.5;
-            spark.style.background = isGold ? '#fde047' : '#ffffff';
-            spark.style.boxShadow = isGold ? '0 0 10px #fde047' : '0 0 10px #ffffff';
+        function updateActiveTarget() {
+            // Find first available non-boss target if current is boss or dead
+            if (villains[activeTargetIndex] && !villains[activeTargetIndex].alive) {
+                let nextAlive = villains.findIndex((v, i) => v.alive && !v.isBoss);
+                if (nextAlive !== -1) {
+                    activeTargetIndex = nextAlive;
+                } else {
+                    // Only boss left
+                    let bossIndex = villains.findIndex(v => v.isBoss && v.alive);
+                    if (bossIndex !== -1) activeTargetIndex = bossIndex;
+                }
+            }
+        }
 
-            let angle = Math.random() * Math.PI * 2;
-            let dist = 30 + Math.random() * 50;
-            spark.style.setProperty('--sx', `${Math.cos(angle) * dist}px`);
-            spark.style.setProperty('--sy', `${Math.sin(angle) * dist}px`);
+        // Spawn Beads in Claw Vault
+        function spawnBeads() {
+            beadContainer.innerHTML = '';
+            beads = [];
+            let beadCount = 8;
+            for(let i=0; i<beadCount; i++) {
+                let size = 38;
+                let x = 10 + Math.random() * 80;
+                let y = 15 + Math.random() * 65;
+                let boosterType = i % 4; // Cycles through Power, Speed, Shield, Bomb
+                let colors = ['radial-gradient(circle at 30% 30%, #fde047, #ca8a04)', 
+                              'radial-gradient(circle at 30% 30%, #60a5fa, #2563eb)', 
+                              'radial-gradient(circle at 30% 30%, #34d399, #059669)', 
+                              'radial-gradient(circle at 30% 30%, #f43f5e, #e11d48)'];
+                
+                beads.push({
+                    id: i,
+                    x: x,
+                    y: y,
+                    size: size,
+                    boosterType: boosterType,
+                    collected: false
+                });
+            }
+            renderBeads();
+        }
 
-            document.body.appendChild(spark);
-            setTimeout(() => spark.remove(), 1000);
+        function renderBeads() {
+            let html = '';
+            beads.forEach(b => {
+                if(!b.collected) {
+                    let bg = ['#ca8a04', '#2563eb', '#059669', '#e11d48'][b.boosterType];
+                    let label = ['P', 'S', 'Sh', 'B'][b.boosterType];
+                    html += `<div class="treasure-bead" style="left: ${b.x}%; top: ${b.y}%; width: ${b.size}px; height: ${b.size}px; background: ${bg};">${label}</div>`;
+                }
+            });
+            beadContainer.innerHTML = html;
+        }
+
+        // Claw Controls
+        let moveInterval = null;
+        
+        function startMovingClaw(direction) {
+            if(clawState !== 'IDLE') return;
+            clawState = direction > 0 ? 'MOVING_RIGHT' : 'MOVING_LEFT';
+            moveInterval = setInterval(() => {
+                clawX += direction * 2.5;
+                if(clawX < 5) clawX = 5;
+                if(clawX > 95) clawX = 95;
+                clawRig.style.left = `${clawX}%`;
+            }, 30);
+        }
+
+        function stopMovingClaw() {
+            if(clawState === 'MOVING_LEFT' || clawState === 'MOVING_RIGHT') {
+                clearInterval(moveInterval);
+                clawState = 'IDLE';
+            }
+        }
+
+        btnLeft.addEventListener('mousedown', () => startMovingClaw(-1));
+        btnLeft.addEventListener('mouseup', stopMovingClaw);
+        btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); startMovingClaw(-1); });
+        btnLeft.addEventListener('touchend', stopMovingClaw);
+
+        btnRight.addEventListener('mousedown', () => startMovingClaw(1));
+        btnRight.addEventListener('mouseup', stopMovingClaw);
+        btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); startMovingClaw(1); });
+        btnRight.addEventListener('touchend', stopMovingClaw);
+
+        dropGrabBtn.addEventListener('click', triggerClawDrop);
+
+        function triggerClawDrop() {
+            if(clawState !== 'IDLE') return;
+            clawState = 'DROPPING';
+
+            // Extend Cable & Claw
+            verticalCable.style.height = '140px';
+            grandClawHead.style.top = '140px';
+
+            setTimeout(() => {
+                grandClawHead.classList.add('closed');
+                
+                // Check collision with beads
+                let collectedBead = beads.find(b => !b.collected && Math.abs(b.x - clawX) < 12);
+                if(collectedBead) {
+                    collectedBead.collected = true;
+                    renderBeads();
+                    incrementBooster(collectedBead.boosterType);
+                }
+
+                setTimeout(() => {
+                    // Retract Cable & Claw
+                    verticalCable.style.height = '20px';
+                    grandClawHead.style.top = '20px';
+                    grandClawHead.classList.remove('closed');
+
+                    setTimeout(() => {
+                        clawState = 'IDLE';
+                        if(collectedBead) {
+                            applyDamageToActiveTarget();
+                        }
+                    }, 350);
+                }, 350);
+            }, 350);
+        }
+
+        // Increment Booster & Check Max
+        function incrementBooster(type) {
+            if(boosters[type].count < boosters[type].max) {
+                boosters[type].count++;
+                document.getElementById(`count-${type}`).innerText = `${boosters[type].count}/${boosters[type].max}`;
+                
+                if(boosters[type].count >= boosters[type].max) {
+                    let slot = document.getElementById(`booster-${type}`);
+                    slot.classList.add('maxed');
+                    showBanner(`${slot.querySelector('.booster-name').innerText} Booster Maxed!`);
+                    checkAllBoostersMaxed();
+                }
+            }
+        }
+
+        function triggerBooster(type) {
+            if(boosters[type].count > 0 && boosters[type].count < boosters[type].max) {
+                applyDamageToActiveTarget(2); // Booster special bonus damage
+            }
+        }
+
+        // Apply Damage to Target Villain
+        function applyDamageToActiveTarget(dmg = 1) {
+            let target = villains[activeTargetIndex];
+            if(!target || !target.alive) return;
+
+            // Boss protection check: Boss can only take damage if all other villains are dead
+            if(target.isBoss && villains.some(v => !v.isBoss && v.alive)) {
+                showBanner("Defeat all other minions first!");
+                return;
+            }
+
+            target.hp -= dmg;
+            if(target.hp <= 0) {
+                target.hp = 0;
+                target.alive = true; // Keep object reference, mark defeated visually
+                target.alive = false;
+            }
+            renderVillains();
+
+            // Check if stage cleared
+            if(villains.every(v => !v.alive)) {
+                handleStageClear();
+            } else {
+                updateActiveTarget();
+                renderVillains();
+            }
+        }
+
+        function handleStageClear() {
+            if(stageLevel < maxStages) {
+                showBanner(`Stage ${stageLevel} Cleared! Advancing...`);
+                setTimeout(() => {
+                    stageLevel++;
+                    currentChapterIndex++;
+                    storyImg.src = storyChapters[currentChapterIndex].img;
+                    storyTitle.innerText = storyChapters[currentChapterIndex].title;
+                    initStage(stageLevel);
+                    spawnBeads();
+                }, 2000);
+            } else {
+                showBanner("All Trials Conquered!");
+                setTimeout(triggerVictorySequence, 2000);
+            }
+        }
+
+        // When all boosters maxed out, player can click anywhere on screen to move forward
+        function checkAllBoostersMaxed() {
+            if(boosters.every(b => b.count >= b.max)) {
+                showBanner("All Boosters Maxed! Click anywhere to advance!");
+                document.body.style.cursor = 'pointer';
+                document.body.addEventListener('click', handleUniversalScreenAdvance, { once: true });
+            }
+        }
+
+        function handleUniversalScreenAdvance() {
+            document.body.style.cursor = 'default';
+            if(stageLevel < maxStages) {
+                stageLevel++;
+                if(currentChapterIndex < storyChapters.length - 1) {
+                    currentChapterIndex++;
+                    storyImg.src = storyChapters[currentChapterIndex].img;
+                    storyTitle.innerText = storyChapters[currentChapterIndex].title;
+                }
+                initStage(stageLevel);
+                spawnBeads();
+            } else {
+                triggerVictorySequence();
+            }
+        }
+
+        // Victory Sequence: Hero moves to Angel and Angel appears
+        function triggerVictorySequence() {
+            heroContainer.style.left = '72%'; // Hero moves across toward angel position
+            setTimeout(() => {
+                angelContainer.style.display = 'flex';
+                angelHalo.style.display = 'block';
+                startHeartFireworks();
+
+                setTimeout(() => {
+                    gameContainer.style.display = 'none';
+                    finalScreen.style.display = 'flex';
+                }, 3000);
+            }, 2500);
+        }
+
+        function startHeartFireworks() {
+            let interval = setInterval(() => {
+                for(let i=0; i<5; i++) {
+                    let heart = document.createElement('div');
+                    heart.className = 'white-heart';
+                    heart.innerHTML = '&#10084;';
+                    let rect = angelContainer.getBoundingClientRect();
+                    heart.style.left = `${rect.left + rect.width/2}px`;
+                    heart.style.top = `${rect.top + rect.height/2}px`;
+                    let angle = Math.random() * Math.PI * 2;
+                    let dist = 60 + Math.random() * 90;
+                    heart.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+                    heart.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 1400);
+                }
+            }, 300);
+            setTimeout(() => clearInterval(interval), 3000);
+        }
+
+        function showBanner(text) {
+            floatingBanner.innerText = text;
+            floatingBanner.style.display = 'block';
+            setTimeout(() => {
+                floatingBanner.style.display = 'none';
+            }, 1800);
         }
     </script>
 </body>
