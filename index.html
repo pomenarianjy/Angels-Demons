@@ -63,7 +63,7 @@
             flex-direction: row;
         }
 
-        /* Left Pane: Storyline Pictures (Thinner left panel, wider right panel) */
+        /* Left Pane: Storyline Pictures */
         #story-pane {
             width: 35%;
             height: 100%;
@@ -94,7 +94,7 @@
             text-shadow: 1px 1px 3px #000;
         }
 
-        /* Right Pane: Game Box (Wider right panel) */
+        /* Right Pane: Game Box */
         #game-pane {
             width: 65%;
             height: 100%;
@@ -141,38 +141,42 @@
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
 
-        /* Hero Cross Projectile Animation (Hero shoots to Villain) */
-        .cross-projectile {
+        /* Clear Christian Cross Projectile Styling & Animation */
+        .christian-cross-projectile {
             position: absolute;
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 50px;
             background: transparent;
             z-index: 25;
             pointer-events: none;
-            transition: all 0.4s linear;
+            transition: all 0.35s linear;
         }
-        .cross-projectile::before, .cross-projectile::after {
+        /* Vertical bar of the Christian cross */
+        .christian-cross-projectile::before {
             content: '';
             position: absolute;
-            background: radial-gradient(circle, #ffeb3b, #ff9800, #f44336);
-            box-shadow: 0 0 12px #ff9800;
+            top: 0;
+            left: 13px;
+            width: 10px;
+            height: 50px;
+            background: linear-gradient(to bottom, #fff700, #ff9800, #ff3d00);
+            border-radius: 3px;
+            box-shadow: 0 0 15px #ff9800, 0 0 5px #ffffff;
         }
-        .cross-projectile::before {
-            top: 10px;
-            left: 0;
+        /* Horizontal bar placed higher up to form a traditional Latin Christian cross */
+        .christian-cross-projectile::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 3px;
             width: 30px;
             height: 10px;
+            background: linear-gradient(to right, #fff700, #ff9800, #ff3d00);
             border-radius: 3px;
-        }
-        .cross-projectile::after {
-            top: 0;
-            left: 10px;
-            width: 10px;
-            height: 30px;
-            border-radius: 3px;
+            box-shadow: 0 0 15px #ff9800, 0 0 5px #ffffff;
         }
 
-        /* Villain Laser Beam Animation (Villain attacks Hero automatically with laser at end of turn) */
+        /* Villain Laser Beam Animation */
         .laser-beam {
             position: absolute;
             height: 4px;
@@ -306,12 +310,12 @@
             filter: drop-shadow(0 0 10px rgba(184, 134, 11, 0.5));
         }
         .boss-img {
-            width: 110px;
-            height: 160px;
-            filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.8));
+            width: 150px;
+            height: 210px;
+            filter: drop-shadow(0 0 25px rgba(255, 69, 0, 0.9));
         }
 
-        /* Bottom Area: Claw Section with Cups (Shorter section) */
+        /* Bottom Area: Claw Section with Cups */
         #claw-section {
             height: 40%;
             width: 100%;
@@ -440,11 +444,6 @@
             pointer-events: none;
         }
 
-        /* Boosters Dock */
-        #boosters-dock {
-            display: none;
-        }
-
         /* Floating Overlays & Banners */
         #floating-banner {
             position: absolute;
@@ -563,13 +562,13 @@
 
     <!-- Main Game Container -->
     <div id="game-container">
-        <!-- Left Pane: Storyline Pictures (Thinner left panel) -->
+        <!-- Left Pane: Storyline Pictures -->
         <div id="story-pane">
             <img id="story-img" src="S1L1.png" alt="Storyline">
             <div id="story-title">Stage 1: The Detective</div>
         </div>
 
-        <!-- Right Pane: Game Box (Wider right panel) -->
+        <!-- Right Pane: Game Box -->
         <div id="game-pane">
             <!-- Top Area: Battle Arena -->
             <div id="battle-arena">
@@ -587,17 +586,14 @@
                     <img id="angel" src="angel.png" alt="Angel">
                 </div>
 
-                <!-- Villains Grid Container (3x4 invisible grid) -->
+                <!-- Villains Grid Container -->
                 <div id="villains-container"></div>
             </div>
 
-            <!-- Bottom Area: Claw Section with Cups (Shorter section) -->
+            <!-- Bottom Area: Claw Section with Cups -->
             <div id="claw-section">
                 <div id="cases-container"></div>
                 <div id="turn-info">choose one</div>
-
-                <!-- Boosters Dock -->
-                <div id="boosters-dock"></div>
             </div>
         </div>
     </div>
@@ -629,78 +625,51 @@
     </div>
 
     <script>
-        // Storyline Sequence Data for all Stages & Levels
         const stageData = {
             1: {
                 title: "Stage 1: The Detective",
-                levels: {
-                    1: "S1L1.png",
-                    2: "S1L2.png",
-                    3: "S1L3.png",
-                    4: "S1L4.png",
-                    5: "S1L5.png"
-                }
+                levels: { 1: "S1L1.png", 2: "S1L2.png", 3: "S1L3.png", 4: "S1L4.png", 5: "S1L5.png" }
             },
             2: {
                 title: "Stage 2: Detective’s Helper",
-                levels: {
-                    1: "S2L1.png",
-                    2: "S2L2.png",
-                    3: "S2L3.png",
-                    4: "S2L4.png",
-                    5: "S2L5.png"
-                }
+                levels: { 1: "S2L1.png", 2: "S2L2.png", 3: "S2L3.png", 4: "S2L4.png", 5: "S2L5.png" }
             },
             3: {
                 title: "Stage 3: The Priest",
-                levels: {
-                    1: "S3L1.png",
-                    2: "S3L2.png",
-                    3: "S3L3.png",
-                    4: "S3L4.png",
-                    5: "S3L5.png"
-                }
+                levels: { 1: "S3L1.png", 2: "S3L2.png", 3: "S3L3.png", 4: "S3L4.png", 5: "S3L5.png" }
             },
             4: {
                 title: "Stage 4: The Close",
-                levels: {
-                    1: "S4L1.png",
-                    2: "S4L2.png",
-                    3: "S4L3.png",
-                    4: "S4L4.png",
-                    5: "S4L5.png"
-                }
+                levels: { 1: "S4L1.png", 2: "S4L2.png", 3: "S4L3.png", 4: "S4L4.png", 5: "S4L5.png" }
             }
         };
 
-        // Game State Variables (4 stages, 5 levels each = 20 levels total)
-        let stageLevel = 1; // 1 to 4
-        let subLevel = 1;   // 1 to 5
+        let stageLevel = 1;
+        let subLevel = 1;
         const maxStages = 4;
         const maxSubLevels = 5;
         
-        // Hero HP tracking
         let heroHp = 100;
         let heroMaxHp = 100;
 
-        // Boosters state
+        // Boosters config with precise specs
         let boosters = [
-            { id: 0, name: "Increase Number", level: 1, max: 7 },
-            { id: 1, name: "Increase Ring Choosing", level: 1, max: 3 },
-            { id: 2, name: "Increase Bounce", level: 1, max: 5 }
+            { id: 0, name: "Increase Number", level: 1, max: 7 },         // +10 per level
+            { id: 1, name: "Increase Choice", level: 1, max: 3 },         // Lv1=1, Lv2=2, Lv3=3 choices
+            { id: 2, name: "Increase Bounce", level: 1, max: 5 }          // Lv1=1 bounce, Lv2=2, Lv3=3, Lv4=4, Lv5=5 bounces
         ];
 
-        // Cups & Turn Management
-        let baseCupValues = [10, 30, 50, 80, 100, 120];
+        // Exact initial values requested: 30, 50, 80, 100, 120, 150
+        let baseCupValues = [30, 50, 80, 100, 120, 150];
         let currentTurnCups = [];
         let accumulatedPower = 0;
-        let turnPhase = 'CHOOSE_CUP'; // 'CHOOSE_CUP' or 'SELECT_TARGET'
+        let picksAllowedTotal = 1;
+        let picksMadeCount = 0;
+        let turnPhase = 'CHOOSE_CUP';
         let lastAttackedIndex = -1;
 
-        // Villains Data Setup for 3x4 Grid
         let villainsGrid = [];
 
-        // DOM Elements
         const startScreen = document.getElementById('start-screen');
         const startBtn = document.getElementById('start-btn');
         const gameContainer = document.getElementById('game-container');
@@ -720,7 +689,6 @@
         const boosterModal = document.getElementById('booster-modal');
         const boosterChoicesContainer = document.getElementById('booster-choices-container');
 
-        // Initialize Game
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
             gameContainer.style.display = 'flex';
@@ -736,118 +704,49 @@
             }
         }
 
-        // Initialize Level Villains (3x4 Grid setup)
         function initLevel() {
             villainsGrid = new Array(12).fill(null);
 
             let villainHp = (stageLevel <= 2) ? 40 : 65;
-            let bossHp = 200 + (stageLevel * 50);
+            let bossHp = 250 + (stageLevel * 75);
 
-            if (stageLevel === 1) {
-                // First stage: Fewer villains, under 4 each level (1 to 3 villains max)
-                let countVillains = 1 + Math.floor(Math.random() * 3); // 1, 2, or 3 villains
+            // Boss index for 3x4 grid: last column, middle row -> Index 7 (Grid index format: cols 0-3, rows 0-2 -> row 1, col 3 = index 1*4 + 3 = 7)
+            let bossSlotIndex = 7;
+
+            if (subLevel === 5) {
+                let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
+                let selectedBossImg = bossImages[stageLevel - 1] || 'boss.png';
+
+                // Place boss at last column, middle row (index 7)
+                villainsGrid[bossSlotIndex] = { id: bossSlotIndex, isBoss: true, hp: bossHp, maxHp: bossHp, alive: true, img: selectedBossImg };
+
+                let availableSlots = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11];
+                let countNormal = 3 + Math.floor(Math.random() * 3);
+                availableSlots.sort(() => Math.random() - 0.5);
+
+                for (let i = 0; i < Math.min(countNormal, availableSlots.length); i++) {
+                    let slotIdx = availableSlots[i];
+                    villainsGrid[slotIdx] = { id: slotIdx, isBoss: false, hp: villainHp, maxHp: villainHp, alive: true, img: 'villain4.png' };
+                }
+            } else {
+                let countVillains = (stageLevel === 1) ? (1 + Math.floor(Math.random() * 3)) : (3 + Math.floor(Math.random() * 4));
                 let availableSlots = Array.from({length: 12}, (_, i) => i);
                 availableSlots.sort(() => Math.random() - 0.5);
 
                 let vImg = 'villain1.png';
                 if (subLevel === 2) vImg = 'villain2.png';
                 else if (subLevel === 3) vImg = 'villain4.png';
-                else if (subLevel === 4) vImg = 'villain1.png';
-                else if (subLevel === 5) {
-                    // For stage 1 level 5, let's keep it very light (e.g. 1 boss + 1 normal or just 2 normal/boss)
-                    let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
-                    villainsGrid[5] = {
-                        id: 5,
-                        isBoss: true,
-                        hp: bossHp,
-                        maxHp: bossHp,
-                        alive: true,
-                        img: bossImages[0]
-                    };
-                    let slotIdx = availableSlots[0] === 5 ? availableSlots[1] : availableSlots[0];
-                    villainsGrid[slotIdx] = {
-                        id: slotIdx,
-                        isBoss: false,
-                        hp: villainHp,
-                        maxHp: villainHp,
-                        alive: true,
-                        img: 'villain4.png'
-                    };
-                    renderVillainsGrid();
-                    return;
-                }
+                else if (subLevel === 4) vImg = Math.random() < 0.5 ? 'villain1.png' : 'villain2.png';
 
                 for (let i = 0; i < countVillains; i++) {
                     let slotIdx = availableSlots[i];
-                    villainsGrid[slotIdx] = {
-                        id: slotIdx,
-                        isBoss: false,
-                        hp: villainHp,
-                        maxHp: villainHp,
-                        alive: true,
-                        img: vImg
-                    };
-                }
-            } else {
-                // Stages 2, 3, 4
-                if (subLevel === 5) {
-                    let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
-                    let selectedBossImg = bossImages[stageLevel - 1] || 'boss.png';
-
-                    villainsGrid[5] = {
-                        id: 5,
-                        isBoss: true,
-                        hp: bossHp,
-                        maxHp: bossHp,
-                        alive: true,
-                        img: selectedBossImg
-                    };
-
-                    let availableSlots = [0, 1, 2, 4, 6, 7, 8, 9, 10, 11];
-                    let countNormal = 3 + Math.floor(Math.random() * 3);
-                    availableSlots.sort(() => Math.random() - 0.5);
-
-                    for (let i = 0; i < Math.min(countNormal, availableSlots.length); i++) {
-                        let slotIdx = availableSlots[i];
-                        villainsGrid[slotIdx] = {
-                            id: slotIdx,
-                            isBoss: false,
-                            hp: villainHp,
-                            maxHp: villainHp,
-                            alive: true,
-                            img: 'villain4.png'
-                        };
-                    }
-                } else {
-                    let countVillains = 3 + Math.floor(Math.random() * 5);
-                    let availableSlots = Array.from({length: 12}, (_, i) => i);
-                    availableSlots.sort(() => Math.random() - 0.5);
-
-                    let vImg = 'villain1.png';
-                    if (subLevel === 2) vImg = 'villain2.png';
-                    else if (subLevel === 3) vImg = 'villain4.png';
-                    else if (subLevel === 4) {
-                        vImg = Math.random() < 0.5 ? 'villain1.png' : 'villain2.png';
-                    }
-
-                    for (let i = 0; i < countVillains; i++) {
-                        let slotIdx = availableSlots[i];
-                        villainsGrid[slotIdx] = {
-                            id: slotIdx,
-                            isBoss: false,
-                            hp: villainHp,
-                            maxHp: villainHp,
-                            alive: true,
-                            img: vImg
-                        };
-                    }
+                    villainsGrid[slotIdx] = { id: slotIdx, isBoss: false, hp: villainHp, maxHp: villainHp, alive: true, img: vImg };
                 }
             }
 
             renderVillainsGrid();
         }
 
-        // Render Villains Grid (3x4)
         function renderVillainsGrid() {
             villainsContainer.innerHTML = '';
             villainsGrid.forEach((v, idx) => {
@@ -886,28 +785,24 @@
             });
         }
 
-        // Cup Generation and Management for Each Turn
         function initNewTurn() {
             turnPhase = 'CHOOSE_CUP';
             accumulatedPower = 0;
-            turnInfo.innerText = "choose one";
+            picksMadeCount = 0;
+            
+            // Sync choices allowed from booster 1 (Increase Choice)
+            picksAllowedTotal = boosters[1].level; // Level 1 = 1 pick, Level 2 = 2 picks, Level 3 = 3 picks
+            
+            turnInfo.innerText = `Choose cups (${picksMadeCount}/${picksAllowedTotal})`;
 
-            let levelBonus = 0;
-            let currentLvl = boosters[0].level;
-            if (currentLvl === 2) levelBonus = 45;
-            else if (currentLvl === 3) levelBonus = 65;
-            else if (currentLvl === 4) levelBonus = 85;
-            else if (currentLvl === 5) levelBonus = 115;
-            else if (currentLvl === 6) levelBonus = 135;
-            else if (currentLvl === 7) levelBonus = 155;
-
-            let extraPerLevel = (currentLvl - 1) * 5;
-            let totalBonus = levelBonus + (currentLvl > 1 ? extraPerLevel : 0);
+            // Increase Number booster: +10 per level up
+            let numberLevel = boosters[0].level;
+            let levelBonus = (numberLevel - 1) * 10;
 
             let shuffledValues = [...baseCupValues].sort(() => Math.random() - 0.5);
             currentTurnCups = shuffledValues.map(val => {
                 return {
-                    val: val + totalBonus,
+                    val: val + levelBonus,
                     opened: false
                 };
             });
@@ -942,73 +837,37 @@
             if (c.opened) return;
 
             c.opened = true;
-            accumulatedPower = c.val;
+            accumulatedPower += c.val;
+            picksMadeCount++;
             renderCups();
 
-            turnPhase = 'SELECT_TARGET';
-            turnInfo.innerText = `Power: ${accumulatedPower} - choose one`;
-            showBanner(`Cup Selected: ${accumulatedPower}! Choose one villain to attack.`);
+            if (picksMadeCount < picksAllowedTotal) {
+                turnInfo.innerText = `Power: ${accumulatedPower} - Pick next cup (${picksMadeCount}/${picksAllowedTotal})`;
+                showBanner(`Cup Opened: +${c.val}! Pick another cup.`);
+            } else {
+                turnPhase = 'SELECT_TARGET';
+                turnInfo.innerText = `Total Power: ${accumulatedPower} - Choose target villain`;
+                showBanner(`Total Power: ${accumulatedPower}! Choose target villain.`);
+            }
         }
 
         function selectTargetVillain(targetIdx) {
             if (turnPhase !== 'SELECT_TARGET') return;
             lastAttackedIndex = targetIdx;
 
-            // Hero shoots cross projectile to villain
-            fireHeroCrossToVillain(targetIdx, () => {
-                let wasDefeated = applyDamageWithBounce(accumulatedPower, targetIdx);
-
-                if (villainsGrid.every(v => !v || !v.alive)) {
-                    handleLevelClear();
-                } else {
-                    setTimeout(() => {
-                        executeVillainTurnLaserAttacks();
-                    }, 500);
-                }
-            });
-        }
-
-        function fireHeroCrossToVillain(targetIdx, callback) {
-            let proj = document.createElement('div');
-            proj.className = 'cross-projectile';
-            
-            let arenaRect = document.getElementById('battle-arena').getBoundingClientRect();
-            let heroRect = heroContainer.getBoundingClientRect();
-            
-            let villainSlots = villainsContainer.querySelectorAll('.villain-slot');
-            let targetSlot = villainSlots[targetIdx];
-            
-            proj.style.left = `${heroRect.left - arenaRect.left + 50}px`;
-            proj.style.top = `${heroRect.top - arenaRect.top + 100}px`;
-            document.getElementById('battle-arena').appendChild(proj);
-
-            if (targetSlot) {
-                let targetRect = targetSlot.getBoundingClientRect();
-                setTimeout(() => {
-                    proj.style.left = `${targetRect.left - arenaRect.left + targetRect.width / 2}px`;
-                    proj.style.top = `${targetRect.top - arenaRect.top + targetRect.height / 2}px`;
-                }, 50);
-            }
-
-            setTimeout(() => {
-                proj.remove();
-                if (callback) callback();
-            }, 450);
-        }
-
-        function applyDamageWithBounce(damageAmount, startTargetIdx) {
-            let bounceLevel = boosters[2].level; 
-            let maxExtraTargets = bounceLevel - 1;
+            // Increase Bounce booster: level 1 = 1 bounce, level 2 = 2, level 3 = 3, level 4 = 4, level 5 = 5
+            let bounceLevel = boosters[2].level;
+            let maxExtraTargets = bounceLevel;
 
             let targetIndices = [];
-            if (villainsGrid[startTargetIdx] && villainsGrid[startTargetIdx].alive) {
-                targetIndices.push(startTargetIdx);
+            if (villainsGrid[targetIdx] && villainsGrid[targetIdx].alive) {
+                targetIndices.push(targetIdx);
             }
 
             if (maxExtraTargets > 0) {
                 let count = 0;
                 for (let i = 0; i < villainsGrid.length && count < maxExtraTargets; i++) {
-                    let nextIdx = (startTargetIdx + i + 1) % villainsGrid.length;
+                    let nextIdx = (targetIdx + i + 1) % villainsGrid.length;
                     let target = villainsGrid[nextIdx];
                     if (target && target.alive && !targetIndices.includes(nextIdx)) {
                         if (target.isBoss && villainsGrid.some(v => v && !v.isBoss && v.alive)) {
@@ -1020,8 +879,84 @@
                 }
             }
 
-            let wasTargetDefeated = false;
+            // Animate Christian cross projectile travelling through primary target and bouncing to next target(s)
+            fireBouncingChristianCross(targetIndices, () => {
+                applyDamageToList(accumulatedPower, targetIndices, targetIdx);
+
+                if (villainsGrid.every(v => !v || !v.alive)) {
+                    handleLevelClear();
+                } else {
+                    setTimeout(() => {
+                        executeVillainTurnLaserAttacks();
+                    }, 500);
+                }
+            });
+        }
+
+        function fireBouncingChristianCross(targetIndices, callback) {
+            let arenaRect = document.getElementById('battle-arena').getBoundingClientRect();
+            let heroRect = heroContainer.getBoundingClientRect();
+            let villainSlots = villainsContainer.querySelectorAll('.villain-slot');
+
+            if (targetIndices.length === 0) {
+                if (callback) callback();
+                return;
+            }
+
+            let proj = document.createElement('div');
+            proj.className = 'christian-cross-projectile';
+            
+            let startX = heroRect.left - arenaRect.left + 50;
+            let startY = heroRect.top - arenaRect.top + 100;
+            
+            proj.style.left = `${startX}px`;
+            proj.style.top = `${startY}px`;
+            document.getElementById('battle-arena').appendChild(proj);
+
+            let currentIndex = 0;
+
+            function moveToNextTarget() {
+                if (currentIndex >= targetIndices.length) {
+                    setTimeout(() => {
+                        proj.remove();
+                        if (callback) callback();
+                    }, 200);
+                    return;
+                }
+
+                let tIdx = targetIndices[currentIndex];
+                let targetSlot = villainSlots[tIdx];
+
+                if (targetSlot) {
+                    let targetRect = targetSlot.getBoundingClientRect();
+                    let destX = targetRect.left - arenaRect.left + targetRect.width / 2 - 18;
+                    let destY = targetRect.top - arenaRect.top + targetRect.height / 2 - 25;
+
+                    proj.style.transition = 'all 0.35s linear';
+                    proj.style.left = `${destX}px`;
+                    proj.style.top = `${destY}px`;
+
+                    setTimeout(() => {
+                        proj.style.transform = 'scale(1.3) rotate(15deg)';
+                        setTimeout(() => {
+                            proj.style.transform = 'scale(1) rotate(0deg)';
+                            currentIndex++;
+                            moveToNextTarget();
+                        }, 150);
+                    }, 350);
+                } else {
+                    currentIndex++;
+                    moveToNextTarget();
+                }
+            }
+
+            setTimeout(moveToNextTarget, 50);
+        }
+
+        function applyDamageToList(damageAmount, targetIndices, startTargetIdx) {
             let currentDamage = damageAmount;
+            let wasTargetDefeated = false;
+
             for (let i = 0; i < targetIndices.length; i++) {
                 let tIdx = targetIndices[i];
                 let target = villainsGrid[tIdx];
@@ -1046,7 +981,6 @@
             return wasTargetDefeated;
         }
 
-        // Villain not diminished will shoot laser back at hero at end of turn
         function executeVillainTurnLaserAttacks() {
             let livingVillains = villainsGrid.filter(v => v && v.alive);
             if (livingVillains.length === 0) return;
@@ -1060,7 +994,6 @@
                 if (v && v.alive) activeIndices.push(idx);
             });
 
-            // Villain not diminished will shoot laser back
             let attackers = activeIndices.filter(idx => idx !== lastAttackedIndex);
             if (attackers.length === 0) {
                 attackers = activeIndices;
@@ -1073,7 +1006,6 @@
                 if (fired >= attacksToFire) {
                     clearInterval(interval);
                     
-                    // Apply damage to hero automatically
                     let damageToHero = 10 + (stageLevel * 5);
                     heroHp = Math.max(0, heroHp - damageToHero);
                     heroHpBar.style.width = `${(heroHp / heroMaxHp) * 100}%`;
@@ -1129,7 +1061,6 @@
             }
         }
 
-        // Pop out boosters to choose when the whole level is passed
         function promptBoosterSelection() {
             boosterChoicesContainer.innerHTML = '';
             
