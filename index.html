@@ -144,11 +144,11 @@
         /* Attack Projectile Animation */
         .attack-projectile {
             position: absolute;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             background: radial-gradient(circle, #ff4500, #ff0000);
             border-radius: 50%;
-            box-shadow: 0 0 12px #ff4500;
+            box-shadow: 0 0 10px #ff4500;
             z-index: 25;
             pointer-events: none;
             transition: all 0.4s linear;
@@ -204,56 +204,33 @@
             100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
         }
 
-        /* Strict 3x4 Grid Formation Field */
-        #villains-grid-field {
+        /* Villains Line-up (Original Layout) */
+        #villains-container {
             position: absolute;
-            right: 2%;
-            top: 2%;
-            width: 62%;
-            height: 96%;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 2px;
-            z-index: 10;
-            background: transparent;
-            border: none;
-        }
-        .grid-cell {
-            background: transparent;
-            border: none;
+            right: 5%;
+            bottom: 5%;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            align-items: flex-end;
+            gap: 15px;
+            z-index: 10;
         }
         .villain-unit {
             display: flex;
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            padding: 1px;
-            border-radius: 6px;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            transition: transform 0.1s;
-            opacity: 1.0 !important;
+            transition: transform 0.2s;
         }
         .villain-unit:hover {
-            transform: scale(1.1);
-        }
-        .villain-unit.active-target .villain-img {
-            filter: drop-shadow(0 0 12px rgba(218, 165, 32, 0.9));
-            transform: scale(1.06);
+            transform: scale(1.05);
         }
         .v-hp-container {
-            width: 48px;
-            height: 4px;
+            width: 50px;
+            height: 6px;
             background: #222;
             border: 1px solid #d4af37;
-            border-radius: 2px;
-            margin-bottom: 1px;
+            border-radius: 3px;
+            margin-bottom: 4px;
             overflow: hidden;
         }
         .v-hp-bar {
@@ -262,15 +239,15 @@
             background: #b8860b;
         }
         .villain-img {
-            width: 64px;
-            height: 82px;
+            width: 110px;
+            height: 165px;
             object-fit: contain;
-            transition: transform 0.2s, filter 0.2s;
+            filter: drop-shadow(0 0 15px rgba(184, 134, 11, 0.5));
         }
-        .villain-img.boss-img {
-            width: 115px;
-            height: 145px;
-            filter: drop-shadow(0 0 15px rgba(255, 69, 0, 0.8));
+        .boss-img {
+            width: 150px;
+            height: 225px;
+            filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.8));
         }
 
         /* Bottom Area: New Case Vault (Keeps background.png) */
@@ -473,7 +450,7 @@
         <!-- Left Pane: Storyline Pictures (50%) -->
         <div id="story-pane">
             <img id="story-img" src="story1.png" alt="Storyline">
-            <div id="story-title">Chapter I: The Awakening</div>
+            <div id="story-title">Act I</div>
         </div>
 
         <!-- Right Pane: Game Box (50%) -->
@@ -493,27 +470,27 @@
                     <img id="angel" src="angel.png" alt="Angel">
                 </div>
 
-                <!-- Villains Grid Field (3x4 Formation) -->
-                <div id="villains-grid-field"></div>
+                <!-- Villains Container (Original Lineup) -->
+                <div id="villains-container"></div>
             </div>
 
             <!-- Bottom Area: Case Vault (Keeps background.png) -->
             <div id="claw-section">
                 <div id="cases-container"></div>
-                <div id="turn-info">Picks remaining: <span id="picks-left">1</span></div>
+                <div id="turn-info">Select <span id="picks-left">1</span> case(s)</div>
 
-                <!-- Boosters Dock (3 Boosters) -->
+                <!-- Boosters Dock (3 Boosters specified) -->
                 <div id="boosters-dock">
                     <div class="booster-slot" id="booster-0" onclick="triggerBooster(0)">
                         <div class="booster-name">Increase Number</div>
                         <div class="booster-counter" id="count-0">Lv.1</div>
                     </div>
                     <div class="booster-slot" id="booster-1" onclick="triggerBooster(1)">
-                        <div class="booster-name">Choose More</div>
+                        <div class="booster-name">Increase Case Choosing</div>
                         <div class="booster-counter" id="count-1">Lv.1</div>
                     </div>
                     <div class="booster-slot" id="booster-2" onclick="triggerBooster(2)">
-                        <div class="booster-name">Bounce Overflow</div>
+                        <div class="booster-name">Increase Bounce</div>
                         <div class="booster-counter" id="count-2">Lv.1</div>
                     </div>
                 </div>
@@ -532,11 +509,11 @@
     </div>
 
     <script>
-        // Storyline Sequence Images & Titles
+        // Storyline Sequence Images & Titles (Original)
         const storyChapters = [
-            { img: 'story1.png', title: 'Chapter I: The Awakening' },
-            { img: 'story2.png', title: 'Chapter II: Trials of Abyss' },
-            { img: 'story3.png', title: 'Chapter III: Ascending Light' }
+            { img: 'story1.png', title: 'Act I' },
+            { img: 'story2.png', title: 'Act II' },
+            { img: 'story3.png', title: 'Act III' }
         ];
         let currentChapterIndex = 0;
 
@@ -545,7 +522,7 @@
         const maxStages = 4;
         
         // Boosters state
-        // 0: Increase number (Max 7 levels: Lv.1 to Lv.7 -> values: 45, 65, 85, 115, 135, 155)
+        // 0: Increase number (Max 7 levels)
         // 1: Increase case choosing (Max 3 levels)
         // 2: Increase bounce (Max 5 levels)
         let boosters = [
@@ -559,10 +536,12 @@
         let currentTurnCases = [];
         let picksAllowed = 1;
         let picksMadeThisTurn = 0;
+        let accumulatedPower = 0;
+        let turnPhase = 'CHOOSE_CASES'; // 'CHOOSE_CASES' or 'SELECT_TARGET'
 
-        // Villains Data Setup (3x4 grid = 12 total units per stage, last unit in grid is Boss)
+        // Villains Data Setup (Original layout: Stage 1/2: 2 villains + boss, Stage 3/4: 2 villains + boss)
         let villains = [];
-        let activeTargetIndex = 0;
+        let consecutiveLossAttacks = 0; // tracking attacks if needed, or check > 3 attacks each turn rule
 
         // DOM Elements
         const startScreen = document.getElementById('start-screen');
@@ -570,7 +549,7 @@
         const gameContainer = document.getElementById('game-container');
         const storyImg = document.getElementById('story-img');
         const storyTitle = document.getElementById('story-title');
-        const villainsGridField = document.getElementById('villains-grid-field');
+        const villainsContainer = document.getElementById('villains-container');
         const floatingBanner = document.getElementById('floating-banner');
         const heroContainer = document.getElementById('hero-container');
         const angelContainer = document.getElementById('angel-container');
@@ -578,6 +557,7 @@
         const finalScreen = document.getElementById('final-screen');
         const casesContainer = document.getElementById('cases-container');
         const picksLeftSpan = document.getElementById('picks-left');
+        const turnInfo = document.getElementById('turn-info');
 
         // Initialize Game
         startBtn.addEventListener('click', () => {
@@ -587,52 +567,36 @@
             initNewTurn();
         });
 
-        // Initialize Stage Villains (3x4 = 12 units)
+        // Initialize Stage Villains (Original Hero/Villain setup)
         function initStage(level) {
             villains = [];
-            let totalUnits = 12;
-            for(let i=0; i<totalUnits; i++) {
-                let isBoss = (i === totalUnits - 1);
-                let maxHp;
-                if(isBoss) {
-                    // Boss life is 200, final big boss life is 300 (Stage 4)
-                    maxHp = (level === 4) ? 300 : 200;
-                } else {
-                    // Each villain life is 40 at stage 1 and 2, each villain life becomes 60 at stage 3 and 4
-                    maxHp = (level <= 2) ? 40 : 60;
-                }
-                villains.push({
-                    id: i,
-                    isBoss: isBoss,
-                    hp: maxHp,
-                    maxHp: maxHp,
-                    alive: true,
-                    img: isBoss ? 'boss.png' : `minion${(i % 3) + 1}.png`
-                });
-            }
-            activeTargetIndex = 0;
-            updateActiveTarget();
+            let villainHp = (level <= 2) ? 40 : 60;
+            let bossHp = (level === 4) ? 300 : 200;
+
+            // 2 normal villains + 1 boss (Original setup)
+            villains.push({ id: 0, isBoss: false, hp: villainHp, maxHp: villainHp, alive: true, img: 'minion1.png' });
+            villains.push({ id: 1, isBoss: false, hp: villainHp, maxHp: villainHp, alive: true, img: 'minion2.png' });
+            villains.push({ id: 2, isBoss: true, hp: bossHp, maxHp: bossHp, alive: true, img: 'boss.png' });
+
             renderVillains();
         }
 
-        // Render Villains in Strict 3x4 Grid
+        // Render Villains (Original layout)
         function renderVillains() {
-            villainsGridField.innerHTML = '';
+            villainsContainer.innerHTML = '';
             villains.forEach((v, idx) => {
-                let cell = document.createElement('div');
-                cell.className = 'grid-cell';
-
                 if (v.alive) {
                     let unitDiv = document.createElement('div');
-                    unitDiv.className = `villain-unit ${idx === activeTargetIndex ? 'active-target' : ''}`;
+                    unitDiv.className = 'villain-unit';
                     unitDiv.onclick = () => {
-                        // Boss rule: boss is always the last to be bounced on/killed
-                        if (v.isBoss && villains.some((item, i) => i !== idx && item.alive)) {
-                            showBanner("Boss must be attacked last!");
-                            return;
+                        if (turnPhase === 'SELECT_TARGET') {
+                            // Boss rule check: boss must be attacked last if minions are alive
+                            if (v.isBoss && villains.some((item, i) => !item.isBoss && item.alive)) {
+                                showBanner("Boss must be attacked last!");
+                                return;
+                            }
+                            selectTargetVillain(idx);
                         }
-                        activeTargetIndex = idx;
-                        renderVillains();
                     };
 
                     let hpCont = document.createElement('div');
@@ -648,50 +612,38 @@
 
                     unitDiv.appendChild(hpCont);
                     unitDiv.appendChild(img);
-                    cell.appendChild(unitDiv);
+                    villainsContainer.appendChild(unitDiv);
                 }
-                villainsGridField.appendChild(cell);
             });
-        }
-
-        function updateActiveTarget() {
-            if (villains[activeTargetIndex] && !villains[activeTargetIndex].alive) {
-                let nextAlive = villains.findIndex((v, i) => v.alive && !v.isBoss);
-                if (nextAlive !== -1) {
-                    activeTargetIndex = nextAlive;
-                } else {
-                    let bossIndex = villains.findIndex(v => v.isBoss && v.alive);
-                    if (bossIndex !== -1) activeTargetIndex = bossIndex;
-                }
-            }
         }
 
         // Case Generation and Management for Each Turn
         function initNewTurn() {
+            turnPhase = 'CHOOSE_CASES';
             picksMadeThisTurn = 0;
-            picksAllowed = boosters[1].level; // Choose more booster level determines picks allowed per turn
+            accumulatedPower = 0;
+            picksAllowed = boosters[1].level; // Increase case choosing booster level
             picksLeftSpan.innerText = picksAllowed - picksMadeThisTurn;
+            turnInfo.innerHTML = `Select <span id="picks-left">${picksAllowed - picksMadeThisTurn}</span> case(s)`;
 
-            // Generate shuffled hidden values with increase number booster bonus
-            // Increase number booster levels 1-7 add values or specify max levels: 45, 65, 85, 115, 135, 155
-            let bonusMap = [0, 45, 65, 85, 115, 135, 155]; 
-            // Wait, let's map booster level 1 to base values (bonus 0), and levels 2-7 to specific fixed values or additions. 
-            // Prompt: "for each booster level up increase numbers under each case by 5, Max seven level to 45, 65, 85, 115, 135, 155"
-            // Let's calculate exact numbers based on level:
+            // Increase number booster bonus values: 45, 65, 85, 115, 135, 155 for levels 2-7
             let levelBonus = 0;
             let currentLvl = boosters[0].level;
-            if (currentLvl === 1) levelBonus = 0;
-            else if (currentLvl === 2) levelBonus = 45;
+            if (currentLvl === 2) levelBonus = 45;
             else if (currentLvl === 3) levelBonus = 65;
             else if (currentLvl === 4) levelBonus = 85;
             else if (currentLvl === 5) levelBonus = 115;
             else if (currentLvl === 6) levelBonus = 135;
             else if (currentLvl === 7) levelBonus = 155;
 
+            // Plus 5 for each level up increase numbers under each case
+            let extraPerLevel = (currentLvl - 1) * 5;
+            let totalBonus = levelBonus + (currentLvl > 1 ? extraPerLevel : 0);
+
             let shuffledValues = [...baseCaseValues].sort(() => Math.random() - 0.5);
             currentTurnCases = shuffledValues.map(val => {
                 return {
-                    val: val + levelBonus,
+                    val: val + totalBonus,
                     opened: false
                 };
             });
@@ -721,19 +673,36 @@
         }
 
         function selectCase(idx) {
+            if (turnPhase !== 'CHOOSE_CASES') return;
             let c = currentTurnCases[idx];
             if (c.opened || picksMadeThisTurn >= picksAllowed) return;
 
             c.opened = true;
+            accumulatedPower += c.val;
             picksMadeThisTurn++;
-            picksLeftSpan.innerText = picksAllowed - picksMadeThisTurn;
+            
+            let span = document.getElementById('picks-left');
+            if(span) span.innerText = picksAllowed - picksMadeThisTurn;
             renderCases();
 
-            // Apply damage to active target
-            applyDamageWithBounce(c.val);
-
-            // Check if turn is complete
+            // After player chooses required cases for the turn, prompt player to select villain target
             if (picksMadeThisTurn >= picksAllowed) {
+                turnPhase = 'SELECT_TARGET';
+                turnInfo.innerHTML = `Total Power: ${accumulatedPower} - Click villain to attack!`;
+                showBanner(`Power Collected: ${accumulatedPower}! Click a villain to attack.`);
+            }
+        }
+
+        // Player selects villain to hit with accumulated power
+        function selectTargetVillain(targetIdx) {
+            if (turnPhase !== 'SELECT_TARGET') return;
+
+            applyDamageWithBounce(accumulatedPower, targetIdx);
+
+            if (villains.every(v => !v.alive)) {
+                handleStageClear();
+            } else {
+                // Villain hit back at end of the turn
                 setTimeout(() => {
                     executeVillainTurnAttacks();
                 }, 600);
@@ -741,9 +710,9 @@
         }
 
         // Apply Damage with Bounce Overflow Logic
-        function applyDamageWithBounce(damageAmount) {
+        function applyDamageWithBounce(damageAmount, startTargetIdx) {
             let bounceLevel = boosters[2].level; 
-            // bounceLevel 1: does not allow bounce (spill over 0 extra villains)
+            // bounceLevel 1: does not allow bounce (spill over 0)
             // bounceLevel 2: spill over to 1 next villain
             // bounceLevel 3: spill over to 2 more villains
             // bounceLevel 4: spill over to 3 more villains
@@ -751,24 +720,14 @@
             let maxExtraTargets = bounceLevel - 1;
 
             let targetIndices = [];
-            // Find current active target index
-            let currIdx = activeTargetIndex;
-            if (!villains[currIdx].alive) {
-                updateActiveTarget();
-                currIdx = activeTargetIndex;
+            if (villains[startTargetIdx].alive) {
+                targetIndices.push(startTargetIdx);
             }
 
-            if (!villains[currIdx].alive) return;
-
-            targetIndices.push(currIdx);
-
-            // Collect spill over targets sequentially from living villains
             if (maxExtraTargets > 0) {
                 let count = 0;
                 for (let i = 1; i < villains.length && count < maxExtraTargets; i++) {
-                    let nextIdx = (currIdx + i) % villains.length;
-                    // Boss rule check for spillover: do not spill over to boss if other minions are alive
-                    let otherMinionsAlive = villains.some((v, vi) => vi !== nextIdx && v.isBoss && v.alive);
+                    let nextIdx = (startTargetIdx + i) % villains.length;
                     if (villains[nextIdx].alive) {
                         if (villains[nextIdx].isBoss && villains.some((v, vi) => !v.isBoss && v.alive)) {
                             continue; // Skip boss spillover if minions remain
@@ -799,46 +758,34 @@
             }
 
             renderVillains();
-
-            if (villains.every(v => !v.alive)) {
-                handleStageClear();
-            } else {
-                updateActiveTarget();
-                renderVillains();
-            }
         }
 
         // Villain Attack Turn Mechanic
         function executeVillainTurnAttacks() {
             // "The Villain side will shoot out attacks to hero once each turn, by the nearest villain. If the hero receives more than 3 attacks each turn he loses and has to restart that level"
-            // Let's shoot 3 attacks each turn from the nearest living villain towards the hero.
             let livingVillains = villains.filter(v => v.alive);
             if (livingVillains.length === 0) return;
 
-            let nearestVillain = livingVillains[0]; // Nearest villain in grid view order
-
-            let attackCount = 3;
+            let attackCount = 3; // 3 attacks fired each turn from nearest villain
             let attacksFired = 0;
 
             let attackInterval = setInterval(() => {
                 if (attacksFired >= attackCount) {
                     clearInterval(attackInterval);
-                    // Check if hero receives more than 3 attacks (here exactly 3 are fired, prompt says: "If the hero receives more than 3 attacks each turn he loses", so 3 or fewer is safe, or let's trigger loss if it exceeds 3).
-                    // Wait, let's verify if 3 attacks causes defeat or if it needs > 3. "If the hero receives more than 3 attacks each turn he loses". Since 3 attacks are fired per turn, hero survives 3 attacks!
-                    setTimeout(initNewTurn, 500);
+                    // Check rule: if hero receives more than 3 attacks he loses. 3 attacks exactly is safe, next turn starts.
+                    setTimeout(initNewTurn, 400);
                     return;
                 }
 
                 fireProjectileAtHero();
                 attacksFired++;
-            }, 300);
+            }, 250);
         }
 
         function fireProjectileAtHero() {
             let proj = document.createElement('div');
             proj.className = 'attack-projectile';
             
-            // Get positions
             let arenaRect = document.getElementById('battle-arena').getBoundingClientRect();
             let heroRect = heroContainer.getBoundingClientRect();
             
@@ -853,16 +800,16 @@
 
             setTimeout(() => {
                 proj.remove();
-            }, 450);
+            }, 400);
         }
 
         // Increment Booster & Check Max
         function incrementBooster(type) {
-            if(boosters[type].level < boosters[type].max) {
+            if (boosters[type].level < boosters[type].max) {
                 boosters[type].level++;
                 document.getElementById(`count-${type}`).innerText = `Lv.${boosters[type].level}`;
                 
-                if(boosters[type].level >= boosters[type].max) {
+                if (boosters[type].level >= boosters[type].max) {
                     let slot = document.getElementById(`booster-${type}`);
                     slot.classList.add('maxed');
                     showBanner(`${slot.querySelector('.booster-name').innerText} Maxed!`);
@@ -893,7 +840,7 @@
             }
         }
 
-        // Victory Sequence: Hero moves to Angel and Angel appears
+        // Victory Sequence: Hero moves to Angel and Angel appears (Original)
         function triggerVictorySequence() {
             heroContainer.style.left = '72%';
             setTimeout(() => {
