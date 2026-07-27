@@ -127,12 +127,12 @@
         #hero-container {
             position: absolute;
             left: 5%;
-            bottom: 5%;
+            bottom: 12%; /* Adjusted down */
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 10;
-            transition: left 2.5s ease-in-out;
+            transition: left 2.5s ease-in-out, bottom 2.5s ease-in-out;
         }
         #hero {
             width: 150px;      
@@ -174,20 +174,17 @@
             box-shadow: 0 0 15px #ff9800, 0 0 5px #ffffff;
         }
 
-        /* Villain Laser Beam Animation */
-        .laser-beam {
+        /* Fireball Projectile Animation for Villain Attacks */
+        .fireball-projectile {
             position: absolute;
-            height: 4px;
-            background: radial-gradient(circle, #ff0055, #ff0000);
-            box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #fff700, #ff4500, #ff0000);
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ff4500, 0 0 30px #ff0000;
             z-index: 25;
             pointer-events: none;
-            transform-origin: left center;
-            animation: laserFlash 0.3s forwards ease-out;
-        }
-        @keyframes laserFlash {
-            0% { opacity: 1; transform: scaleX(1); }
-            100% { opacity: 0; transform: scaleX(1); }
+            transition: all 0.4s linear;
         }
 
         /* Hero HP Bar */
@@ -207,38 +204,39 @@
             transition: width 0.3s ease;
         }
 
-        /* Angel/Angle Settings & Elements */
+        /* Angel Setting & Elements */
         #angel-container {
             position: absolute;
             right: 5%;
-            bottom: 5%;
+            bottom: 12%; /* Adjusted down to match hero height */
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 15;
             cursor: pointer;
             display: none;
+            transition: transform 0.3s ease;
         }
         #angel {
-            width: 130px;      
-            height: 195px;      
+            width: 150px;      
+            height: 225px;      
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
             transform: rotate(var(--angel-tilt, 0deg));
-            transition: transform 0.3s ease;
         }
 
         .angel-halo {
             position: absolute;
-            top: -5px;
-            width: 48px;
-            height: 16px;
+            top: -8px;
+            width: 52px;
+            height: 18px;
             border: 2px solid #fde047;
             border-radius: 50%;
             box-shadow: 0 0 15px #fde047;
             animation: haloGlow 1s infinite alternate;
             display: none;
+            z-index: 16;
         }
         @keyframes haloGlow {
             from { transform: scale(1); box-shadow: 0 0 10px #fde047; }
@@ -274,15 +272,44 @@
         .white-heart {
             position: absolute;
             color: #ffffff;
-            font-size: 20px;
+            font-size: 22px;
             pointer-events: none;
             animation: heartFirework 1.4s forwards ease-out;
-            z-index: 1;
+            z-index: 20;
             text-shadow: 0 0 10px #ffffff, 0 0 20px #fde047;
         }
         @keyframes heartFirework {
             0% { transform: translate(0, 0) scale(0.4); opacity: 1; }
             100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
+        }
+
+        /* Flying Fly.png Sparkles & Animation */
+        .sparkle-spark {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #ffffff, #ffd700);
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffd700, 0 0 20px #fff;
+            pointer-events: none;
+            animation: sparkleDrop 1.2s forwards ease-out;
+            z-index: 220;
+        }
+        @keyframes sparkleDrop {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(40px) scale(0.2); opacity: 0; }
+        }
+
+        #flying-sprite {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            z-index: 210;
+            pointer-events: none;
+            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9));
+            display: none;
+            transition: all 0.5s linear;
         }
 
         /* Villains Grid Layout (3x4 invisible grid) */
@@ -342,7 +369,7 @@
             filter: drop-shadow(0 0 30px rgba(255, 69, 0, 0.95));
         }
 
-        /* Bottom Area: Claw Section with Cups */
+        /* Bottom Area: Claw Section with Rings */
         #claw-section {
             height: 40%;
             width: 100%;
@@ -360,7 +387,7 @@
             padding: 10px;
         }
 
-        /* Cups Container: 6 cups side by side horizontally */
+        /* Rings Container: 6 rings side by side horizontally */
         #cases-container {
             display: flex;
             justify-content: center;
@@ -608,7 +635,7 @@
                 </div>
 
                 <!-- Angel Container & Angel Settings Panel -->
-                <div id="angel-container">
+                <div id="angel-container" onclick="handleAngelClick()">
                     <div class="angel-halo" id="angel-halo"></div>
                     <img id="angel" src="angel.png" alt="Angel">
                 </div>
@@ -623,7 +650,7 @@
                 <div id="villains-container"></div>
             </div>
 
-            <!-- Bottom Area: Claw Section with Cups -->
+            <!-- Bottom Area: Claw Section with Rings -->
             <div id="claw-section">
                 <div id="cases-container"></div>
                 <div id="turn-info">choose one</div>
@@ -652,10 +679,13 @@
 
     <!-- Final Fly Screen -->
     <div id="final-screen">
-        <img id="final-img" src="fly.png" alt="Final Fly">
+        <img id="final-img" src="congrat.png" alt="Congratulations">
         <div id="final-msg">Together In Eternity</div>
         <button id="restart-game-btn" onclick="location.reload()">Play Again</button>
     </div>
+
+    <!-- Flying Sprite Element -->
+    <img id="flying-sprite" src="fly.png" alt="Flying Sprite">
 
     <script>
         const stageData = {
@@ -692,14 +722,14 @@
             { id: 2, name: "Increase Bounce", level: 1, max: 5 }
         ];
 
-        // Randomly hidden numbers: 30, 50, 80, 100, 120, 150
-        let baseCupValues = [30, 50, 80, 100, 120, 150];
-        let currentTurnCups = [];
+        let baseRingValues = [30, 50, 80, 100, 120, 150];
+        let currentTurnRings = [];
         let accumulatedPower = 0;
         let picksAllowedTotal = 1;
         let picksMadeCount = 0;
-        let turnPhase = 'CHOOSE_CUP';
+        let turnPhase = 'CHOOSE_RING';
         let lastAttackedIndex = -1;
+        let waitingForAngelClick = false;
 
         let villainsGrid = [];
 
@@ -724,8 +754,8 @@
         const stageClearMsg = document.getElementById('stage-clear-msg');
         const boosterModal = document.getElementById('booster-modal');
         const boosterChoicesContainer = document.getElementById('booster-choices-container');
+        const flyingSprite = document.getElementById('flying-sprite');
 
-        // Angel angle/tilt setting listener
         angelAngleSlider.addEventListener('input', (e) => {
             const angle = e.target.value;
             angelAngleVal.innerText = angle;
@@ -752,15 +782,12 @@
 
             let villainHp = (stageLevel <= 2) ? 40 : 65;
             let bossHp = 250 + (stageLevel * 75);
-
-            // Boss position: last column, middle row -> Index 7 (row 1, col 3)
             let bossSlotIndex = 7;
 
             if (subLevel === 5) {
                 let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
                 let selectedBossImg = bossImages[stageLevel - 1] || 'boss.png';
 
-                // Place boss at last column middle row, bigger scale styling
                 villainsGrid[bossSlotIndex] = { id: bossSlotIndex, isBoss: true, hp: bossHp, maxHp: bossHp, alive: true, img: selectedBossImg };
 
                 let availableSlots = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11];
@@ -829,36 +856,34 @@
         }
 
         function initNewTurn() {
-            turnPhase = 'CHOOSE_CUP';
+            if (waitingForAngelClick) return;
+            turnPhase = 'CHOOSE_RING';
             accumulatedPower = 0;
             picksMadeCount = 0;
             
-            // Increase Choice booster sync
             picksAllowedTotal = boosters[1].level;
-            
-            turnInfo.innerText = `Choose cups (${picksMadeCount}/${picksAllowedTotal})`;
+            turnInfo.innerText = `Choose rings (${picksMadeCount}/${picksAllowedTotal})`;
 
-            // Increase Number booster sync (+10 per level up)
             let numberLevel = boosters[0].level;
             let levelBonus = (numberLevel - 1) * 10;
 
-            let shuffledValues = [...baseCupValues].sort(() => Math.random() - 0.5);
-            currentTurnCups = shuffledValues.map(val => {
+            let shuffledValues = [...baseRingValues].sort(() => Math.random() - 0.5);
+            currentTurnRings = shuffledValues.map(val => {
                 return {
                     val: val + levelBonus,
                     opened: false
                 };
             });
 
-            renderCups();
+            renderRings();
         }
 
-        function renderCups() {
+        function renderRings() {
             casesContainer.innerHTML = '';
-            currentTurnCups.forEach((c, idx) => {
+            currentTurnRings.forEach((c, idx) => {
                 let card = document.createElement('div');
                 card.className = `case-card ${c.opened ? 'opened' : ''}`;
-                card.onclick = () => selectCup(idx);
+                card.onclick = () => selectRing(idx);
 
                 let img = document.createElement('img');
                 img.className = 'case-img';
@@ -874,19 +899,19 @@
             });
         }
 
-        function selectCup(idx) {
-            if (turnPhase !== 'CHOOSE_CUP') return;
-            let c = currentTurnCups[idx];
+        function selectRing(idx) {
+            if (turnPhase !== 'CHOOSE_RING') return;
+            let c = currentTurnRings[idx];
             if (c.opened) return;
 
             c.opened = true;
             accumulatedPower += c.val;
             picksMadeCount++;
-            renderCups();
+            renderRings();
 
             if (picksMadeCount < picksAllowedTotal) {
-                turnInfo.innerText = `Power: ${accumulatedPower} - Pick next cup (${picksMadeCount}/${picksAllowedTotal})`;
-                showBanner(`Cup Opened: +${c.val}! Pick another cup.`);
+                turnInfo.innerText = `Power: ${accumulatedPower} - Pick next ring (${picksMadeCount}/${picksAllowedTotal})`;
+                showBanner(`Ring Opened: +${c.val}! Pick another ring.`);
             } else {
                 turnPhase = 'SELECT_TARGET';
                 turnInfo.innerText = `Total Power: ${accumulatedPower} - Choose target villain`;
@@ -898,7 +923,6 @@
             if (turnPhase !== 'SELECT_TARGET') return;
             lastAttackedIndex = targetIdx;
 
-            // Increase Bounce booster sync (levels 1 to 5)
             let bounceLevel = boosters[2].level;
             let maxExtraTargets = bounceLevel;
 
@@ -929,7 +953,7 @@
                     handleLevelClear();
                 } else {
                     setTimeout(() => {
-                        executeVillainTurnLaserAttacks();
+                        executeVillainTurnFireballAttacks();
                     }, 500);
                 }
             });
@@ -1023,7 +1047,7 @@
             return wasTargetDefeated;
         }
 
-        function executeVillainTurnLaserAttacks() {
+        function executeVillainTurnFireballAttacks() {
             let livingVillains = villainsGrid.filter(v => v && v.alive);
             if (livingVillains.length === 0) return;
 
@@ -1070,36 +1094,98 @@
                 let slot = villainSlots[chosenIdx];
                 if (slot) {
                     let vRect = slot.getBoundingClientRect();
-                    let laser = document.createElement('div');
-                    laser.className = 'laser-beam';
+                    let fireball = document.createElement('div');
+                    fireball.className = 'fireball-projectile';
 
-                    let x1 = vRect.left - arenaRect.left + vRect.width / 2;
-                    let y1 = vRect.top - arenaRect.top + vRect.height / 2;
-                    let x2 = heroRect.left - arenaRect.left + heroRect.width / 2;
-                    let y2 = heroRect.top - arenaRect.top + heroRect.height / 2;
+                    let x1 = vRect.left - arenaRect.left + vRect.width / 2 - 15;
+                    let y1 = vRect.top - arenaRect.top + vRect.height / 2 - 15;
+                    let x2 = heroRect.left - arenaRect.left + heroRect.width / 2 - 15;
+                    let y2 = heroRect.top - arenaRect.top + heroRect.height / 2 - 15;
 
-                    let length = Math.hypot(x2 - x1, y2 - y1);
-                    let angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+                    fireball.style.left = `${x1}px`;
+                    fireball.style.top = `${y1}px`;
+                    document.getElementById('battle-arena').appendChild(fireball);
 
-                    laser.style.width = `${length}px`;
-                    laser.style.left = `${x1}px`;
-                    laser.style.top = `${y1}px`;
-                    laser.style.transform = `rotate(${angle}deg)`;
+                    setTimeout(() => {
+                        fireball.style.transition = 'all 0.4s ease-in';
+                        fireball.style.left = `${x2}px`;
+                        fireball.style.top = `${y2}px`;
+                    }, 50);
 
-                    document.getElementById('battle-arena').appendChild(laser);
-                    setTimeout(() => laser.remove(), 300);
+                    setTimeout(() => fireball.remove(), 450);
                 }
 
                 fired++;
-            }, 300);
+            }, 350);
         }
 
         function handleLevelClear() {
-            if (subLevel < maxSubLevels || stageLevel < maxStages) {
-                promptBoosterSelection();
+            if (subLevel === 5) {
+                turnPhase = 'STAGE_CLEARED_ANGEL';
+                waitingForAngelClick = true;
+                turnInfo.innerText = "Touch the angel to clear stage!";
+                casesContainer.innerHTML = '';
+                
+                angelContainer.style.display = 'flex';
+                angelContainer.style.right = '5%';
+                angelContainer.style.bottom = '12%';
+                showBanner("Click the Angel to finish stage!");
             } else {
-                showBanner("All Trials Conquered!");
-                setTimeout(triggerVictorySequence, 2000);
+                promptBoosterSelection();
+            }
+        }
+
+        function handleAngelClick() {
+            if (!waitingForAngelClick) return;
+            waitingForAngelClick = false;
+
+            heroContainer.style.left = '68%';
+            heroContainer.style.bottom = '12%';
+
+            setTimeout(() => {
+                angelHalo.style.display = 'block';
+                triggerFourWavesOfHearts();
+
+                setTimeout(() => {
+                    heroContainer.style.left = '5%';
+                    heroContainer.style.bottom = '12%';
+                    angelContainer.style.display = 'none';
+                    angelHalo.style.display = 'none';
+
+                    if (stageLevel === maxStages && subLevel === maxSubLevels) {
+                        triggerFinalVictorySequence();
+                    } else {
+                        promptBoosterSelection();
+                    }
+                }, 3200);
+            }, 2500);
+        }
+
+        function triggerFourWavesOfHearts() {
+            let waveCount = 0;
+            let waveInterval = setInterval(() => {
+                waveCount++;
+                spawnHeartBurst();
+                if (waveCount >= 4) {
+                    clearInterval(waveInterval);
+                }
+            }, 600);
+        }
+
+        function spawnHeartBurst() {
+            for (let i = 0; i < 8; i++) {
+                let heart = document.createElement('div');
+                heart.className = 'white-heart';
+                heart.innerHTML = '&#10084;';
+                let rect = angelContainer.getBoundingClientRect();
+                heart.style.left = `${rect.left + rect.width / 2}px`;
+                heart.style.top = `${rect.top + rect.height / 2}px`;
+                let angle = Math.random() * Math.PI * 2;
+                let dist = 70 + Math.random() * 80;
+                heart.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+                heart.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 1400);
             }
         }
 
@@ -1151,38 +1237,36 @@
             initNewTurn();
         }
 
-        function triggerVictorySequence() {
-            heroContainer.style.left = '72%';
-            setTimeout(() => {
-                angelContainer.style.display = 'flex';
-                angelHalo.style.display = 'block';
-                startHeartFireworks();
-
-                setTimeout(() => {
-                    gameContainer.style.display = 'none';
-                    finalScreen.style.display = 'flex';
-                }, 3000);
-            }, 2500);
+        function triggerFinalVictorySequence() {
+            gameContainer.style.display = 'none';
+            finalScreen.style.display = 'flex';
+            startFlySpriteSparkles();
         }
 
-        function startHeartFireworks() {
-            let interval = setInterval(() => {
-                for(let i=0; i<5; i++) {
-                    let heart = document.createElement('div');
-                    heart.className = 'white-heart';
-                    heart.innerHTML = '&#10084;';
-                    let rect = angelContainer.getBoundingClientRect();
-                    heart.style.left = `${rect.left + rect.width/2}px`;
-                    heart.style.top = `${rect.top + rect.height/2}px`;
-                    let angle = Math.random() * Math.PI * 2;
-                    let dist = 60 + Math.random() * 90;
-                    heart.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
-                    heart.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
-                    document.body.appendChild(heart);
-                    setTimeout(() => heart.remove(), 1400);
+        function startFlySpriteSparkles() {
+            flyingSprite.style.display = 'block';
+            let posX = window.innerWidth / 2 - 60;
+            let posY = window.innerHeight / 2 - 60;
+            flyingSprite.style.left = `${posX}px`;
+            flyingSprite.style.top = `${posY}px`;
+
+            let flyInterval = setInterval(() => {
+                posX = 50 + Math.random() * (window.innerWidth - 200);
+                posY = 50 + Math.random() * (window.innerHeight - 200);
+                flyingSprite.style.left = `${posX}px`;
+                flyingSprite.style.top = `${posY}px`;
+
+                for (let i = 0; i < 4; i++) {
+                    let spark = document.createElement('div');
+                    spark.className = 'sparkle-spark';
+                    spark.style.left = `${posX + 40 + (Math.random() * 40 - 20)}px`;
+                    spark.style.top = `${posY + 60 + (Math.random() * 20)}px`;
+                    document.body.appendChild(spark);
+                    setTimeout(() => spark.remove(), 1200);
                 }
-            }, 300);
-            setTimeout(() => clearInterval(interval), 3000);
+            }, 800);
+
+            window.flyIntervalRef = flyInterval;
         }
 
         function showBanner(text) {
