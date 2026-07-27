@@ -222,7 +222,7 @@
             transition: width 0.3s ease;
         }
 
-        /* Angel Setting & Elements (Resized to match hero height correctly) */
+        /* Angel Setting & Elements (Significantly smaller than Hero now) */
         #angel-container {
             position: absolute;
             right: 5%;
@@ -236,8 +236,8 @@
             transition: transform 0.3s ease;
         }
         #angel {
-            width: 150px;      
-            height: 225px;      
+            width: 95px;      
+            height: 140px;      
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
@@ -245,9 +245,9 @@
 
         .angel-halo {
             position: absolute;
-            top: -8px;
-            width: 52px;
-            height: 18px;
+            top: -6px;
+            width: 35px;
+            height: 12px;
             border: 2px solid #fde047;
             border-radius: 50%;
             box-shadow: 0 0 15px #fde047;
@@ -274,31 +274,31 @@
             100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
         }
 
-        /* Flying Fly.png Sparkles & Animation */
+        /* Flying Fly.png Sparkles & Animation (Made much bigger) */
         .sparkle-spark {
             position: absolute;
-            width: 8px;
-            height: 8px;
+            width: 12px;
+            height: 12px;
             background: radial-gradient(circle, #ffffff, #ffd700);
             border-radius: 50%;
-            box-shadow: 0 0 10px #ffd700, 0 0 20px #fff;
+            box-shadow: 0 0 12px #ffd700, 0 0 25px #fff;
             pointer-events: none;
             animation: sparkleDrop 1.2s forwards ease-out;
             z-index: 220;
         }
         @keyframes sparkleDrop {
             0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(40px) scale(0.2); opacity: 0; }
+            100% { transform: translateY(50px) scale(0.2); opacity: 0; }
         }
 
         #flying-sprite {
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: 220px;
+            height: 220px;
             object-fit: contain;
             z-index: 210;
             pointer-events: none;
-            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9));
+            filter: drop-shadow(0 0 35px rgba(255, 215, 0, 0.95));
             display: none;
             transition: all 0.5s linear;
         }
@@ -485,7 +485,7 @@
         .booster-choice-btn.maxed {
             border-color: #ef4444;
             opacity: 0.6;
-            cursor: pointer; /* clickable to allow proceeding when all maxed */
+            cursor: pointer;
         }
         .booster-maxed-hint {
             margin-top: 15px;
@@ -677,7 +677,7 @@
         <button id="restart-game-btn" onclick="location.reload()">Play Again</button>
     </div>
 
-    <!-- Flying Sprite Element -->
+    <!-- Flying Sprite Element (Made bigger) -->
     <img id="flying-sprite" src="fly.png" alt="Flying Sprite">
 
     <script>
@@ -708,7 +708,6 @@
         let heroHp = 100;
         let heroMaxHp = 100;
 
-        // Boosters config: Increase Number maxed to 15, +5 per level
         let boosters = [
             { id: 0, name: "Increase Number", level: 1, max: 15 },
             { id: 1, name: "Increase Choice", level: 1, max: 3 },
@@ -849,7 +848,6 @@
             picksAllowedTotal = boosters[1].level;
             turnInfo.innerText = `Choose rings (${picksMadeCount}/${picksAllowedTotal})`;
 
-            // Increase Number booster: +5 for each level up under each ring
             let numberLevel = boosters[0].level;
             let levelBonus = (numberLevel - 1) * 5;
 
@@ -1249,22 +1247,22 @@
 
         function startFlySpriteSparkles() {
             flyingSprite.style.display = 'block';
-            let posX = window.innerWidth / 2 - 60;
-            let posY = window.innerHeight / 2 - 60;
+            let posX = window.innerWidth / 2 - 110;
+            let posY = window.innerHeight / 2 - 110;
             flyingSprite.style.left = `${posX}px`;
             flyingSprite.style.top = `${posY}px`;
 
             let flyInterval = setInterval(() => {
-                posX = 50 + Math.random() * (window.innerWidth - 200);
-                posY = 50 + Math.random() * (window.innerHeight - 200);
+                posX = 50 + Math.random() * (window.innerWidth - 300);
+                posY = 50 + Math.random() * (window.innerHeight - 300);
                 flyingSprite.style.left = `${posX}px`;
                 flyingSprite.style.top = `${posY}px`;
 
                 for (let i = 0; i < 4; i++) {
                     let spark = document.createElement('div');
                     spark.className = 'sparkle-spark';
-                    spark.style.left = `${posX + 40 + (Math.random() * 40 - 20)}px`;
-                    spark.style.top = `${posY + 60 + (Math.random() * 20)}px`;
+                    spark.style.left = `${posX + 80 + (Math.random() * 60 - 30)}px`;
+                    spark.style.top = `${posY + 120 + (Math.random() * 30)}px`;
                     document.body.appendChild(spark);
                     setTimeout(() => spark.remove(), 1200);
                 }
