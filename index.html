@@ -30,7 +30,7 @@
             width: 100%;
             height: 100%;
             background-color: #060913;
-            background-image: url('start.jpg');
+            background-image: url('start.png');
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
@@ -67,7 +67,7 @@
         #story-pane {
             width: 50%;
             height: 100%;
-            background-image: linear-gradient(rgba(4, 6, 10, 0.75), rgba(4, 6, 10, 0.75)), url('left.jpg');
+            background-image: linear-gradient(rgba(4, 6, 10, 0.75), rgba(4, 6, 10, 0.75)), url('left.png');
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
@@ -117,7 +117,7 @@
             bottom: 0;
             width: 100%;
             height: 100%;
-            background-image: linear-gradient(rgba(4, 6, 10, 0.55), rgba(4, 6, 10, 0.55)), url('sky.jpg');
+            background-image: linear-gradient(rgba(4, 6, 10, 0.55), rgba(4, 6, 10, 0.55)), url('sky.png');
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
@@ -141,17 +141,35 @@
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
 
-        /* Attack Projectile Animation */
-        .attack-projectile {
+        /* Cardinal's Cross Projectile Animation */
+        .cross-projectile {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #ff4500, #ff0000);
-            border-radius: 50%;
-            box-shadow: 0 0 10px #ff4500;
+            width: 30px;
+            height: 30px;
+            background: transparent;
             z-index: 25;
             pointer-events: none;
             transition: all 0.4s linear;
+        }
+        .cross-projectile::before, .cross-projectile::after {
+            content: '';
+            position: absolute;
+            background: radial-gradient(circle, #ffeb3b, #ff9800, #f44336);
+            box-shadow: 0 0 12px #ff9800;
+        }
+        .cross-projectile::before {
+            top: 10px;
+            left: 0;
+            width: 30px;
+            height: 10px;
+            border-radius: 3px;
+        }
+        .cross-projectile::after {
+            top: 0;
+            left: 10px;
+            width: 10px;
+            height: 30px;
+            border-radius: 3px;
         }
 
         /* Angel Container & Alignment */
@@ -204,15 +222,25 @@
             100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
         }
 
-        /* Villains Line-up (Original Layout) */
+        /* Villains Grid Layout (3x4 invisible grid) */
         #villains-container {
             position: absolute;
-            right: 5%;
+            right: 2%;
+            top: 5%;
             bottom: 5%;
-            display: flex;
-            align-items: flex-end;
-            gap: 15px;
+            width: 65%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
             z-index: 10;
+        }
+        .villain-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
         }
         .villain-unit {
             display: flex;
@@ -225,12 +253,12 @@
             transform: scale(1.05);
         }
         .v-hp-container {
-            width: 50px;
-            height: 6px;
+            width: 45px;
+            height: 5px;
             background: #222;
             border: 1px solid #d4af37;
             border-radius: 3px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             overflow: hidden;
         }
         .v-hp-bar {
@@ -239,18 +267,18 @@
             background: #b8860b;
         }
         .villain-img {
-            width: 110px;
-            height: 165px;
+            width: 75px;
+            height: 110px;
             object-fit: contain;
-            filter: drop-shadow(0 0 15px rgba(184, 134, 11, 0.5));
+            filter: drop-shadow(0 0 10px rgba(184, 134, 11, 0.5));
         }
         .boss-img {
-            width: 150px;
-            height: 225px;
+            width: 110px;
+            height: 160px;
             filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.8));
         }
 
-        /* Bottom Area: New Case Vault (Keeps background.png) */
+        /* Bottom Area: Claw Section with Rings */
         #claw-section {
             height: 48%;
             width: 100%;
@@ -268,7 +296,7 @@
             padding: 10px;
         }
 
-        /* Cases Container: 6 case.png side by side horizontally */
+        /* Rings Container: 6 rings side by side horizontally */
         #cases-container {
             display: flex;
             justify-content: center;
@@ -291,8 +319,8 @@
             transform: scale(1.08);
         }
         .case-img {
-            width: 75px;
-            height: 95px;
+            width: 70px;
+            height: 70px;
             object-fit: contain;
             filter: drop-shadow(0 0 10px rgba(218, 165, 32, 0.6));
         }
@@ -389,6 +417,46 @@
             pointer-events: none;
         }
 
+        /* Stage Clear Popup Overlay */
+        #stage-clear-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(4, 6, 10, 0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 150;
+        }
+        #stage-clear-box {
+            background: #090e1a;
+            border: 3px solid #daa520;
+            padding: 30px 50px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 35px rgba(218, 165, 32, 0.8);
+        }
+        #stage-clear-msg {
+            font-size: 1.8rem;
+            color: #f0e682;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        #next-level-btn {
+            background: linear-gradient(135deg, #8b6508, #daa520);
+            border: 2px solid #fff;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 10px 30px;
+            cursor: pointer;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
         /* Expanded Final Fly Screen */
         #final-screen {
             position: absolute;
@@ -470,14 +538,14 @@
                     <img id="angel" src="angel.png" alt="Angel">
                 </div>
 
-                <!-- Villains Container (Original Lineup) -->
+                <!-- Villains Grid Container (3x4 invisible grid) -->
                 <div id="villains-container"></div>
             </div>
 
-            <!-- Bottom Area: Case Vault (Keeps background.png) -->
+            <!-- Bottom Area: Claw Section with Rings -->
             <div id="claw-section">
                 <div id="cases-container"></div>
-                <div id="turn-info">Select <span id="picks-left">1</span> case(s)</div>
+                <div id="turn-info">Select <span id="picks-left">1</span> ring(s)</div>
 
                 <!-- Boosters Dock (3 Boosters specified) -->
                 <div id="boosters-dock">
@@ -486,7 +554,7 @@
                         <div class="booster-counter" id="count-0">Lv.1</div>
                     </div>
                     <div class="booster-slot" id="booster-1" onclick="triggerBooster(1)">
-                        <div class="booster-name">Increase Case Choosing</div>
+                        <div class="booster-name">Increase Ring Choosing</div>
                         <div class="booster-counter" id="count-1">Lv.1</div>
                     </div>
                     <div class="booster-slot" id="booster-2" onclick="triggerBooster(2)">
@@ -501,6 +569,14 @@
     <!-- Floating Banner -->
     <div id="floating-banner">Victory!</div>
 
+    <!-- Stage Clear Screen -->
+    <div id="stage-clear-screen">
+        <div id="stage-clear-box">
+            <div id="stage-clear-msg">Level Cleared!</div>
+            <button id="next-level-btn" onclick="proceedToNextLevel()">Continue</button>
+        </div>
+    </div>
+
     <!-- Final Fly Screen -->
     <div id="final-screen">
         <img id="final-img" src="fly.png" alt="Final Fly">
@@ -509,7 +585,7 @@
     </div>
 
     <script>
-        // Storyline Sequence Images & Titles (Original)
+        // Storyline Sequence Images & Titles
         const storyChapters = [
             { img: 'story1.png', title: 'Act I' },
             { img: 'story2.png', title: 'Act II' },
@@ -517,31 +593,29 @@
         ];
         let currentChapterIndex = 0;
 
-        // Game State Variables
-        let stageLevel = 1; // Stage 1 to 4
+        // Game State Variables (4 stages, 5 levels each = 20 levels total)
+        let stageLevel = 1; // 1 to 4
+        let subLevel = 1;   // 1 to 5
         const maxStages = 4;
+        const maxSubLevels = 5;
         
         // Boosters state
-        // 0: Increase number (Max 7 levels)
-        // 1: Increase case choosing (Max 3 levels)
-        // 2: Increase bounce (Max 5 levels)
         let boosters = [
             { level: 1, max: 7 },
             { level: 1, max: 3 },
             { level: 1, max: 5 }
         ];
 
-        // Cases & Turn Management
-        let baseCaseValues = [10, 30, 50, 80, 100, 120];
-        let currentTurnCases = [];
+        // Rings & Turn Management (Using ring.png instead of case.png)
+        let baseRingValues = [10, 30, 50, 80, 100, 120];
+        let currentTurnRings = [];
         let picksAllowed = 1;
         let picksMadeThisTurn = 0;
         let accumulatedPower = 0;
         let turnPhase = 'CHOOSE_CASES'; // 'CHOOSE_CASES' or 'SELECT_TARGET'
 
-        // Villains Data Setup (Original layout: Stage 1/2: 2 villains + boss, Stage 3/4: 2 villains + boss)
-        let villains = [];
-        let consecutiveLossAttacks = 0; // tracking attacks if needed, or check > 3 attacks each turn rule
+        // Villains Data Setup for 3x4 Grid
+        let villainsGrid = []; // Array of 12 slots (3 rows x 4 cols)
 
         // DOM Elements
         const startScreen = document.getElementById('start-screen');
@@ -558,40 +632,99 @@
         const casesContainer = document.getElementById('cases-container');
         const picksLeftSpan = document.getElementById('picks-left');
         const turnInfo = document.getElementById('turn-info');
+        const stageClearScreen = document.getElementById('stage-clear-screen');
+        const stageClearMsg = document.getElementById('stage-clear-msg');
 
         // Initialize Game
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
             gameContainer.style.display = 'flex';
-            initStage(stageLevel);
+            initLevel();
             initNewTurn();
         });
 
-        // Initialize Stage Villains (Original Hero/Villain setup)
-        function initStage(level) {
-            villains = [];
-            let villainHp = (level <= 2) ? 40 : 60;
-            let bossHp = (level === 4) ? 300 : 200;
+        // Initialize Level Villains (3x4 Grid setup)
+        function initLevel() {
+            villainsGrid = new Array(12).fill(null);
 
-            // 2 normal villains + 1 boss (Original setup)
-            villains.push({ id: 0, isBoss: false, hp: villainHp, maxHp: villainHp, alive: true, img: 'minion1.png' });
-            villains.push({ id: 1, isBoss: false, hp: villainHp, maxHp: villainHp, alive: true, img: 'minion2.png' });
-            villains.push({ id: 2, isBoss: true, hp: bossHp, maxHp: bossHp, alive: true, img: 'boss.png' });
+            let villainHp = (stageLevel <= 2) ? 40 : 65;
+            let bossHp = 200 + (stageLevel * 50);
 
-            renderVillains();
+            if (subLevel === 5) {
+                // Level 5: Boss in the last column middle row (Index 5 in 3x4 grid: row 1, col 3)
+                // Normal villains (villain4.png) in other columns except the last column
+                let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
+                let selectedBossImg = bossImages[stageLevel - 1] || 'boss.png';
+
+                villainsGrid[5] = {
+                    id: 5,
+                    isBoss: true,
+                    hp: bossHp,
+                    maxHp: bossHp,
+                    alive: true,
+                    img: selectedBossImg
+                };
+
+                // Populate other columns (col 0, 1, 2) with villain4.png
+                let availableSlots = [0, 1, 2, 4, 6, 7, 8, 9, 10, 11];
+                let countNormal = 3 + Math.floor(Math.random() * 3); // 3-5 normal villains
+                availableSlots.sort(() => Math.random() - 0.5);
+
+                for (let i = 0; i < Math.min(countNormal, availableSlots.length); i++) {
+                    let slotIdx = availableSlots[i];
+                    villainsGrid[slotIdx] = {
+                        id: slotIdx,
+                        isBoss: false,
+                        hp: villainHp,
+                        maxHp: villainHp,
+                        alive: true,
+                        img: 'villain4.png'
+                    };
+                }
+            } else {
+                // Levels 1 to 4: Random number and location of villains between 3-7 per level
+                let countVillains = 3 + Math.floor(Math.random() * 5); // 3 to 7
+                let availableSlots = Array.from({length: 12}, (_, i) => i);
+                availableSlots.sort(() => Math.random() - 0.5);
+
+                let vImg = 'villain1.png';
+                if (subLevel === 2) vImg = 'villain2.png';
+                else if (subLevel === 3) vImg = 'villain4.png';
+                else if (subLevel === 4) {
+                    // Level 4 uses villain1.png and villain2.png
+                    vImg = Math.random() < 0.5 ? 'villain1.png' : 'villain2.png';
+                }
+
+                for (let i = 0; i < countVillains; i++) {
+                    let slotIdx = availableSlots[i];
+                    villainsGrid[slotIdx] = {
+                        id: slotIdx,
+                        isBoss: false,
+                        hp: villainHp,
+                        maxHp: villainHp,
+                        alive: true,
+                        img: vImg
+                    };
+                }
+            }
+
+            renderVillainsGrid();
         }
 
-        // Render Villains (Original layout)
-        function renderVillains() {
+        // Render Villains Grid (3x4)
+        function renderVillainsGrid() {
             villainsContainer.innerHTML = '';
-            villains.forEach((v, idx) => {
-                if (v.alive) {
+            villainsGrid.forEach((v, idx) => {
+                let slotDiv = document.createElement('div');
+                slotDiv.className = 'villain-slot';
+
+                if (v && v.alive) {
                     let unitDiv = document.createElement('div');
                     unitDiv.className = 'villain-unit';
                     unitDiv.onclick = () => {
                         if (turnPhase === 'SELECT_TARGET') {
-                            // Boss rule check: boss must be attacked last if minions are alive
-                            if (v.isBoss && villains.some((item, i) => !item.isBoss && item.alive)) {
+                            // Boss rule check: boss must be attacked last if other regular villains are alive
+                            if (v.isBoss && villainsGrid.some((item, i) => item && !item.isBoss && item.alive)) {
                                 showBanner("Boss must be attacked last!");
                                 return;
                             }
@@ -612,21 +745,21 @@
 
                     unitDiv.appendChild(hpCont);
                     unitDiv.appendChild(img);
-                    villainsContainer.appendChild(unitDiv);
+                    slotDiv.appendChild(unitDiv);
                 }
+                villainsContainer.appendChild(slotDiv);
             });
         }
 
-        // Case Generation and Management for Each Turn
+        // Ring Generation and Management for Each Turn
         function initNewTurn() {
             turnPhase = 'CHOOSE_CASES';
             picksMadeThisTurn = 0;
             accumulatedPower = 0;
-            picksAllowed = boosters[1].level; // Increase case choosing booster level
+            picksAllowed = boosters[1].level; // Increase ring choosing booster level
             picksLeftSpan.innerText = picksAllowed - picksMadeThisTurn;
-            turnInfo.innerHTML = `Select <span id="picks-left">${picksAllowed - picksMadeThisTurn}</span> case(s)`;
+            turnInfo.innerHTML = `Select <span id="picks-left">${picksAllowed - picksMadeThisTurn}</span> ring(s)`;
 
-            // Increase number booster bonus values: 45, 65, 85, 115, 135, 155 for levels 2-7
             let levelBonus = 0;
             let currentLvl = boosters[0].level;
             if (currentLvl === 2) levelBonus = 45;
@@ -636,31 +769,30 @@
             else if (currentLvl === 6) levelBonus = 135;
             else if (currentLvl === 7) levelBonus = 155;
 
-            // Plus 5 for each level up increase numbers under each case
             let extraPerLevel = (currentLvl - 1) * 5;
             let totalBonus = levelBonus + (currentLvl > 1 ? extraPerLevel : 0);
 
-            let shuffledValues = [...baseCaseValues].sort(() => Math.random() - 0.5);
-            currentTurnCases = shuffledValues.map(val => {
+            let shuffledValues = [...baseRingValues].sort(() => Math.random() - 0.5);
+            currentTurnRings = shuffledValues.map(val => {
                 return {
                     val: val + totalBonus,
                     opened: false
                 };
             });
 
-            renderCases();
+            renderRings();
         }
 
-        function renderCases() {
+        function renderRings() {
             casesContainer.innerHTML = '';
-            currentTurnCases.forEach((c, idx) => {
+            currentTurnRings.forEach((c, idx) => {
                 let card = document.createElement('div');
                 card.className = `case-card ${c.opened ? 'opened' : ''}`;
-                card.onclick = () => selectCase(idx);
+                card.onclick = () => selectRing(idx);
 
                 let img = document.createElement('img');
                 img.className = 'case-img';
-                img.src = 'case.png';
+                img.src = 'ring.png';
 
                 let valDiv = document.createElement('div');
                 valDiv.className = 'case-val';
@@ -672,9 +804,9 @@
             });
         }
 
-        function selectCase(idx) {
+        function selectRing(idx) {
             if (turnPhase !== 'CHOOSE_CASES') return;
-            let c = currentTurnCases[idx];
+            let c = currentTurnRings[idx];
             if (c.opened || picksMadeThisTurn >= picksAllowed) return;
 
             c.opened = true;
@@ -683,9 +815,8 @@
             
             let span = document.getElementById('picks-left');
             if(span) span.innerText = picksAllowed - picksMadeThisTurn;
-            renderCases();
+            renderRings();
 
-            // After player chooses required cases for the turn, prompt player to select villain target
             if (picksMadeThisTurn >= picksAllowed) {
                 turnPhase = 'SELECT_TARGET';
                 turnInfo.innerHTML = `Total Power: ${accumulatedPower} - Click villain to attack!`;
@@ -699,10 +830,9 @@
 
             applyDamageWithBounce(accumulatedPower, targetIdx);
 
-            if (villains.every(v => !v.alive)) {
-                handleStageClear();
+            if (villainsGrid.every(v => !v || !v.alive)) {
+                handleLevelClear();
             } else {
-                // Villain hit back at end of the turn
                 setTimeout(() => {
                     executeVillainTurnAttacks();
                 }, 600);
@@ -712,25 +842,26 @@
         // Apply Damage with Bounce Overflow Logic
         function applyDamageWithBounce(damageAmount, startTargetIdx) {
             let bounceLevel = boosters[2].level; 
-            // bounceLevel 1: does not allow bounce (spill over 0)
-            // bounceLevel 2: spill over to 1 next villain
-            // bounceLevel 3: spill over to 2 more villains
-            // bounceLevel 4: spill over to 3 more villains
-            // bounceLevel 5: spill over to 4 more villains
             let maxExtraTargets = bounceLevel - 1;
 
+            let livingIndices = [];
+            villainsGrid.forEach((v, idx) => {
+                if (v && v.alive) livingIndices.push(idx);
+            });
+
             let targetIndices = [];
-            if (villains[startTargetIdx].alive) {
+            if (villainsGrid[startTargetIdx] && villainsGrid[startTargetIdx].alive) {
                 targetIndices.push(startTargetIdx);
             }
 
             if (maxExtraTargets > 0) {
                 let count = 0;
-                for (let i = 1; i < villains.length && count < maxExtraTargets; i++) {
-                    let nextIdx = (startTargetIdx + i) % villains.length;
-                    if (villains[nextIdx].alive) {
-                        if (villains[nextIdx].isBoss && villains.some((v, vi) => !v.isBoss && v.alive)) {
-                            continue; // Skip boss spillover if minions remain
+                for (let i = 0; i < villainsGrid.length && count < maxExtraTargets; i++) {
+                    let nextIdx = (startTargetIdx + i + 1) % villainsGrid.length;
+                    let target = villainsGrid[nextIdx];
+                    if (target && target.alive && !targetIndices.includes(nextIdx)) {
+                        if (target.isBoss && villainsGrid.some(v => v && !v.isBoss && v.alive)) {
+                            continue;
                         }
                         targetIndices.push(nextIdx);
                         count++;
@@ -741,8 +872,8 @@
             let currentDamage = damageAmount;
             for (let i = 0; i < targetIndices.length; i++) {
                 let tIdx = targetIndices[i];
-                let target = villains[tIdx];
-                if (!target.alive) continue;
+                let target = villainsGrid[tIdx];
+                if (!target || !target.alive) continue;
 
                 if (currentDamage >= target.hp) {
                     let overflow = currentDamage - target.hp;
@@ -757,34 +888,32 @@
                 if (currentDamage <= 0) break;
             }
 
-            renderVillains();
+            renderVillainsGrid();
         }
 
-        // Villain Attack Turn Mechanic
+        // Villain Attack Turn Mechanic with Cardinal's Cross Projectile
         function executeVillainTurnAttacks() {
-            // "The Villain side will shoot out attacks to hero once each turn, by the nearest villain. If the hero receives more than 3 attacks each turn he loses and has to restart that level"
-            let livingVillains = villains.filter(v => v.alive);
+            let livingVillains = villainsGrid.filter(v => v && v.alive);
             if (livingVillains.length === 0) return;
 
-            let attackCount = 3; // 3 attacks fired each turn from nearest villain
+            let attackCount = 3; 
             let attacksFired = 0;
 
             let attackInterval = setInterval(() => {
                 if (attacksFired >= attackCount) {
                     clearInterval(attackInterval);
-                    // Check rule: if hero receives more than 3 attacks he loses. 3 attacks exactly is safe, next turn starts.
                     setTimeout(initNewTurn, 400);
                     return;
                 }
 
-                fireProjectileAtHero();
+                fireCrossProjectileAtHero();
                 attacksFired++;
             }, 250);
         }
 
-        function fireProjectileAtHero() {
+        function fireCrossProjectileAtHero() {
             let proj = document.createElement('div');
-            proj.className = 'attack-projectile';
+            proj.className = 'cross-projectile';
             
             let arenaRect = document.getElementById('battle-arena').getBoundingClientRect();
             let heroRect = heroContainer.getBoundingClientRect();
@@ -821,26 +950,39 @@
             incrementBooster(type);
         }
 
-        function handleStageClear() {
-            if(stageLevel < maxStages) {
-                showBanner(`Stage ${stageLevel} Cleared! Advancing...`);
-                setTimeout(() => {
-                    stageLevel++;
-                    if(currentChapterIndex < storyChapters.length - 1) {
-                        currentChapterIndex++;
-                        storyImg.src = storyChapters[currentChapterIndex].img;
-                        storyTitle.innerText = storyChapters[currentChapterIndex].title;
-                    }
-                    initStage(stageLevel);
-                    initNewTurn();
-                }, 2000);
+        function handleLevelClear() {
+            if (subLevel < maxSubLevels || stageLevel < maxStages) {
+                stageClearMsg.innerText = `Stage ${stageLevel} Level ${subLevel} Cleared!`;
+                stageClearScreen.style.display = 'flex';
             } else {
                 showBanner("All Trials Conquered!");
                 setTimeout(triggerVictorySequence, 2000);
             }
         }
 
-        // Victory Sequence: Hero moves to Angel and Angel appears (Original)
+        function proceedToNextLevel() {
+            stageClearScreen.style.display = 'none';
+
+            // Stage level up boosters to pop out after passing each level (automatically increments random booster if possible)
+            let randomBoosterType = Math.floor(Math.random() * 3);
+            incrementBooster(randomBoosterType);
+
+            subLevel++;
+            if (subLevel > maxSubLevels) {
+                subLevel = 1;
+                stageLevel++;
+                if (currentChapterIndex < storyChapters.length - 1) {
+                    currentChapterIndex++;
+                    storyImg.src = storyChapters[currentChapterIndex].img;
+                    storyTitle.innerText = storyChapters[currentChapterIndex].title;
+                }
+            }
+
+            initLevel();
+            initNewTurn();
+        }
+
+        // Victory Sequence: Hero moves to Angel and Angel appears
         function triggerVictorySequence() {
             heroContainer.style.left = '72%';
             setTimeout(() => {
