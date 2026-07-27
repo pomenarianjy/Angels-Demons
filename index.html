@@ -55,7 +55,7 @@
             letter-spacing: 3px;
         }
 
-        /* Main Game Layout */
+        /* Main Game Layout (Desktop / Default) */
         #game-container {
             display: none;
             width: 100vw;
@@ -63,7 +63,7 @@
             flex-direction: row;
         }
 
-        /* Left Pane: Storyline Pictures */
+        /* Left Pane: Storyline Pictures (Desktop) */
         #story-pane {
             width: 35%;
             height: 100%;
@@ -94,7 +94,7 @@
             text-shadow: 1px 1px 3px #000;
         }
 
-        /* Right Pane: Game Box */
+        /* Right Pane: Game Box (Desktop) */
         #game-pane {
             width: 65%;
             height: 100%;
@@ -222,7 +222,7 @@
             transition: width 0.3s ease;
         }
 
-        /* Angel Setting & Elements (Significantly smaller than Hero now) */
+        /* Angel Setting & Elements */
         #angel-container {
             position: absolute;
             right: 5%;
@@ -274,7 +274,7 @@
             100% { transform: translate(var(--dx), var(--dy)) scale(1.4); opacity: 0; }
         }
 
-        /* Flying Fly.png Sparkles & Animation (Made much bigger) */
+        /* Flying Fly.png Sparkles & Animation */
         .sparkle-spark {
             position: absolute;
             width: 12px;
@@ -602,6 +602,42 @@
             box-shadow: 0 0 20px rgba(218, 165, 32, 0.8);
             text-transform: uppercase;
         }
+
+        /* Mobile Layout Adjustments (Stacked vertically with story on top, more space for game) */
+        @media screen and (max-width: 1024px), screen and (max-height: 768px) {
+            #game-container {
+                flex-direction: column;
+            }
+            #story-pane {
+                width: 100%;
+                height: 25vh;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 10px 15px;
+                border-right: none;
+                border-bottom: 3px solid #000000;
+                gap: 15px;
+            }
+            #story-img {
+                max-width: 35%;
+                max-height: 90%;
+            }
+            #story-title {
+                margin-top: 0;
+                font-size: 1.1rem;
+                text-align: left;
+            }
+            #game-pane {
+                width: 100%;
+                height: 75vh;
+            }
+            #battle-arena {
+                height: 55%;
+            }
+            #claw-section {
+                height: 45%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -677,7 +713,7 @@
         <button id="restart-game-btn" onclick="location.reload()">Play Again</button>
     </div>
 
-    <!-- Flying Sprite Element (Made bigger) -->
+    <!-- Flying Sprite Element -->
     <img id="flying-sprite" src="fly.png" alt="Flying Sprite">
 
     <script>
