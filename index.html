@@ -63,9 +63,9 @@
             flex-direction: row;
         }
 
-        /* Left Pane: Storyline Pictures (Exact 50/50 and exact left.jpg background setting) */
+        /* Left Pane: Storyline Pictures (Thinner left panel, wider right panel) */
         #story-pane {
-            width: 50%;
+            width: 35%;
             height: 100%;
             background-image: url('left.jpg');
             background-repeat: no-repeat;
@@ -94,18 +94,18 @@
             text-shadow: 1px 1px 3px #000;
         }
 
-        /* Right Pane: Game Box (Exact 50/50 width) */
+        /* Right Pane: Game Box (Wider right panel) */
         #game-pane {
-            width: 50%;
+            width: 65%;
             height: 100%;
             display: flex;
             flex-direction: column;
             position: relative;
         }
 
-        /* Top Area: Battle Arena */
+        /* Top Area: Battle Arena (Slightly taller / right bottom section shorter) */
         #battle-arena {
-            height: 52%;
+            height: 60%;
             width: 100%;
             position: relative;
             background-color: #090e1a;
@@ -311,9 +311,9 @@
             filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.8));
         }
 
-        /* Bottom Area: Claw Section with Cups */
+        /* Bottom Area: Claw Section with Cups (Shorter right bottom section) */
         #claw-section {
-            height: 48%;
+            height: 40%;
             width: 100%;
             background-color: #03050a;
             background-image: linear-gradient(rgba(3, 5, 10, 0.3), rgba(3, 5, 10, 0.3)), url('background.png');
@@ -442,51 +442,7 @@
 
         /* Boosters Dock */
         #boosters-dock {
-            height: 65px;
-            background: #050811;
-            border-top: 1px solid #000000;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 8px;
-            z-index: 40;
             display: none;
-        }
-        .booster-slot {
-            background: linear-gradient(135deg, #111827, #1f2937);
-            border: 2px solid #b8860b;
-            border-radius: 8px;
-            width: 31%;
-            height: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 0 10px rgba(184, 134, 11, 0.2);
-            transition: transform 0.1s, border-color 0.2s;
-        }
-        .booster-slot:active {
-            transform: scale(0.96);
-        }
-        .booster-slot.maxed {
-            border-color: #ef4444;
-            opacity: 0.65;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .booster-name {
-            font-size: 0.75rem;
-            color: #f0e682;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .booster-counter {
-            font-size: 0.8rem;
-            color: #fff;
-            margin-top: 2px;
         }
 
         /* Floating Overlays & Banners */
@@ -607,13 +563,13 @@
 
     <!-- Main Game Container -->
     <div id="game-container">
-        <!-- Left Pane: Storyline Pictures (50%) -->
+        <!-- Left Pane: Storyline Pictures (Thinner left panel) -->
         <div id="story-pane">
             <img id="story-img" src="S1L1.png" alt="Storyline">
             <div id="story-title">Stage 1: The Detective</div>
         </div>
 
-        <!-- Right Pane: Game Box (50%) -->
+        <!-- Right Pane: Game Box (Wider right panel) -->
         <div id="game-pane">
             <!-- Top Area: Battle Arena -->
             <div id="battle-arena">
@@ -635,12 +591,12 @@
                 <div id="villains-container"></div>
             </div>
 
-            <!-- Bottom Area: Claw Section with Cups -->
+            <!-- Bottom Area: Claw Section with Cups (Shorter section) -->
             <div id="claw-section">
                 <div id="cases-container"></div>
-                <div id="turn-info">Choose one cup</div>
+                <div id="turn-info">choose one</div>
 
-                <!-- Boosters Dock (Hidden by request) -->
+                <!-- Boosters Dock -->
                 <div id="boosters-dock"></div>
             </div>
         </div>
@@ -739,6 +695,7 @@
         let currentTurnCups = [];
         let accumulatedPower = 0;
         let turnPhase = 'CHOOSE_CUP'; // 'CHOOSE_CUP' or 'SELECT_TARGET'
+        let lastAttackedIndex = -1;
 
         // Villains Data Setup for 3x4 Grid
         let villainsGrid = [];
@@ -885,7 +842,7 @@
         function initNewTurn() {
             turnPhase = 'CHOOSE_CUP';
             accumulatedPower = 0;
-            turnInfo.innerText = "Choose one cup";
+            turnInfo.innerText = "choose one";
 
             let levelBonus = 0;
             let currentLvl = boosters[0].level;
@@ -941,12 +898,13 @@
             renderCups();
 
             turnPhase = 'SELECT_TARGET';
-            turnInfo.innerText = `Power: ${accumulatedPower} - Choose one villain to attack`;
+            turnInfo.innerText = `Power: ${accumulatedPower} - choose one`;
             showBanner(`Cup Selected: ${accumulatedPower}! Choose one villain to attack.`);
         }
 
         function selectTargetVillain(targetIdx) {
             if (turnPhase !== 'SELECT_TARGET') return;
+            lastAttackedIndex = targetIdx;
 
             // Hero shoots cross projectile to villain
             fireHeroCrossToVillain(targetIdx, () => {
@@ -956,7 +914,7 @@
                     handleLevelClear();
                 } else {
                     setTimeout(() => {
-                        executeVillainTurnLaserAttacks(wasDefeated);
+                        executeVillainTurnLaserAttacks();
                     }, 500);
                 }
             });
@@ -1041,7 +999,7 @@
         }
 
         // Villain not diminished will shoot laser back at hero at end of turn
-        function executeVillainTurnLaserAttacks(targetWasDefeated) {
+        function executeVillainTurnLaserAttacks() {
             let livingVillains = villainsGrid.filter(v => v && v.alive);
             if (livingVillains.length === 0) return;
 
@@ -1054,15 +1012,9 @@
                 if (v && v.alive) activeIndices.push(idx);
             });
 
-            // Filter out the villain that was just diminished/attacked (if still alive)
-            // Wait, prompt says: "Then villain not diminished will shoot laser back at hero"
-            // Let's ensure attackers exclude the specifically targeted/attacked villain if it was not killed, or any villain that received damage this turn.
-            // Actually, "villain not diminished" means villains that were not attacked/diminished this turn can shoot!
-            // Let's track the attacked target index or just exclude any villain that was hit this turn.
-            // To be robust, let's keep track of last attacked index globally for this turn.
+            // Villain not diminished will shoot laser back
             let attackers = activeIndices.filter(idx => idx !== lastAttackedIndex);
             if (attackers.length === 0) {
-                // Fallback if all remaining villains were somehow involved, pick any alive
                 attackers = activeIndices;
             }
 
@@ -1084,12 +1036,10 @@
                             heroHp = 100;
                             heroHpBar.style.width = '100%';
                             initLevel();
-                            promptBoosterSelection();
+                            initNewTurn();
                         }, 1500);
                     } else {
-                        setTimeout(() => {
-                            promptBoosterSelection();
-                        }, 400);
+                        setTimeout(initNewTurn, 400);
                     }
                     return;
                 }
@@ -1122,27 +1072,16 @@
             }, 300);
         }
 
-        let lastAttackedIndex = -1;
-        // Override selectTargetVillain to save lastAttackedIndex
-        const originalSelectTargetVillain = selectTargetVillain;
-        selectTargetVillain = function(targetIdx) {
-            lastAttackedIndex = targetIdx;
-            if (turnPhase !== 'SELECT_TARGET') return;
+        function handleLevelClear() {
+            if (subLevel < maxSubLevels || stageLevel < maxStages) {
+                promptBoosterSelection();
+            } else {
+                showBanner("All Trials Conquered!");
+                setTimeout(triggerVictorySequence, 2000);
+            }
+        }
 
-            fireHeroCrossToVillain(targetIdx, () => {
-                applyDamageWithBounce(accumulatedPower, targetIdx);
-
-                if (villainsGrid.every(v => !v || !v.alive)) {
-                    handleLevelClear();
-                } else {
-                    setTimeout(() => {
-                        executeVillainTurnLaserAttacks();
-                    }, 500);
-                }
-            });
-        };
-
-        // Three boosters pop out on screen player can choose one to level up
+        // Pop out boosters to choose when the whole level is passed
         function promptBoosterSelection() {
             boosterChoicesContainer.innerHTML = '';
             
@@ -1156,7 +1095,7 @@
                         b.level++;
                         showBanner(`${b.name} Upgraded to Lv.${b.level}!`);
                         boosterModal.style.display = 'none';
-                        initNewTurn();
+                        showStageClearPopup();
                     };
                 } else {
                     btn.onclick = () => {
@@ -1169,14 +1108,9 @@
             boosterModal.style.display = 'flex';
         }
 
-        function handleLevelClear() {
-            if (subLevel < maxSubLevels || stageLevel < maxStages) {
-                stageClearMsg.innerText = `Stage ${stageLevel} Level ${subLevel} Cleared!`;
-                stageClearScreen.style.display = 'flex';
-            } else {
-                showBanner("All Trials Conquered!");
-                setTimeout(triggerVictorySequence, 2000);
-            }
+        function showStageClearPopup() {
+            stageClearMsg.innerText = `Stage ${stageLevel} Level ${subLevel} Cleared!`;
+            stageClearScreen.style.display = 'flex';
         }
 
         function proceedToNextLevel() {
