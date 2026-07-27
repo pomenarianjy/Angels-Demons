@@ -311,7 +311,7 @@
             filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.8));
         }
 
-        /* Bottom Area: Claw Section with Rings (User requested claw section setup to stay) */
+        /* Bottom Area: Claw Section with Cups */
         #claw-section {
             height: 48%;
             width: 100%;
@@ -329,7 +329,7 @@
             padding: 10px;
         }
 
-        /* Rings Container: 6 rings side by side horizontally */
+        /* Cups Container: 6 cups side by side horizontally */
         #cases-container {
             display: flex;
             justify-content: center;
@@ -382,6 +382,64 @@
             border: 1px solid #b8860b;
         }
 
+        /* Boosters Popout Modal */
+        #booster-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(4, 6, 10, 0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 120;
+        }
+        #booster-modal-box {
+            background: #090e1a;
+            border: 3px solid #daa520;
+            padding: 25px 35px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 35px rgba(218, 165, 32, 0.8);
+            max-width: 500px;
+            width: 90%;
+        }
+        #booster-modal-title {
+            font-size: 1.5rem;
+            color: #f0e682;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .booster-choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .booster-choice-btn {
+            background: linear-gradient(135deg, #111827, #1f2937);
+            border: 2px solid #b8860b;
+            color: #f0e682;
+            padding: 12px 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, border-color 0.2s;
+            text-transform: uppercase;
+        }
+        .booster-choice-btn:hover {
+            border-color: #daa520;
+            transform: scale(1.02);
+        }
+        .booster-choice-btn.maxed {
+            border-color: #ef4444;
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
         /* Boosters Dock */
         #boosters-dock {
             height: 65px;
@@ -392,6 +450,7 @@
             align-items: center;
             padding: 0 8px;
             z-index: 40;
+            display: none;
         }
         .booster-slot {
             background: linear-gradient(135deg, #111827, #1f2937);
@@ -576,27 +635,22 @@
                 <div id="villains-container"></div>
             </div>
 
-            <!-- Bottom Area: Claw Section with Rings -->
+            <!-- Bottom Area: Claw Section with Cups -->
             <div id="claw-section">
                 <div id="cases-container"></div>
-                <div id="turn-info">Select <span id="picks-left">1</span> ring(s)</div>
+                <div id="turn-info">Choose one cup</div>
 
-                <!-- Boosters Dock (3 Boosters specified) -->
-                <div id="boosters-dock">
-                    <div class="booster-slot" id="booster-0" onclick="triggerBooster(0)">
-                        <div class="booster-name">Increase Number</div>
-                        <div class="booster-counter" id="count-0">Lv.1</div>
-                    </div>
-                    <div class="booster-slot" id="booster-1" onclick="triggerBooster(1)">
-                        <div class="booster-name">Increase Ring Choosing</div>
-                        <div class="booster-counter" id="count-1">Lv.1</div>
-                    </div>
-                    <div class="booster-slot" id="booster-2" onclick="triggerBooster(2)">
-                        <div class="booster-name">Increase Bounce</div>
-                        <div class="booster-counter" id="count-2">Lv.1</div>
-                    </div>
-                </div>
+                <!-- Boosters Dock (Hidden by request) -->
+                <div id="boosters-dock"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Booster Modal Popout -->
+    <div id="booster-modal">
+        <div id="booster-modal-box">
+            <div id="booster-modal-title">Choose a Booster to Level Up</div>
+            <div class="booster-choices-container" id="booster-choices-container"></div>
         </div>
     </div>
 
@@ -675,18 +729,16 @@
 
         // Boosters state
         let boosters = [
-            { level: 1, max: 7 },
-            { level: 1, max: 3 },
-            { level: 1, max: 5 }
+            { id: 0, name: "Increase Number", level: 1, max: 7 },
+            { id: 1, name: "Increase Ring Choosing", level: 1, max: 3 },
+            { id: 2, name: "Increase Bounce", level: 1, max: 5 }
         ];
 
-        // Rings & Turn Management
-        let baseRingValues = [10, 30, 50, 80, 100, 120];
-        let currentTurnRings = [];
-        let picksAllowed = 1;
-        let picksMadeThisTurn = 0;
+        // Cups & Turn Management
+        let baseCupValues = [10, 30, 50, 80, 100, 120];
+        let currentTurnCups = [];
         let accumulatedPower = 0;
-        let turnPhase = 'CHOOSE_CASES'; // 'CHOOSE_CASES' or 'SELECT_TARGET'
+        let turnPhase = 'CHOOSE_CUP'; // 'CHOOSE_CUP' or 'SELECT_TARGET'
 
         // Villains Data Setup for 3x4 Grid
         let villainsGrid = [];
@@ -705,10 +757,11 @@
         const angelHalo = document.getElementById('angel-halo');
         const finalScreen = document.getElementById('final-screen');
         const casesContainer = document.getElementById('cases-container');
-        const picksLeftSpan = document.getElementById('picks-left');
         const turnInfo = document.getElementById('turn-info');
         const stageClearScreen = document.getElementById('stage-clear-screen');
         const stageClearMsg = document.getElementById('stage-clear-msg');
+        const boosterModal = document.getElementById('booster-modal');
+        const boosterChoicesContainer = document.getElementById('booster-choices-container');
 
         // Initialize Game
         startBtn.addEventListener('click', () => {
@@ -828,14 +881,11 @@
             });
         }
 
-        // Ring Generation and Management for Each Turn
+        // Cup Generation and Management for Each Turn
         function initNewTurn() {
-            turnPhase = 'CHOOSE_CASES';
-            picksMadeThisTurn = 0;
+            turnPhase = 'CHOOSE_CUP';
             accumulatedPower = 0;
-            picksAllowed = boosters[1].level;
-            picksLeftSpan.innerText = picksAllowed - picksMadeThisTurn;
-            turnInfo.innerHTML = `Select <span id="picks-left">${picksAllowed - picksMadeThisTurn}</span> ring(s)`;
+            turnInfo.innerText = "Choose one cup";
 
             let levelBonus = 0;
             let currentLvl = boosters[0].level;
@@ -849,31 +899,31 @@
             let extraPerLevel = (currentLvl - 1) * 5;
             let totalBonus = levelBonus + (currentLvl > 1 ? extraPerLevel : 0);
 
-            let shuffledValues = [...baseRingValues].sort(() => Math.random() - 0.5);
-            currentTurnRings = shuffledValues.map(val => {
+            let shuffledValues = [...baseCupValues].sort(() => Math.random() - 0.5);
+            currentTurnCups = shuffledValues.map(val => {
                 return {
                     val: val + totalBonus,
                     opened: false
                 };
             });
 
-            renderRings();
+            renderCups();
         }
 
-        function renderRings() {
+        function renderCups() {
             casesContainer.innerHTML = '';
-            currentTurnRings.forEach((c, idx) => {
+            currentTurnCups.forEach((c, idx) => {
                 let card = document.createElement('div');
                 card.className = `case-card ${c.opened ? 'opened' : ''}`;
-                card.onclick = () => selectRing(idx);
+                card.onclick = () => selectCup(idx);
 
                 let img = document.createElement('img');
                 img.className = 'case-img';
-                img.src = 'ring.png';
+                img.src = 'case.png';
 
                 let valDiv = document.createElement('div');
                 valDiv.className = 'case-val';
-                valDiv.innerText = c.opened ? `+${c.val}` : '?';
+                valDiv.innerText = c.opened ? `+${c.val}` : '';
 
                 card.appendChild(img);
                 card.appendChild(valDiv);
@@ -881,24 +931,18 @@
             });
         }
 
-        function selectRing(idx) {
-            if (turnPhase !== 'CHOOSE_CASES') return;
-            let c = currentTurnRings[idx];
-            if (c.opened || picksMadeThisTurn >= picksAllowed) return;
+        function selectCup(idx) {
+            if (turnPhase !== 'CHOOSE_CUP') return;
+            let c = currentTurnCups[idx];
+            if (c.opened) return;
 
             c.opened = true;
-            accumulatedPower += c.val;
-            picksMadeThisTurn++;
-            
-            let span = document.getElementById('picks-left');
-            if(span) span.innerText = picksAllowed - picksMadeThisTurn;
-            renderRings();
+            accumulatedPower = c.val;
+            renderCups();
 
-            if (picksMadeThisTurn >= picksAllowed) {
-                turnPhase = 'SELECT_TARGET';
-                turnInfo.innerHTML = `Total Power: ${accumulatedPower} - Click villain to attack!`;
-                showBanner(`Power Collected: ${accumulatedPower}! Click a villain to attack.`);
-            }
+            turnPhase = 'SELECT_TARGET';
+            turnInfo.innerText = `Power: ${accumulatedPower} - Choose one villain to attack`;
+            showBanner(`Cup Selected: ${accumulatedPower}! Choose one villain to attack.`);
         }
 
         function selectTargetVillain(targetIdx) {
@@ -906,13 +950,13 @@
 
             // Hero shoots cross projectile to villain
             fireHeroCrossToVillain(targetIdx, () => {
-                applyDamageWithBounce(accumulatedPower, targetIdx);
+                let wasDefeated = applyDamageWithBounce(accumulatedPower, targetIdx);
 
                 if (villainsGrid.every(v => !v || !v.alive)) {
                     handleLevelClear();
                 } else {
                     setTimeout(() => {
-                        executeVillainTurnLaserAttacks();
+                        executeVillainTurnLaserAttacks(wasDefeated);
                     }, 500);
                 }
             });
@@ -970,6 +1014,7 @@
                 }
             }
 
+            let wasTargetDefeated = false;
             let currentDamage = damageAmount;
             for (let i = 0; i < targetIndices.length; i++) {
                 let tIdx = targetIndices[i];
@@ -981,19 +1026,22 @@
                     target.hp = 0;
                     target.alive = false;
                     currentDamage = overflow;
+                    if (tIdx === startTargetIdx) wasTargetDefeated = true;
                 } else {
                     target.hp -= currentDamage;
                     currentDamage = 0;
+                    if (tIdx === startTargetIdx) wasTargetDefeated = false;
                 }
 
                 if (currentDamage <= 0) break;
             }
 
             renderVillainsGrid();
+            return wasTargetDefeated;
         }
 
-        // Villain automatically attacks Hero at end of turn with lasers
-        function executeVillainTurnLaserAttacks() {
+        // Villain not diminished will shoot laser back at hero at end of turn
+        function executeVillainTurnLaserAttacks(targetWasDefeated) {
             let livingVillains = villainsGrid.filter(v => v && v.alive);
             if (livingVillains.length === 0) return;
 
@@ -1006,7 +1054,19 @@
                 if (v && v.alive) activeIndices.push(idx);
             });
 
-            let attacksToFire = Math.min(activeIndices.length, 2);
+            // Filter out the villain that was just diminished/attacked (if still alive)
+            // Wait, prompt says: "Then villain not diminished will shoot laser back at hero"
+            // Let's ensure attackers exclude the specifically targeted/attacked villain if it was not killed, or any villain that received damage this turn.
+            // Actually, "villain not diminished" means villains that were not attacked/diminished this turn can shoot!
+            // Let's track the attacked target index or just exclude any villain that was hit this turn.
+            // To be robust, let's keep track of last attacked index globally for this turn.
+            let attackers = activeIndices.filter(idx => idx !== lastAttackedIndex);
+            if (attackers.length === 0) {
+                // Fallback if all remaining villains were somehow involved, pick any alive
+                attackers = activeIndices;
+            }
+
+            let attacksToFire = Math.min(attackers.length, 2);
             let fired = 0;
 
             let interval = setInterval(() => {
@@ -1024,15 +1084,17 @@
                             heroHp = 100;
                             heroHpBar.style.width = '100%';
                             initLevel();
-                            initNewTurn();
+                            promptBoosterSelection();
                         }, 1500);
                     } else {
-                        setTimeout(initNewTurn, 400);
+                        setTimeout(() => {
+                            promptBoosterSelection();
+                        }, 400);
                     }
                     return;
                 }
 
-                let chosenIdx = activeIndices[Math.floor(Math.random() * activeIndices.length)];
+                let chosenIdx = attackers[Math.floor(Math.random() * attackers.length)];
                 let slot = villainSlots[chosenIdx];
                 if (slot) {
                     let vRect = slot.getBoundingClientRect();
@@ -1060,21 +1122,51 @@
             }, 300);
         }
 
-        function incrementBooster(type) {
-            if (boosters[type].level < boosters[type].max) {
-                boosters[type].level++;
-                document.getElementById(`count-${type}`).innerText = `Lv.${boosters[type].level}`;
-                
-                if (boosters[type].level >= boosters[type].max) {
-                    let slot = document.getElementById(`booster-${type}`);
-                    slot.classList.add('maxed');
-                    showBanner(`${slot.querySelector('.booster-name').innerText} Maxed!`);
-                }
-            }
-        }
+        let lastAttackedIndex = -1;
+        // Override selectTargetVillain to save lastAttackedIndex
+        const originalSelectTargetVillain = selectTargetVillain;
+        selectTargetVillain = function(targetIdx) {
+            lastAttackedIndex = targetIdx;
+            if (turnPhase !== 'SELECT_TARGET') return;
 
-        function triggerBooster(type) {
-            incrementBooster(type);
+            fireHeroCrossToVillain(targetIdx, () => {
+                applyDamageWithBounce(accumulatedPower, targetIdx);
+
+                if (villainsGrid.every(v => !v || !v.alive)) {
+                    handleLevelClear();
+                } else {
+                    setTimeout(() => {
+                        executeVillainTurnLaserAttacks();
+                    }, 500);
+                }
+            });
+        };
+
+        // Three boosters pop out on screen player can choose one to level up
+        function promptBoosterSelection() {
+            boosterChoicesContainer.innerHTML = '';
+            
+            boosters.forEach(b => {
+                let btn = document.createElement('button');
+                btn.className = `booster-choice-btn ${b.level >= b.max ? 'maxed' : ''}`;
+                btn.innerText = `${b.name} (Lv. ${b.level}/${b.max})`;
+                
+                if (b.level < b.max) {
+                    btn.onclick = () => {
+                        b.level++;
+                        showBanner(`${b.name} Upgraded to Lv.${b.level}!`);
+                        boosterModal.style.display = 'none';
+                        initNewTurn();
+                    };
+                } else {
+                    btn.onclick = () => {
+                        showBanner(`${b.name} is already maxed!`);
+                    };
+                }
+                boosterChoicesContainer.appendChild(btn);
+            });
+
+            boosterModal.style.display = 'flex';
         }
 
         function handleLevelClear() {
@@ -1089,9 +1181,6 @@
 
         function proceedToNextLevel() {
             stageClearScreen.style.display = 'none';
-
-            let randomBoosterType = Math.floor(Math.random() * 3);
-            incrementBooster(randomBoosterType);
 
             subLevel++;
             if (subLevel > maxSubLevels) {
