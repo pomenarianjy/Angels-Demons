@@ -103,7 +103,7 @@
             position: relative;
         }
 
-        /* Top Area: Battle Arena (Slightly taller / right bottom section shorter) */
+        /* Top Area: Battle Arena */
         #battle-arena {
             height: 60%;
             width: 100%;
@@ -311,7 +311,7 @@
             filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.8));
         }
 
-        /* Bottom Area: Claw Section with Cups (Shorter right bottom section) */
+        /* Bottom Area: Claw Section with Cups (Shorter section) */
         #claw-section {
             height: 40%;
             width: 100%;
@@ -743,25 +743,28 @@
             let villainHp = (stageLevel <= 2) ? 40 : 65;
             let bossHp = 200 + (stageLevel * 50);
 
-            if (subLevel === 5) {
-                let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
-                let selectedBossImg = bossImages[stageLevel - 1] || 'boss.png';
-
-                villainsGrid[5] = {
-                    id: 5,
-                    isBoss: true,
-                    hp: bossHp,
-                    maxHp: bossHp,
-                    alive: true,
-                    img: selectedBossImg
-                };
-
-                let availableSlots = [0, 1, 2, 4, 6, 7, 8, 9, 10, 11];
-                let countNormal = 3 + Math.floor(Math.random() * 3);
+            if (stageLevel === 1) {
+                // First stage: Fewer villains, under 4 each level (1 to 3 villains max)
+                let countVillains = 1 + Math.floor(Math.random() * 3); // 1, 2, or 3 villains
+                let availableSlots = Array.from({length: 12}, (_, i) => i);
                 availableSlots.sort(() => Math.random() - 0.5);
 
-                for (let i = 0; i < Math.min(countNormal, availableSlots.length); i++) {
-                    let slotIdx = availableSlots[i];
+                let vImg = 'villain1.png';
+                if (subLevel === 2) vImg = 'villain2.png';
+                else if (subLevel === 3) vImg = 'villain4.png';
+                else if (subLevel === 4) vImg = 'villain1.png';
+                else if (subLevel === 5) {
+                    // For stage 1 level 5, let's keep it very light (e.g. 1 boss + 1 normal or just 2 normal/boss)
+                    let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
+                    villainsGrid[5] = {
+                        id: 5,
+                        isBoss: true,
+                        hp: bossHp,
+                        maxHp: bossHp,
+                        alive: true,
+                        img: bossImages[0]
+                    };
+                    let slotIdx = availableSlots[0] === 5 ? availableSlots[1] : availableSlots[0];
                     villainsGrid[slotIdx] = {
                         id: slotIdx,
                         isBoss: false,
@@ -770,17 +773,8 @@
                         alive: true,
                         img: 'villain4.png'
                     };
-                }
-            } else {
-                let countVillains = 3 + Math.floor(Math.random() * 5);
-                let availableSlots = Array.from({length: 12}, (_, i) => i);
-                availableSlots.sort(() => Math.random() - 0.5);
-
-                let vImg = 'villain1.png';
-                if (subLevel === 2) vImg = 'villain2.png';
-                else if (subLevel === 3) vImg = 'villain4.png';
-                else if (subLevel === 4) {
-                    vImg = Math.random() < 0.5 ? 'villain1.png' : 'villain2.png';
+                    renderVillainsGrid();
+                    return;
                 }
 
                 for (let i = 0; i < countVillains; i++) {
@@ -793,6 +787,60 @@
                         alive: true,
                         img: vImg
                     };
+                }
+            } else {
+                // Stages 2, 3, 4
+                if (subLevel === 5) {
+                    let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
+                    let selectedBossImg = bossImages[stageLevel - 1] || 'boss.png';
+
+                    villainsGrid[5] = {
+                        id: 5,
+                        isBoss: true,
+                        hp: bossHp,
+                        maxHp: bossHp,
+                        alive: true,
+                        img: selectedBossImg
+                    };
+
+                    let availableSlots = [0, 1, 2, 4, 6, 7, 8, 9, 10, 11];
+                    let countNormal = 3 + Math.floor(Math.random() * 3);
+                    availableSlots.sort(() => Math.random() - 0.5);
+
+                    for (let i = 0; i < Math.min(countNormal, availableSlots.length); i++) {
+                        let slotIdx = availableSlots[i];
+                        villainsGrid[slotIdx] = {
+                            id: slotIdx,
+                            isBoss: false,
+                            hp: villainHp,
+                            maxHp: villainHp,
+                            alive: true,
+                            img: 'villain4.png'
+                        };
+                    }
+                } else {
+                    let countVillains = 3 + Math.floor(Math.random() * 5);
+                    let availableSlots = Array.from({length: 12}, (_, i) => i);
+                    availableSlots.sort(() => Math.random() - 0.5);
+
+                    let vImg = 'villain1.png';
+                    if (subLevel === 2) vImg = 'villain2.png';
+                    else if (subLevel === 3) vImg = 'villain4.png';
+                    else if (subLevel === 4) {
+                        vImg = Math.random() < 0.5 ? 'villain1.png' : 'villain2.png';
+                    }
+
+                    for (let i = 0; i < countVillains; i++) {
+                        let slotIdx = availableSlots[i];
+                        villainsGrid[slotIdx] = {
+                            id: slotIdx,
+                            isBoss: false,
+                            hp: villainHp,
+                            maxHp: villainHp,
+                            alive: true,
+                            img: vImg
+                        };
+                    }
                 }
             }
 
