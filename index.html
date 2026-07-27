@@ -63,11 +63,11 @@
             flex-direction: row;
         }
 
-        /* Left Pane: Storyline Pictures */
+        /* Left Pane: Storyline Pictures (Exact 50/50 and exact left.png background setting) */
         #story-pane {
             width: 50%;
             height: 100%;
-            background-image: linear-gradient(rgba(4, 6, 10, 0.75), rgba(4, 6, 10, 0.75)), url('left.png');
+            background-image: url('left.png');
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
@@ -94,7 +94,7 @@
             text-shadow: 1px 1px 3px #000;
         }
 
-        /* Right Pane: Game Box */
+        /* Right Pane: Game Box (Exact 50/50 width) */
         #game-pane {
             width: 50%;
             height: 100%;
@@ -117,7 +117,7 @@
             bottom: 0;
             width: 100%;
             height: 100%;
-            background-image: linear-gradient(rgba(4, 6, 10, 0.55), rgba(4, 6, 10, 0.55)), url('sky.png');
+            background-image: url('sky.png');
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
@@ -141,7 +141,7 @@
             filter: drop-shadow(0 0 22px rgba(218, 165, 32, 0.85));
         }
 
-        /* Cardinal's Cross Projectile Animation */
+        /* Hero Cross Projectile Animation (Hero shoots to Villain) */
         .cross-projectile {
             position: absolute;
             width: 30px;
@@ -170,6 +170,39 @@
             width: 10px;
             height: 30px;
             border-radius: 3px;
+        }
+
+        /* Villain Laser Beam Animation (Villain attacks Hero automatically with laser at end of turn) */
+        .laser-beam {
+            position: absolute;
+            height: 4px;
+            background: radial-gradient(circle, #ff0055, #ff0000);
+            box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            z-index: 25;
+            pointer-events: none;
+            transform-origin: left center;
+            animation: laserFlash 0.3s forwards ease-out;
+        }
+        @keyframes laserFlash {
+            0% { opacity: 1; transform: scaleX(1); }
+            100% { opacity: 0; transform: scaleX(1); }
+        }
+
+        /* Hero HP Bar */
+        #hero-hp-container {
+            width: 100px;
+            height: 8px;
+            background: #222;
+            border: 1px solid #d4af37;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+        #hero-hp-bar {
+            width: 100%;
+            height: 100%;
+            background: #22c55e;
+            transition: width 0.3s ease;
         }
 
         /* Angel Container & Alignment */
@@ -278,7 +311,7 @@
             filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.8));
         }
 
-        /* Bottom Area: Claw Section with Rings */
+        /* Bottom Area: Claw Section with Rings (User requested claw section setup to stay) */
         #claw-section {
             height: 48%;
             width: 100%;
@@ -527,8 +560,9 @@
             <div id="battle-arena">
                 <div id="road"></div>
                 
-                <!-- Hero Container -->
+                <!-- Hero Container with HP bar -->
                 <div id="hero-container">
+                    <div id="hero-hp-container"><div id="hero-hp-bar"></div></div>
                     <img id="hero" src="hero.png" alt="Hero">
                 </div>
 
@@ -635,6 +669,10 @@
         const maxStages = 4;
         const maxSubLevels = 5;
         
+        // Hero HP tracking
+        let heroHp = 100;
+        let heroMaxHp = 100;
+
         // Boosters state
         let boosters = [
             { level: 1, max: 7 },
@@ -662,6 +700,7 @@
         const villainsContainer = document.getElementById('villains-container');
         const floatingBanner = document.getElementById('floating-banner');
         const heroContainer = document.getElementById('hero-container');
+        const heroHpBar = document.getElementById('hero-hp-bar');
         const angelContainer = document.getElementById('angel-container');
         const angelHalo = document.getElementById('angel-halo');
         const finalScreen = document.getElementById('final-screen');
@@ -695,7 +734,6 @@
             let bossHp = 200 + (stageLevel * 50);
 
             if (subLevel === 5) {
-                // Level 5: Boss in the last column middle row (Index 5 in 3x4 grid: row 1, col 3)
                 let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
                 let selectedBossImg = bossImages[stageLevel - 1] || 'boss.png';
 
@@ -866,15 +904,46 @@
         function selectTargetVillain(targetIdx) {
             if (turnPhase !== 'SELECT_TARGET') return;
 
-            applyDamageWithBounce(accumulatedPower, targetIdx);
+            // Hero shoots cross projectile to villain
+            fireHeroCrossToVillain(targetIdx, () => {
+                applyDamageWithBounce(accumulatedPower, targetIdx);
 
-            if (villainsGrid.every(v => !v || !v.alive)) {
-                handleLevelClear();
-            } else {
+                if (villainsGrid.every(v => !v || !v.alive)) {
+                    handleLevelClear();
+                } else {
+                    setTimeout(() => {
+                        executeVillainTurnLaserAttacks();
+                    }, 500);
+                }
+            });
+        }
+
+        function fireHeroCrossToVillain(targetIdx, callback) {
+            let proj = document.createElement('div');
+            proj.className = 'cross-projectile';
+            
+            let arenaRect = document.getElementById('battle-arena').getBoundingClientRect();
+            let heroRect = heroContainer.getBoundingClientRect();
+            
+            let villainSlots = villainsContainer.querySelectorAll('.villain-slot');
+            let targetSlot = villainSlots[targetIdx];
+            
+            proj.style.left = `${heroRect.left - arenaRect.left + 50}px`;
+            proj.style.top = `${heroRect.top - arenaRect.top + 100}px`;
+            document.getElementById('battle-arena').appendChild(proj);
+
+            if (targetSlot) {
+                let targetRect = targetSlot.getBoundingClientRect();
                 setTimeout(() => {
-                    executeVillainTurnAttacks();
-                }, 600);
+                    proj.style.left = `${targetRect.left - arenaRect.left + targetRect.width / 2}px`;
+                    proj.style.top = `${targetRect.top - arenaRect.top + targetRect.height / 2}px`;
+                }, 50);
             }
+
+            setTimeout(() => {
+                proj.remove();
+                if (callback) callback();
+            }, 450);
         }
 
         function applyDamageWithBounce(damageAmount, startTargetIdx) {
@@ -923,44 +992,72 @@
             renderVillainsGrid();
         }
 
-        function executeVillainTurnAttacks() {
+        // Villain automatically attacks Hero at end of turn with lasers
+        function executeVillainTurnLaserAttacks() {
             let livingVillains = villainsGrid.filter(v => v && v.alive);
             if (livingVillains.length === 0) return;
 
-            let attackCount = 3; 
-            let attacksFired = 0;
+            let villainSlots = villainsContainer.querySelectorAll('.villain-slot');
+            let arenaRect = document.getElementById('battle-arena').getBoundingClientRect();
+            let heroRect = heroContainer.getBoundingClientRect();
 
-            let attackInterval = setInterval(() => {
-                if (attacksFired >= attackCount) {
-                    clearInterval(attackInterval);
-                    setTimeout(initNewTurn, 400);
+            let activeIndices = [];
+            villainsGrid.forEach((v, idx) => {
+                if (v && v.alive) activeIndices.push(idx);
+            });
+
+            let attacksToFire = Math.min(activeIndices.length, 2);
+            let fired = 0;
+
+            let interval = setInterval(() => {
+                if (fired >= attacksToFire) {
+                    clearInterval(interval);
+                    
+                    // Apply damage to hero automatically
+                    let damageToHero = 10 + (stageLevel * 5);
+                    heroHp = Math.max(0, heroHp - damageToHero);
+                    heroHpBar.style.width = `${(heroHp / heroMaxHp) * 100}%`;
+
+                    if (heroHp <= 0) {
+                        showBanner("Hero Defeated! Restarting level...");
+                        setTimeout(() => {
+                            heroHp = 100;
+                            heroHpBar.style.width = '100%';
+                            initLevel();
+                            initNewTurn();
+                        }, 1500);
+                    } else {
+                        setTimeout(initNewTurn, 400);
+                    }
                     return;
                 }
 
-                fireCrossProjectileAtHero();
-                attacksFired++;
-            }, 250);
-        }
+                let chosenIdx = activeIndices[Math.floor(Math.random() * activeIndices.length)];
+                let slot = villainSlots[chosenIdx];
+                if (slot) {
+                    let vRect = slot.getBoundingClientRect();
+                    let laser = document.createElement('div');
+                    laser.className = 'laser-beam';
 
-        function fireCrossProjectileAtHero() {
-            let proj = document.createElement('div');
-            proj.className = 'cross-projectile';
-            
-            let arenaRect = document.getElementById('battle-arena').getBoundingClientRect();
-            let heroRect = heroContainer.getBoundingClientRect();
-            
-            proj.style.left = `${arenaRect.width * 0.75}px`;
-            proj.style.top = `${arenaRect.height * 0.5}px`;
-            document.getElementById('battle-arena').appendChild(proj);
+                    let x1 = vRect.left - arenaRect.left + vRect.width / 2;
+                    let y1 = vRect.top - arenaRect.top + vRect.height / 2;
+                    let x2 = heroRect.left - arenaRect.left + heroRect.width / 2;
+                    let y2 = heroRect.top - arenaRect.top + heroRect.height / 2;
 
-            setTimeout(() => {
-                proj.style.left = `${heroRect.left - arenaRect.left + 50}px`;
-                proj.style.top = `${heroRect.top - arenaRect.top + 100}px`;
-            }, 50);
+                    let length = Math.hypot(x2 - x1, y2 - y1);
+                    let angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
-            setTimeout(() => {
-                proj.remove();
-            }, 400);
+                    laser.style.width = `${length}px`;
+                    laser.style.left = `${x1}px`;
+                    laser.style.top = `${y1}px`;
+                    laser.style.transform = `rotate(${angle}deg)`;
+
+                    document.getElementById('battle-arena').appendChild(laser);
+                    setTimeout(() => laser.remove(), 300);
+                }
+
+                fired++;
+            }, 300);
         }
 
         function incrementBooster(type) {
@@ -1001,6 +1098,9 @@
                 subLevel = 1;
                 stageLevel++;
             }
+
+            heroHp = heroMaxHp;
+            heroHpBar.style.width = '100%';
 
             updateStoryPane();
             initLevel();
