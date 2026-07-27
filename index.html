@@ -127,7 +127,7 @@
         #hero-container {
             position: absolute;
             left: 5%;
-            bottom: 12%; /* Adjusted down */
+            bottom: 12%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -208,7 +208,7 @@
         #angel-container {
             position: absolute;
             right: 5%;
-            bottom: 12%; /* Adjusted down to match hero height */
+            bottom: 12%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -223,7 +223,6 @@
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
-            transform: rotate(var(--angel-tilt, 0deg));
         }
 
         .angel-halo {
@@ -241,32 +240,6 @@
         @keyframes haloGlow {
             from { transform: scale(1); box-shadow: 0 0 10px #fde047; }
             to { transform: scale(1.1); box-shadow: 0 0 25px #fff; }
-        }
-
-        /* Angel Rotation Angle Selector Bar (Interactive Setting) */
-        #angel-angle-panel {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background: rgba(4, 6, 10, 0.9);
-            border: 2px solid #daa520;
-            padding: 8px 12px;
-            border-radius: 8px;
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 0 15px rgba(218, 165, 32, 0.5);
-        }
-        #angel-angle-label {
-            font-size: 0.85rem;
-            color: #f0e682;
-            font-weight: bold;
-        }
-        #angel-angle-slider {
-            width: 110px;
-            cursor: pointer;
         }
 
         .white-heart {
@@ -634,16 +607,10 @@
                     <img id="hero" src="hero.png" alt="Hero">
                 </div>
 
-                <!-- Angel Container & Angel Settings Panel -->
+                <!-- Angel Container -->
                 <div id="angel-container" onclick="handleAngelClick()">
                     <div class="angel-halo" id="angel-halo"></div>
                     <img id="angel" src="angel.png" alt="Angel">
-                </div>
-
-                <!-- Angel Angle/Tilt Customization Setting Panel -->
-                <div id="angel-angle-panel">
-                    <div id="angel-angle-label">Angel Tilt: <span id="angel-angle-val">0</span>°</div>
-                    <input type="range" id="angel-angle-slider" min="-45" max="45" value="0">
                 </div>
 
                 <!-- Villains Grid Layout (3x4 invisible grid) -->
@@ -744,9 +711,6 @@
         const heroHpBar = document.getElementById('hero-hp-bar');
         const angelContainer = document.getElementById('angel-container');
         const angelHalo = document.getElementById('angel-halo');
-        const angelImg = document.getElementById('angel');
-        const angelAngleSlider = document.getElementById('angel-angle-slider');
-        const angelAngleVal = document.getElementById('angel-angle-val');
         const finalScreen = document.getElementById('final-screen');
         const casesContainer = document.getElementById('cases-container');
         const turnInfo = document.getElementById('turn-info');
@@ -755,12 +719,6 @@
         const boosterModal = document.getElementById('booster-modal');
         const boosterChoicesContainer = document.getElementById('booster-choices-container');
         const flyingSprite = document.getElementById('flying-sprite');
-
-        angelAngleSlider.addEventListener('input', (e) => {
-            const angle = e.target.value;
-            angelAngleVal.innerText = angle;
-            angelImg.style.setProperty('--angel-tilt', `${angle}deg`);
-        });
 
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
@@ -1121,6 +1079,7 @@
 
         function handleLevelClear() {
             if (subLevel === 5) {
+                // Angel appears when the boss (level 5) is eliminated
                 turnPhase = 'STAGE_CLEARED_ANGEL';
                 waitingForAngelClick = true;
                 turnInfo.innerText = "Touch the angel to clear stage!";
@@ -1129,7 +1088,7 @@
                 angelContainer.style.display = 'flex';
                 angelContainer.style.right = '5%';
                 angelContainer.style.bottom = '12%';
-                showBanner("Click the Angel to finish stage!");
+                showBanner("Angel appeared! Click the Angel to finish stage!");
             } else {
                 promptBoosterSelection();
             }
