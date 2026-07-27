@@ -151,7 +151,6 @@
             pointer-events: none;
             transition: all 0.35s linear;
         }
-        /* Vertical bar of the Christian cross */
         .christian-cross-projectile::before {
             content: '';
             position: absolute;
@@ -163,7 +162,6 @@
             border-radius: 3px;
             box-shadow: 0 0 15px #ff9800, 0 0 5px #ffffff;
         }
-        /* Horizontal bar placed higher up to form a traditional Latin Christian cross */
         .christian-cross-projectile::after {
             content: '';
             position: absolute;
@@ -209,7 +207,7 @@
             transition: width 0.3s ease;
         }
 
-        /* Angel Container & Alignment */
+        /* Angel/Angle Settings & Elements */
         #angel-container {
             position: absolute;
             right: 5%;
@@ -227,6 +225,8 @@
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
             position: relative;
+            transform: rotate(var(--angel-tilt, 0deg));
+            transition: transform 0.3s ease;
         }
 
         .angel-halo {
@@ -243,6 +243,32 @@
         @keyframes haloGlow {
             from { transform: scale(1); box-shadow: 0 0 10px #fde047; }
             to { transform: scale(1.1); box-shadow: 0 0 25px #fff; }
+        }
+
+        /* Angel Rotation Angle Selector Bar (Interactive Setting) */
+        #angel-angle-panel {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(4, 6, 10, 0.9);
+            border: 2px solid #daa520;
+            padding: 8px 12px;
+            border-radius: 8px;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.5);
+        }
+        #angel-angle-label {
+            font-size: 0.85rem;
+            color: #f0e682;
+            font-weight: bold;
+        }
+        #angel-angle-slider {
+            width: 110px;
+            cursor: pointer;
         }
 
         .white-heart {
@@ -310,9 +336,10 @@
             filter: drop-shadow(0 0 10px rgba(184, 134, 11, 0.5));
         }
         .boss-img {
-            width: 150px;
-            height: 210px;
-            filter: drop-shadow(0 0 25px rgba(255, 69, 0, 0.9));
+            width: 160px;
+            height: 220px;
+            transform: scale(1.25);
+            filter: drop-shadow(0 0 30px rgba(255, 69, 0, 0.95));
         }
 
         /* Bottom Area: Claw Section with Cups */
@@ -580,13 +607,19 @@
                     <img id="hero" src="hero.png" alt="Hero">
                 </div>
 
-                <!-- Angel Container -->
+                <!-- Angel Container & Angel Settings Panel -->
                 <div id="angel-container">
                     <div class="angel-halo" id="angel-halo"></div>
                     <img id="angel" src="angel.png" alt="Angel">
                 </div>
 
-                <!-- Villains Grid Container -->
+                <!-- Angel Angle/Tilt Customization Setting Panel -->
+                <div id="angel-angle-panel">
+                    <div id="angel-angle-label">Angel Tilt: <span id="angel-angle-val">0</span>°</div>
+                    <input type="range" id="angel-angle-slider" min="-45" max="45" value="0">
+                </div>
+
+                <!-- Villains Grid Layout (3x4 invisible grid) -->
                 <div id="villains-container"></div>
             </div>
 
@@ -652,14 +685,14 @@
         let heroHp = 100;
         let heroMaxHp = 100;
 
-        // Boosters config with precise specs
+        // Boosters config
         let boosters = [
-            { id: 0, name: "Increase Number", level: 1, max: 7 },         // +10 per level
-            { id: 1, name: "Increase Choice", level: 1, max: 3 },         // Lv1=1, Lv2=2, Lv3=3 choices
-            { id: 2, name: "Increase Bounce", level: 1, max: 5 }          // Lv1=1 bounce, Lv2=2, Lv3=3, Lv4=4, Lv5=5 bounces
+            { id: 0, name: "Increase Number", level: 1, max: 7 },
+            { id: 1, name: "Increase Choice", level: 1, max: 3 },
+            { id: 2, name: "Increase Bounce", level: 1, max: 5 }
         ];
 
-        // Exact initial values requested: 30, 50, 80, 100, 120, 150
+        // Randomly hidden numbers: 30, 50, 80, 100, 120, 150
         let baseCupValues = [30, 50, 80, 100, 120, 150];
         let currentTurnCups = [];
         let accumulatedPower = 0;
@@ -681,6 +714,9 @@
         const heroHpBar = document.getElementById('hero-hp-bar');
         const angelContainer = document.getElementById('angel-container');
         const angelHalo = document.getElementById('angel-halo');
+        const angelImg = document.getElementById('angel');
+        const angelAngleSlider = document.getElementById('angel-angle-slider');
+        const angelAngleVal = document.getElementById('angel-angle-val');
         const finalScreen = document.getElementById('final-screen');
         const casesContainer = document.getElementById('cases-container');
         const turnInfo = document.getElementById('turn-info');
@@ -688,6 +724,13 @@
         const stageClearMsg = document.getElementById('stage-clear-msg');
         const boosterModal = document.getElementById('booster-modal');
         const boosterChoicesContainer = document.getElementById('booster-choices-container');
+
+        // Angel angle/tilt setting listener
+        angelAngleSlider.addEventListener('input', (e) => {
+            const angle = e.target.value;
+            angelAngleVal.innerText = angle;
+            angelImg.style.setProperty('--angel-tilt', `${angle}deg`);
+        });
 
         startBtn.addEventListener('click', () => {
             startScreen.style.display = 'none';
@@ -710,14 +753,14 @@
             let villainHp = (stageLevel <= 2) ? 40 : 65;
             let bossHp = 250 + (stageLevel * 75);
 
-            // Boss index for 3x4 grid: last column, middle row -> Index 7 (Grid index format: cols 0-3, rows 0-2 -> row 1, col 3 = index 1*4 + 3 = 7)
+            // Boss position: last column, middle row -> Index 7 (row 1, col 3)
             let bossSlotIndex = 7;
 
             if (subLevel === 5) {
                 let bossImages = ['villain6.png', 'villain3.png', 'villain7.png', 'villain8.png'];
                 let selectedBossImg = bossImages[stageLevel - 1] || 'boss.png';
 
-                // Place boss at last column, middle row (index 7)
+                // Place boss at last column middle row, bigger scale styling
                 villainsGrid[bossSlotIndex] = { id: bossSlotIndex, isBoss: true, hp: bossHp, maxHp: bossHp, alive: true, img: selectedBossImg };
 
                 let availableSlots = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11];
@@ -790,12 +833,12 @@
             accumulatedPower = 0;
             picksMadeCount = 0;
             
-            // Sync choices allowed from booster 1 (Increase Choice)
-            picksAllowedTotal = boosters[1].level; // Level 1 = 1 pick, Level 2 = 2 picks, Level 3 = 3 picks
+            // Increase Choice booster sync
+            picksAllowedTotal = boosters[1].level;
             
             turnInfo.innerText = `Choose cups (${picksMadeCount}/${picksAllowedTotal})`;
 
-            // Increase Number booster: +10 per level up
+            // Increase Number booster sync (+10 per level up)
             let numberLevel = boosters[0].level;
             let levelBonus = (numberLevel - 1) * 10;
 
@@ -855,7 +898,7 @@
             if (turnPhase !== 'SELECT_TARGET') return;
             lastAttackedIndex = targetIdx;
 
-            // Increase Bounce booster: level 1 = 1 bounce, level 2 = 2, level 3 = 3, level 4 = 4, level 5 = 5
+            // Increase Bounce booster sync (levels 1 to 5)
             let bounceLevel = boosters[2].level;
             let maxExtraTargets = bounceLevel;
 
@@ -879,7 +922,6 @@
                 }
             }
 
-            // Animate Christian cross projectile travelling through primary target and bouncing to next target(s)
             fireBouncingChristianCross(targetIndices, () => {
                 applyDamageToList(accumulatedPower, targetIndices, targetIdx);
 
